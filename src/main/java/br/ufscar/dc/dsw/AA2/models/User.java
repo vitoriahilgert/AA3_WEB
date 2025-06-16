@@ -29,6 +29,9 @@ public class User {
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TestSession> testSessions = new ArrayList<>();
 
+    @ManyToMany(targetEntity = Project.class, mappedBy = "users")
+    private List<Project> projects = new ArrayList<>();
+
     public User() {
     }
 
@@ -86,5 +89,13 @@ public class User {
 
     public void setTestSessions(List<TestSession> testSessions) {
         this.testSessions = testSessions;
+    }
+
+    public List<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<Project> projects) {
+        this.projects = projects;
     }
 }
