@@ -32,23 +32,72 @@ public class Strategy {
     @OneToMany(mappedBy = "strategies", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TestSession> testSessions = new ArrayList<>();
 
-    public void setName(String name) {
+    public Strategy() {
+    }
+
+    public Strategy(UUID id, String name, String description, String examples, String tips, List<Image> images, List<TestSession> testSessions) {
+        this.id = id;
         this.name = name;
-    }
-
-    public void setDescription(String description) {
         this.description = description;
+        this.examples = examples;
+        this.tips = tips;
+        this.images = images;
+        this.testSessions = testSessions;
     }
 
-    public void setExamples(String examples) {
-        this.examples = examples;
+    public List<TestSession> getTestSessions() {
+        return testSessions;
+    }
+
+    public void setTestSessions(List<TestSession> testSessions) {
+        this.testSessions = testSessions;
+    }
+
+    public List<Image> getImages() {
+        return images;
     }
 
     public void setImages(List<Image> images) {
         this.images = images;
     }
 
+    public String getTips() {
+        return tips;
+    }
+
     public void setTips(String tips) {
         this.tips = tips;
+    }
+
+    public String getExamples() {
+        return examples;
+    }
+
+    public void setExamples(String examples) {
+        this.examples = examples;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 }

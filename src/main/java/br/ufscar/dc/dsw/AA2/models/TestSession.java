@@ -32,6 +32,10 @@ public class TestSession {
     @Column
     private LocalDateTime finishDateTime;
 
+    @ManyToOne
+    @JoinColumn(name="project_id")
+    private Project project;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="tester_id")
     private User tester;
@@ -121,5 +125,13 @@ public class TestSession {
 
     public void setStrategy(Strategy strategy) {
         this.strategy = strategy;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 }
