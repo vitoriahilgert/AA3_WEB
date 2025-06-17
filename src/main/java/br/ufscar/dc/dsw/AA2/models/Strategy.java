@@ -1,5 +1,6 @@
 package br.ufscar.dc.dsw.AA2.models;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
