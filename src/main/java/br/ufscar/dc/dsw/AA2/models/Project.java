@@ -23,6 +23,69 @@ public class Project {
     @CreationTimestamp
     private LocalDateTime creationDateTime;
 
+    @OneToMany(mappedBy = "projects", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TestSession> testSessions;
+
     @ManyToMany(targetEntity = User.class)
     private List<User> allowedMembers;
+
+    public Project() {
+    }
+
+    public Project(UUID id, String name, String description, LocalDateTime creationDateTime, List<TestSession> testSessions, List<User> allowedMembers) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.creationDateTime = creationDateTime;
+        this.testSessions = testSessions;
+        this.allowedMembers = allowedMembers;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDateTime getCreationDateTime() {
+        return creationDateTime;
+    }
+
+    public void setCreationDateTime(LocalDateTime creationDateTime) {
+        this.creationDateTime = creationDateTime;
+    }
+
+    public List<TestSession> getTestSessions() {
+        return testSessions;
+    }
+
+    public void setTestSessions(List<TestSession> testSessions) {
+        this.testSessions = testSessions;
+    }
+
+    public List<User> getAllowedMembers() {
+        return allowedMembers;
+    }
+
+    public void setAllowedMembers(List<User> allowedMembers) {
+        this.allowedMembers = allowedMembers;
+    }
 }
