@@ -32,12 +32,11 @@ public class Project {
     public Project() {
     }
 
-    public Project(UUID id, String name, String description, LocalDateTime creationDateTime, List<TestSession> testSessions, List<User> allowedMembers) {
+    public Project(UUID id, String name, String description, LocalDateTime creationDateTime, List<User> allowedMembers) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.creationDateTime = creationDateTime;
-        this.testSessions = testSessions;
         this.allowedMembers = allowedMembers;
     }
 
@@ -73,14 +72,6 @@ public class Project {
         this.creationDateTime = creationDateTime;
     }
 
-    public List<TestSession> getTestSessions() {
-        return testSessions;
-    }
-
-    public void setTestSessions(List<TestSession> testSessions) {
-        this.testSessions = testSessions;
-    }
-
     public List<User> getAllowedMembers() {
         return allowedMembers;
     }
@@ -89,3 +80,6 @@ public class Project {
         this.allowedMembers = allowedMembers;
     }
 }
+
+
+
