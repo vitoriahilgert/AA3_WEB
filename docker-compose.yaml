@@ -1,10 +1,13 @@
 services:
   aa2-db:
-    image: 'postgres:16.0-alpine3.18'
+    image: 'mysql:8.0'
     container_name: aa2-db
     environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=db
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=AA2
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
     ports:
-      - "5432:5432"
+      - "3306:3306"
+    volumes:
+      - ./mysql-data:/var/lib/mysql
