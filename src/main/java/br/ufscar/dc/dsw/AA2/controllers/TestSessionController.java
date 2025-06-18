@@ -4,6 +4,7 @@ import br.ufscar.dc.dsw.AA2.dtos.testSession.CreateTestSessionRequestDTO;
 import br.ufscar.dc.dsw.AA2.dtos.testSession.CreateTestSessionResponseDTO;
 import br.ufscar.dc.dsw.AA2.dtos.testSession.GetTestSessionResponseDTO;
 import br.ufscar.dc.dsw.AA2.services.TestSessionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +15,8 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/sessions")
 public class TestSessionController {
+    @Autowired
     private TestSessionService testSessionService;
-
-    public TestSessionController(TestSessionService testSessionService) {
-        this.testSessionService = testSessionService;
-    }
 
     @PostMapping("/{projectId}")
     public ResponseEntity<CreateTestSessionResponseDTO> create(@RequestBody CreateTestSessionRequestDTO dto, @PathVariable("projectId") UUID projectId) {

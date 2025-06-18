@@ -12,6 +12,7 @@ import br.ufscar.dc.dsw.AA2.repositories.ProjectRepository;
 import br.ufscar.dc.dsw.AA2.repositories.StrategyRepository;
 import br.ufscar.dc.dsw.AA2.repositories.TestSessionRepository;
 import br.ufscar.dc.dsw.AA2.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,10 +22,17 @@ import java.util.stream.Collectors;
 
 @Service
 public class TestSessionService {
-    private final TestSessionRepository testSessionRepository;
-    private final StrategyRepository strategyRepository;
-    private final UserRepository userRepository;
-    private final ProjectRepository projectRepository;
+    @Autowired
+    private TestSessionRepository testSessionRepository;
+
+    @Autowired
+    private StrategyRepository strategyRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ProjectRepository projectRepository;
 
     public TestSessionService(TestSessionRepository testSessionRepository, StrategyRepository strategyRepository, UserRepository userRepository, ProjectRepository projectRepository) {
         this.testSessionRepository = testSessionRepository;

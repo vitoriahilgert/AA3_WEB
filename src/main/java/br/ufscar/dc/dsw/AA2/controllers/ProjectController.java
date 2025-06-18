@@ -3,6 +3,7 @@ package br.ufscar.dc.dsw.AA2.controllers;
 import br.ufscar.dc.dsw.AA2.dtos.ProjectRecordDto;
 import br.ufscar.dc.dsw.AA2.models.Project;
 import br.ufscar.dc.dsw.AA2.services.ProjectService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +15,8 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/projects")
 public class ProjectController {
-    private final ProjectService projectService;
-
-    public ProjectController(ProjectService projectService){
-        this.projectService = projectService;
-    }
+    @Autowired
+    private ProjectService projectService;
 
     @GetMapping
     public ResponseEntity<List<Project>> getAllProjects() {

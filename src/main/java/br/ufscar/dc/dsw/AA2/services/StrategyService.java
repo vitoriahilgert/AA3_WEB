@@ -3,6 +3,7 @@ package br.ufscar.dc.dsw.AA2.services;
 import br.ufscar.dc.dsw.AA2.dtos.StrategyDTO;
 import br.ufscar.dc.dsw.AA2.models.Strategy;
 import br.ufscar.dc.dsw.AA2.repositories.StrategyRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,12 +11,8 @@ import java.util.UUID;
 
 @Service
 public class StrategyService {
-
-    private final StrategyRepository strategyRepository;
-
-    public StrategyService(StrategyRepository strategyRepository) {
-        this.strategyRepository = strategyRepository;
-    }
+    @Autowired
+    private StrategyRepository strategyRepository;
 
     public List<Strategy> getAll() {
         return strategyRepository.findAll();

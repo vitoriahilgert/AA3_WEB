@@ -7,21 +7,18 @@ import br.ufscar.dc.dsw.AA2.models.User;
 import br.ufscar.dc.dsw.AA2.repositories.ProjectRepository;
 import br.ufscar.dc.dsw.AA2.repositories.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
 public class ProjectService {
+    @Autowired
+    private ProjectRepository projectRepository;
 
-    private final ProjectRepository projectRepository;
-    private final UserRepository userRepository;
-
-    public ProjectService(ProjectRepository projectRepository, UserRepository userRepository) {
-        this.projectRepository = projectRepository;
-        this.userRepository = userRepository;
-    }
-
+    @Autowired
+    private UserRepository userRepository;
 
     public List<Project> getAllProjects() {
         return projectRepository.findAll();

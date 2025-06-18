@@ -4,6 +4,7 @@ import br.ufscar.dc.dsw.AA2.models.User;
 import br.ufscar.dc.dsw.AA2.repositories.UserRepository;
 import br.ufscar.dc.dsw.AA2.dtos.UserRecordDto;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,12 +12,8 @@ import java.util.UUID;
 
 @Service
 public class UserService {
-
-    private final UserRepository userRepository;
-
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    @Autowired
+    private UserRepository userRepository;
 
     public List<User> getAllUsers() {
         return userRepository.findAll();

@@ -3,6 +3,7 @@ package br.ufscar.dc.dsw.AA2.controllers;
 import br.ufscar.dc.dsw.AA2.dtos.StrategyDTO;
 import br.ufscar.dc.dsw.AA2.models.Strategy;
 import br.ufscar.dc.dsw.AA2.services.StrategyService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,11 +14,8 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/strategy")
 public class StrategyController {
-    private final StrategyService strategyService;
-
-    public StrategyController(StrategyService strategyService) {
-        this.strategyService = strategyService;
-    }
+    @Autowired
+    private StrategyService strategyService;
 
     @GetMapping
     public ResponseEntity<List<Strategy>> getAll() {
