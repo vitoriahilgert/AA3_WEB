@@ -23,7 +23,7 @@ public class ErrorViewController implements ErrorViewResolver {
                 break;
             case 500:
                 model.addObject("error", "Ocorreu um erro interno no servidor.");
-                model.addObject("message", "Ocorreu um erro inexperado, tente mais tarde.");
+                model.addObject("message", "Ocorreu um erro inesperado, tente mais tarde.");
                 break;
             default:
                 model.addObject("error", map.get("error"));
