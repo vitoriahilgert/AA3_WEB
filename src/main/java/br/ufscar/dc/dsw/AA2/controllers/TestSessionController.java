@@ -1,4 +1,4 @@
-package br.ufscar.dc.dsw.AA2.controller;
+package br.ufscar.dc.dsw.AA2.controllers;
 
 import br.ufscar.dc.dsw.AA2.dtos.testSession.CreateTestSessionRequestDTO;
 import br.ufscar.dc.dsw.AA2.dtos.testSession.CreateTestSessionResponseDTO;
