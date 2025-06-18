@@ -9,7 +9,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "projects")
-public class Project {
+public class
+Project {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -23,7 +24,7 @@ public class Project {
     @CreationTimestamp
     private LocalDateTime creationDateTime;
 
-    @OneToMany(mappedBy = "projects", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TestSession> testSessions;
 
     @ManyToMany(targetEntity = User.class)
@@ -79,6 +80,16 @@ public class Project {
     public void setAllowedMembers(List<User> allowedMembers) {
         this.allowedMembers = allowedMembers;
     }
+
+    public List<TestSession> getTestSessions() {
+        return testSessions;
+    }
+
+    public void setTestSessions(List<TestSession> testSessions) {
+        this.testSessions = testSessions;
+    }
+
+
 }
 
 

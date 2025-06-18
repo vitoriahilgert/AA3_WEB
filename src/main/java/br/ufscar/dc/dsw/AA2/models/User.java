@@ -26,10 +26,10 @@ public class User {
     @Column(nullable = false)
     private UserRoleEnum role;
 
-    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "tester", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TestSession> testSessions = new ArrayList<>();
 
-    @ManyToMany(targetEntity = Project.class, mappedBy = "users")
+    @ManyToMany(targetEntity = Project.class, mappedBy = "allowedMembers")
     private List<Project> projects = new ArrayList<>();
 
     public User() {
