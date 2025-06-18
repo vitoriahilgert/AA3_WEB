@@ -1,0 +1,10 @@
+services:
+  aa2-db:
+    image: 'postgres:16.0-alpine3.18'
+    container_name: aa2-db
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=db
+    ports:
+      - "5432:5432"
