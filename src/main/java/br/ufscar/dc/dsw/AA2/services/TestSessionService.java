@@ -4,6 +4,7 @@ import br.ufscar.dc.dsw.AA2.dtos.testSession.CreateTestSessionRequestDTO;
 import br.ufscar.dc.dsw.AA2.dtos.testSession.CreateTestSessionResponseDTO;
 import br.ufscar.dc.dsw.AA2.dtos.testSession.GetTestSessionResponseDTO;
 import br.ufscar.dc.dsw.AA2.dtos.testSession.GetTestSessionsResponseDTO;
+import br.ufscar.dc.dsw.AA2.exceptions.ResourceNotFoundException;
 import br.ufscar.dc.dsw.AA2.models.Project;
 import br.ufscar.dc.dsw.AA2.models.Strategy;
 import br.ufscar.dc.dsw.AA2.models.TestSession;
@@ -15,6 +16,7 @@ import br.ufscar.dc.dsw.AA2.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,27 +36,22 @@ public class TestSessionService {
     @Autowired
     private ProjectRepository projectRepository;
 
-    public TestSessionService(TestSessionRepository testSessionRepository, StrategyRepository strategyRepository, UserRepository userRepository, ProjectRepository projectRepository) {
-        this.testSessionRepository = testSessionRepository;
-        this.strategyRepository = strategyRepository;
-        this.userRepository = userRepository;
-        this.projectRepository = projectRepository;
-    }
-
-    // TODO: criar um ExceptionHandler
     public CreateTestSessionResponseDTO createTestSession(UUID projectId, CreateTestSessionRequestDTO dto) {
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId.toString()));
 
         Strategy strategy = strategyRepository.findById(dto.getStrategyId())
-                .orElseThrow(() -> new RuntimeException("Strategy not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Strategy", "id", dto.getStrategyId().toString()));
 
         User tester = userRepository.findById(dto.getTesterId())
-                .orElseThrow(() -> new RuntimeException("Tester not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Tester", "id", dto.getTesterId().toString()));
 
         TestSession testSession = new TestSession();
         testSession.setDescription(dto.getDescription());
         testSession.setDuration(dto.getDuration());
+        testSession.setProject(project);
+        testSession.setTester(tester);
+        testSession.setStrategy(strategy);
 
         testSessionRepository.save(testSession);
 
@@ -63,14 +60,14 @@ public class TestSessionService {
 
     public void deleteTestSession(UUID sessionId) {
         TestSession testSession = testSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new RuntimeException("TestSession not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("TestSession", "id", sessionId.toString()));
 
         testSessionRepository.delete(testSession);
     }
 
     public GetTestSessionResponseDTO getTestSessionById(UUID sessionId) {
         TestSession testSession = testSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new RuntimeException("TestSession not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("TestSession", "id", sessionId.toString()));
         return new GetTestSessionResponseDTO(testSession);
     }
 
@@ -78,5 +75,7 @@ public class TestSessionService {
         List<TestSession> testSessions = testSessionRepository.findAll();
         return testSessions.stream().map(GetTestSessionResponseDTO::new).collect(Collectors.toList());
     }
+
+    // public TestSession updateTestSession(UUID sessionId, CreateTestSessionRequestDTO dto) {}
 
 }
