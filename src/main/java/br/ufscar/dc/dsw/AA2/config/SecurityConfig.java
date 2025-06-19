@@ -17,6 +17,8 @@ import org.springframework.security.web.access.expression.DefaultWebSecurityExpr
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -38,13 +40,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authorize -> authorize
-//                .requestMatchers("/tester/**").hasRole("TESTER")
-//                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.POST, "/login").permitAll()
-        )
+        http
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/", "/home", "/login", "/css/**", "/js/**", "/images/**").permitAll()
+                        .anyRequest().authenticated()
+                )
             .formLogin((form) -> form
                     .loginPage("/login")
+                    .usernameParameter("email")
+                    .defaultSuccessUrl("/home", true) // <-- IMPORTANTE: para onde ir após o login
+                    .failureUrl("/login?error")
                     .permitAll()
             );
         return http.build();

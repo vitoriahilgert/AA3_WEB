@@ -14,7 +14,6 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import java.util.Locale;
 
 @Configuration
-@ComponentScan(basePackages = "br.ufscar.dc.dsw.AA2.config")
 public class MVCConfig implements WebMvcConfigurer {
 
     public void addViewControllers(ViewControllerRegistry registry) {

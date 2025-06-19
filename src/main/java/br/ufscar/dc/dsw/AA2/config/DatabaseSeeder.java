@@ -6,6 +6,7 @@ import br.ufscar.dc.dsw.AA2.repositories.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.UUID;
 
@@ -13,12 +14,12 @@ import java.util.UUID;
 public class DatabaseSeeder {
 
     @Bean
-    CommandLineRunner initDatabase(UserRepository userRepository) {
+    CommandLineRunner initDatabase(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
             if (userRepository.count() == 0) {
                 User user = new User();
                 user.setEmail("vihilgerttomasel@gmail.com");
-                user.setPassword("password");
+                user.setPassword(passwordEncoder.encode("password"));
                 user.setName("Vitória Admin");
                 user.setRole(UserRoleEnum.ADMIN);
                 userRepository.save(user);
