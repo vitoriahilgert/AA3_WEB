@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -89,6 +90,14 @@ Project {
         this.testSessions = testSessions;
     }
 
+    public void addAllowedMember(User user) {
+        if (this.allowedMembers == null) {
+            this.allowedMembers = new ArrayList<>();
+        }
+        if (!this.allowedMembers.contains(user)) {
+            this.allowedMembers.add(user);
+        }
+    }
 
 }
 
