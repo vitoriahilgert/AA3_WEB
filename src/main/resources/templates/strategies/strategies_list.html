@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Estratégias</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #121212;
+            color: #f0f0f0;
+            margin: 0;
+        }
+
+        h1 {
+            color: #00BFFF;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            margin-top: 80px;
+            background-color: #1f1f1f;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.7);
+        }
+
+        button, select, input[type="submit"] {
+            background-color: #00BFFF;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover, select:hover, input[type="submit"]:hover {
+            background-color: #009ACD;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+
+        th {
+            background-color: #272727;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+        }
+
+        .modal-content {
+            background-color: #1f1f1f;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            box-shadow: 0 0 10px black;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: white;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        #allowedMembersCheckboxes label {
+            display: inline-block;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            background-color: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 5px;
+        }
+
+        #formDeletar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        #formDeletar input[type="submit"],
+        #formDeletar button {
+            flex: 1;
+            max-width: 120px;
+            padding: 8px 0;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        #cadastroSubmitContainer {
+            margin-top: 30px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        #cadastroSubmit {
+            width: 30%;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        .actions button, .actions a {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            font-size: 14px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #6A5ACD;
+            transition: background-color 0.3s;
+        }
+
+        .actions button:hover, .actions a:hover{
+            background-color: #483D8B;
+        }
+
+        .actions i {
+            color: white;
+            pointer-events: none;
+        }
+
+        .navbar {
+            background-color: #6A5ACD;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 60px;
+            width: 100%;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .navbar a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .language-selector {
+            padding: 6px 10px;
+            border-radius: 5px;
+            border: none;
+            background-color: white;
+            color: #6A0DAD;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .language-selector:hover {
+            background-color: #f0f0f0;
+        }
+
+        .testador-header {
+            background-color: #1f1f1f;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #00BFFF;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .testador-header .logo-title h1 {
+            color: #00BFFF;
+            margin: 0;
+            font-size: 2em;
+        }
+        .testador-header .logo-title p {
+            margin: 5px 0 0;
+            font-size: 0.9em;
+            color: #aaaaaa;
+        }
+
+        .testador-header .user-info a {
+            color: #00BFFF;
+            text-decoration: none;
+            font-weight: bold;
+            margin-left: 20px;
+        }
+        .testador-header .user-info a:hover {
+            text-decoration: underline;
+        }
+
+        .admin-header {
+            background-color: #1f1f1f;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #00BFFF;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .admin-header .logo-title h1 {
+            color: #00BFFF;
+            margin: 0;
+            font-size: 2em;
+        }
+        .admin-header .logo-title p {
+            margin: 5px 0 0;
+            font-size: 0.9em;
+            color: #aaaaaa;
+        }
+
+        .admin-header .user-info a {
+            color: #00BFFF;
+            text-decoration: none;
+            font-weight: bold;
+            margin-left: 20px;
+        }
+        .admin-header .user-info a:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+<header th:switch="${role}">
+    <div th:case="'ADMIN'" class="admin-header">
+        <div class="logo-title">
+            <h1>Painel Administrativo</h1>
+            <p>GameTests Management Suite</p>
+        </div>
+        <div class="user-info">
+            <span th:text="${'Olá, ' + user.name + '!'}">Olá, <strong><span th:text="${user.name}"></span></strong>!</span>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit">Sair</button>
+            </form>
+        </div>
+    </div>
+
+    <div th:case="'TESTER'" class="testador-header">
+        <div class="logo-title">
+            <h1>Painel do Testador</h1>
+            <p>Gerencie suas sessões de teste</p>
+        </div>
+        <div class="user-info">
+            <span th:text="${'Olá, ' + user.name + '!'}">Olá, <strong><span th:text="${user.name}"></span></strong>!</span>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit">Sair</button>
+            </form>
+        </div>
+    </div>
+
+    <div th:case="*" class="testador-header">
+        <div class="logo-title">
+            <h1>GameTests</h1>
+            <p>Sistema de Gerenciamento de Testes</p>
+        </div>
+        <div class="auth-links">
+            <form th:action="@{/login}" method="get">
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="header">
+        <h1 th:text="Estratégias">Estratégias</h1>
+        <div sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/strategies/create}" class="btn-new">
+                <i class="fas fa-plus"></i>
+                <span>Nova Estratégia</span>
+            </a>
+        </div>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+        <p th:text="${error}"></p>
+    </div>
+
+    <div th:if="${message}" class="alert alert-success" role="alert">
+        <p th:text="${message}"></p>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Descrição</th>
+            <th>Exemplos</th>
+            <th>Dicas</th>
+            <th th:if="${role == 'ADMIN'}">Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr th:if="${strategies.empty}">
+            <td colspan="5" class="no-data">Nenhuma estratégia cadastrada.</td>
+        </tr>
+
+        <tr th:each="strategy : ${strategies}">
+            <td th:text="${strategy.name}">Nome da Estratégia</td>
+            <td th:text="${strategy.description}">Descrição da Estratégia</td>
+            <td th:text="${strategy.examples}">Exemplo de Estratégia</td>
+            <td th:text="${strategy.tips}">Dica da Estratégia</td>
+
+            <td th:if="${role == 'ADMIN'}" class="action-buttons">
+                <a th:href="@{/strategies/edit/{id}(id=${strategy.id})}" class="btn-edit" title="Editar">
+                    <i class="fas fa-pencil"></i>
+                </a>
+                <form th:action="@{/strategies/delete}" method="post" style="display: inline;" onsubmit="return confirm('Tem certeza que deseja excluir esta estratégia?');">
+                    <input type="hidden" name="id" th:value="${strategy.id}" />
+                    <button type="submit" class="btn-delete" title="Excluir">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
