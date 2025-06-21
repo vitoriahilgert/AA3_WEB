@@ -1,6 +1,7 @@
 package br.ufscar.dc.dsw.AA2.services;
 
 import br.ufscar.dc.dsw.AA2.models.User;
+import br.ufscar.dc.dsw.AA2.models.enums.UserRoleEnum;
 import br.ufscar.dc.dsw.AA2.repositories.UserRepository;
 import br.ufscar.dc.dsw.AA2.dtos.UserRecordDto;
 import jakarta.transaction.Transactional;
@@ -50,4 +51,10 @@ public class UserService {
         }
         return null;
     }
+
+    @Transactional
+    public List<User> getAllTesters() {
+        return userRepository.findByRole(UserRoleEnum.TESTER);
+    }
+
 }

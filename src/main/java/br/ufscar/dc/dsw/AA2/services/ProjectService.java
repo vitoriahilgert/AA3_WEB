@@ -1,7 +1,9 @@
 package br.ufscar.dc.dsw.AA2.services;
 
 
-import br.ufscar.dc.dsw.AA2.dtos.ProjectRecordDto;
+import br.ufscar.dc.dsw.AA2.dtos.project.CreateProjectRequestDTO;
+import br.ufscar.dc.dsw.AA2.dtos.project.ProjectFormDTO;
+import br.ufscar.dc.dsw.AA2.dtos.project.UpdateProjectRequestDTO;
 import br.ufscar.dc.dsw.AA2.models.Project;
 import br.ufscar.dc.dsw.AA2.models.User;
 import br.ufscar.dc.dsw.AA2.repositories.ProjectRepository;
@@ -29,31 +31,28 @@ public class ProjectService {
     }
 
     @Transactional
-    public Project saveProject(ProjectRecordDto projectDto) {
+    public Project saveProject(CreateProjectRequestDTO projectDto) {
         Project project = new Project();
-        project.setName(projectDto.name());
-        project.setDescription(projectDto.description());
-        project.setCreationDateTime(projectDto.creationDateTime());
+        project.setName(projectDto.getName());
+        project.setDescription(projectDto.getDescription());
 
-        if (projectDto.allowedMemberIds() != null && !projectDto.allowedMemberIds().isEmpty()) {
-            List<User> allowedUsers = userRepository.findAllById(projectDto.allowedMemberIds());
+        if (projectDto.getAllowedMembersIds() != null && !projectDto.getAllowedMembersIds().isEmpty()) {
+            List<User> allowedUsers = userRepository.findAllById(projectDto.getAllowedMembersIds());
             project.setAllowedMembers(allowedUsers);
-        } else {
-            project.setAllowedMembers(List.of());
         }
         return projectRepository.save(project);
     }
 
     @Transactional
-    public Project updateProject(UUID id, ProjectRecordDto projectDto) {
+    public Project updateProject(UUID id, UpdateProjectRequestDTO projectDto) {
         Project project = projectRepository.findById(id).orElse(null);
 
         if (project != null) {
-            project.setName(projectDto.name());
-            project.setDescription(projectDto.description());
+            project.setName(projectDto.getName());
+            project.setDescription(projectDto.getDescription());
 
-            if (projectDto.allowedMemberIds() != null) {
-                List<User> allowedUsers = userRepository.findAllById(projectDto.allowedMemberIds());
+            if (projectDto.getAllowedMembersIds() != null) {
+                List<User> allowedUsers = userRepository.findAllById(projectDto.getAllowedMembersIds());
                 project.setAllowedMembers(allowedUsers);
             }
             return projectRepository.save(project);
