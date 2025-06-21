@@ -1,5 +1,6 @@
 package br.ufscar.dc.dsw.AA2.controllers;
 
+import br.ufscar.dc.dsw.AA2.config.Routes;
 import br.ufscar.dc.dsw.AA2.models.Strategy;
 import br.ufscar.dc.dsw.AA2.services.StrategyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 @Controller
-@RequestMapping("/strategies")
+@RequestMapping(Routes.STRATEGIES)
 public class StrategyController {
 
     @Autowired

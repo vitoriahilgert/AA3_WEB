@@ -1,5 +1,6 @@
 package br.ufscar.dc.dsw.AA2.controllers;
 
+import br.ufscar.dc.dsw.AA2.config.Routes;
 import br.ufscar.dc.dsw.AA2.dtos.project.ProjectFormDTO;
 import br.ufscar.dc.dsw.AA2.dtos.project.CreateProjectRequestDTO;
 import br.ufscar.dc.dsw.AA2.dtos.project.UpdateProjectRequestDTO;
@@ -20,7 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("/projetos")
+@RequestMapping(Routes.PROJETOS)
 public class ProjectController {
 
     @Autowired

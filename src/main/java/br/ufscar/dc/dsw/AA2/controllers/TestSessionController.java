@@ -1,5 +1,6 @@
 package br.ufscar.dc.dsw.AA2.controllers;
 
+import br.ufscar.dc.dsw.AA2.config.Routes;
 import br.ufscar.dc.dsw.AA2.dtos.testSession.CreateTestSessionRequestDTO;
 import br.ufscar.dc.dsw.AA2.dtos.testSession.CreateTestSessionResponseDTO;
 import br.ufscar.dc.dsw.AA2.dtos.testSession.GetTestSessionResponseDTO;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/sessions")
+@RequestMapping(Routes.SESSIONS)
 public class TestSessionController {
     @Autowired
     private TestSessionService testSessionService;

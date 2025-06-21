@@ -43,19 +43,19 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, @Lazy JPAUserDetailsService customUserDetailsService) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/", "/home", "/login", "/css/**", "/js/**", "/images/**", "/projetos", "/strategies").permitAll()
+                        .requestMatchers(Routes.ROOT, Routes.HOME, Routes.LOGIN, Routes.CSS, Routes.JS, Routes.IMAGES, Routes.PROJETOS, Routes.STRATEGIES).permitAll()
                         .anyRequest().authenticated()
                 )
             .formLogin((form) -> form
-                    .loginPage("/login")
+                    .loginPage(Routes.LOGIN)
                     .usernameParameter("email")
-                    .defaultSuccessUrl("/home", true) // <-- IMPORTANTE: para onde ir após o login
-                    .failureUrl("/login?error")
+                    .defaultSuccessUrl(Routes.HOME, true) // <-- IMPORTANTE: para onde ir após o login
+                    .failureUrl(Routes.LOGIN + "?error")
                     .permitAll()
             )
         .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout")
+                .logoutUrl(Routes.LOGOUT)
+                .logoutSuccessUrl(Routes.LOGIN + "?logout")
         )
                 .userDetailsService(customUserDetailsService);
         return http.build();
