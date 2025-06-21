@@ -1,9 +1,8 @@
 package br.ufscar.dc.dsw.AA2.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -15,6 +14,9 @@ import java.util.Locale;
 
 @Configuration
 public class MVCConfig implements WebMvcConfigurer {
+
+    @Autowired
+    private UserRoleInterceptor userRoleInterceptor;
 
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("redirect:/home");
@@ -39,5 +41,7 @@ public class MVCConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor());
+        registry.addInterceptor(userRoleInterceptor)
+                .addPathPatterns("/**");
     }
 }

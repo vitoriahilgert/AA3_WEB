@@ -1,8 +1,9 @@
 package br.ufscar.dc.dsw.AA2.config;
 
+import br.ufscar.dc.dsw.AA2.services.JPAUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -39,10 +40,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, @Lazy JPAUserDetailsService customUserDetailsService) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/", "/home", "/login", "/css/**", "/js/**", "/images/**", "/projetos").permitAll()
+                        .requestMatchers("/", "/home", "/login", "/css/**", "/js/**", "/images/**", "/projetos", "/strategies").permitAll()
                         .anyRequest().authenticated()
                 )
             .formLogin((form) -> form
@@ -51,7 +52,12 @@ public class SecurityConfig {
                     .defaultSuccessUrl("/home", true) // <-- IMPORTANTE: para onde ir após o login
                     .failureUrl("/login?error")
                     .permitAll()
-            );
+            )
+        .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login?logout")
+        )
+                .userDetailsService(customUserDetailsService);
         return http.build();
     }
 }
