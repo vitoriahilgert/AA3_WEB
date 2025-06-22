@@ -2,12 +2,12 @@ package br.ufscar.dc.dsw.AA2.services;
 
 import br.ufscar.dc.dsw.AA2.dtos.testSession.CreateTestSessionRequestDTO;
 import br.ufscar.dc.dsw.AA2.dtos.testSession.GetTestSessionResponseDTO;
-import br.ufscar.dc.dsw.AA2.dtos.testSession.GetTestSessionsResponseDTO;
 import br.ufscar.dc.dsw.AA2.exceptions.ResourceNotFoundException;
 import br.ufscar.dc.dsw.AA2.models.Project;
 import br.ufscar.dc.dsw.AA2.models.Strategy;
 import br.ufscar.dc.dsw.AA2.models.TestSession;
 import br.ufscar.dc.dsw.AA2.models.User;
+import br.ufscar.dc.dsw.AA2.models.enums.TestSessionStatusEnum;
 import br.ufscar.dc.dsw.AA2.repositories.ProjectRepository;
 import br.ufscar.dc.dsw.AA2.repositories.StrategyRepository;
 import br.ufscar.dc.dsw.AA2.repositories.TestSessionRepository;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -73,6 +72,21 @@ public class TestSessionService {
     public List<GetTestSessionResponseDTO> getAllTestSessions() {
         List<TestSession> testSessions = testSessionRepository.findAll();
         return testSessions.stream().map(GetTestSessionResponseDTO::new).collect(Collectors.toList());
+    }
+
+    public void updateSessionStatus(UUID sessionId) {
+        TestSession testSession = testSessionRepository.findById(sessionId)
+                .orElseThrow(() -> new ResourceNotFoundException("TestSession", "id", sessionId.toString()));
+        if (testSession.getStatus().equals(TestSessionStatusEnum.CREATED)) {
+            testSession.setStatus(TestSessionStatusEnum.IN_PROGRESS);
+            testSession.setStartDateTime(LocalDateTime.now());
+        } else if (testSession.getStatus().equals(TestSessionStatusEnum.IN_PROGRESS)) {
+            testSession.setFinishDateTime(LocalDateTime.now());
+            testSession.setStatus(TestSessionStatusEnum.FINISHED);
+        }
+
+        testSessionRepository.save(testSession);
+        new GetTestSessionResponseDTO(testSession);
     }
 
     // public TestSession updateTestSession(UUID sessionId, CreateTestSessionRequestDTO dto) {}

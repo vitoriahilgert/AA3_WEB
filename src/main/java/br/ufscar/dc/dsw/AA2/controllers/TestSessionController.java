@@ -69,6 +69,20 @@ public class TestSessionController {
         model.addAttribute("sessao", dto);
         return "test-session-details";
     }
+
+    @PostMapping("/atualizar-status")
+    public String updateSession(@RequestParam("id") UUID id, RedirectAttributes redirectAttributes) {
+        try {
+            testSessionService.updateSessionStatus(id);
+            redirectAttributes.addFlashAttribute("success", "Sessão iniciada com sucesso!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Erro ao iniciar a sessão: " + e.getMessage());
+        }
+
+        return "redirect:/sessoes/detalhes?id=" + id;
+    }
+
+
 //
 //    @PostMapping("/{projectId}")
 //    public ResponseEntity<CreateTestSessionResponseDTO> create(@RequestBody CreateTestSessionRequestDTO dto, @PathVariable("projectId") UUID projectId) {

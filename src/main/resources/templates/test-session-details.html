@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="|Detalhes da Sessão de Teste #${sessao.id}|">Detalhes da Sessão</title>
+    <title>Detalhes da Sessão</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <style>
@@ -43,9 +43,9 @@
 <div class="page-container">
     <div class="page-header">
         <!-- O título da página agora é dinâmico com th:text -->
-        <h1 th:text="|Detalhes da Sessão de Teste #${sessao.id}|">Detalhes da Sessão</h1>
+        <h1>Detalhes da Sessão</h1>
         <!-- O link de voltar usa a sintaxe de URL do Thymeleaf -->
-        <a th:href="@{/sessoes/listar}" class="back-link">Voltar para Lista</a>
+        <a th:href="@{/sessoes}" class="back-link">Voltar para Lista</a>
     </div>
 
     <!-- Mensagens de sucesso/erro (flash attributes) -->
@@ -93,13 +93,21 @@
         <div class="detail-card actions-section">
             <h2>Ações da Sessão</h2>
             <div th:switch="${sessao.status.name()}">
-                <div th:case="'CRIADO'">
-                    <a th:href="@{/sessoes/iniciar(id=${sessao.id})}" class="button-action start-button">Iniciar Sessão</a>
+                <div th:case="'CREATED'">
+                    <!-- Formulário para o botão Iniciar -->
+                    <form th:action="@{/sessoes/atualizar-status}" method="post" style="display:inline;">
+                        <input type="hidden" name="id" th:value="${sessao.id}" />
+                        <button type="submit" class="button-action start-button">Iniciar Sessão</button>
+                    </form>
                 </div>
-                <div th:case="'EM_EXECUCAO'">
-                    <a th:href="@{/sessoes/finalizar(id=${sessao.id})}" class="button-action finalize-button">Finalizar Sessão</a>
+                <div th:case="'IN_PROGRESS'">
+                    <!-- Formulário para o botão Finalizar -->
+                    <form th:action="@{/sessoes/atualizar-status}" method="post" style="display:inline;">
+                        <input type="hidden" name="id" th:value="${sessao.id}" />
+                        <button type="submit" class="button-action finalize-button">Finalizar Sessão</button>
+                    </form>
                 </div>
-                <div th:case="'FINALIZADO'">
+                <div th:case="'FINISHED'">
                     <p class="disabled-text">Esta sessão foi finalizada e não pode mais ser modificada.</p>
                 </div>
                 <div th:case="*">
