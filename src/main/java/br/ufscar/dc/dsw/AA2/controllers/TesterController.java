@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,23 +20,23 @@ import java.util.UUID;
 
 @Controller
 @RequestMapping("/admin")
-public class AdminController {
+public class TesterController {
 
     @Autowired
     private UserService userService;
 
-    @GetMapping("/users/admins")
-    public String showManageAdminsPage(Model model) {
-        List<User> adminUsers = userService.findByRole(UserRoleEnum.ADMIN);
+    @GetMapping("/users/testers")
+    public String handleTesterActions(Model model) {
+        List<User> testerUsers = userService.findByRole(UserRoleEnum.TESTER);
 
-        model.addAttribute("adminsList", adminUsers);
+        model.addAttribute("testersList", testerUsers);
 
-        return "admins";
+        return "testers";
     }
 
 
-    @PostMapping("/users/admins")
-    public String handleAdminActions(@RequestParam String action,
+    @PostMapping("/users/testers")
+    public String handleTesterActions(@RequestParam String action,
                                      @RequestParam(name = "id", required = false) UUID id,
                                      @RequestParam(name = "name", required = false) String name,
                                      @RequestParam(name = "email", required = false) String email,
@@ -48,7 +47,7 @@ public class AdminController {
 
         switch (action) {
             case "create":
-                UserRecordDto userDto = new UserRecordDto(name, email, password, UserRoleEnum.ADMIN, null, null);
+                UserRecordDto userDto = new UserRecordDto(name, email, password, UserRoleEnum.TESTER, null, null);
 
                 userService.saveUser(userDto);
                 break;
@@ -70,21 +69,11 @@ public class AdminController {
                 break;
 
             case "delete":
-                User loggedInUser = (User) authentication.getPrincipal();
-
-                if (loggedInUser.getId().equals(id)) {
-
-                    userService.deleteUser(id);
-                    new SecurityContextLogoutHandler().logout(request, response, authentication);
-
-                    return "redirect:/login?logout&self_deleted";
-                } else {
-                    userService.deleteUser(id);
-                }
+                userService.deleteUser(id);
                 break;
         }
 
 
-        return "redirect:/admin/users/admins";
+        return "redirect:/admin/users/testers";
     }
 }
