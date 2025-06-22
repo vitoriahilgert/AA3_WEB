@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciar Testadores</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        /* === ESTILOS GERAIS E DO 'HOME' === */
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif; background-color: #121212;
+            color: #f0f0f0; margin: 0; padding: 0;
+            display: flex; flex-direction: column; min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .page-footer {
+            text-align: center; padding: 15px 5%; background-color: #1f1f1f;
+            color: #888; font-size: 0.85em; border-top: 1px solid #2f2f2f;
+        }
+        .page-header {
+            background-color: #1f1f1f; padding: 20px 40px; display: flex;
+            justify-content: space-between; align-items: center;
+            border-bottom: 2px solid #00BFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .page-header .logo-title h1 { color: #00BFFF; margin: 0; font-size: 2em; }
+        .page-header .logo-title p { margin: 5px 0 0; font-size: 0.9em; color: #aaaaaa; }
+        .page-header .user-info a { color: #00BFFF; text-decoration: none; font-weight: 500; }
+        .page-header .user-info button {
+            background: none; border: none; color: #00BFFF; font-weight: bold;
+            cursor: pointer; font-size: 1em; padding: 0; margin-left: 20px;
+        }
+        .page-header .user-info button:hover { text-decoration: underline; }
+        .dashboard-container {
+            flex-grow: 1; padding: 30px 5%; max-width: 1200px; margin: 0 auto;
+            width: 100%;
+        }
+        .content-card {
+            background-color: #1f1f1f; padding: 25px; border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+        }
+        .content-card h3 {
+            color: #00BFFF; margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid #333;
+            padding-bottom: 10px; font-size: 1.4em;
+        }
+        .button, .button-secondary {
+            background-color: #00BFFF; color: white; border: none; padding: 10px 15px; border-radius: 5px;
+            cursor: pointer; text-decoration: none; font-weight: bold; text-align: center;
+            font-size: 0.95em; transition: background-color 0.2s, transform 0.1s; display: inline-block;
+        }
+        .button:hover { background-color: #009ACD; transform: translateY(-1px); }
+        .button-secondary { background-color: #444; }
+        .button-secondary:hover { background-color: #555; }
+
+        /* === ESTILOS ESPECÍFICOS DESTA PÁGINA (Gerenciar) === */
+        .page-controls {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; flex-wrap: wrap; gap: 15px;
+        }
+        .page-controls .sort-section { display: flex; align-items: center; gap: 10px; }
+        table {
+            width: 100%; border-collapse: collapse; margin-top: 20px;
+        }
+        th, td {
+            padding: 12px 15px; text-align: left; border-bottom: 1px solid #333;
+        }
+        th { background-color: #272727; color: #00BFFF; }
+        td { color: #cccccc; }
+        tr:hover td { background-color: #2a2a2a; }
+
+        .actions-cell button {
+            background-color: #6A5ACD; color: white; border: none; width: 35px; height: 35px;
+            padding: 0; font-size: 15px; border-radius: 50%; cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center;
+            margin-right: 5px; transition: background-color 0.3s;
+        }
+        .actions-cell button:hover { background-color: #483D8B; }
+
+        /* === ESTILOS DOS MODAIS === */
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+            width: 100%; height: 100%; background-color: rgba(0,0,0,0.8);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #1f1f1f; margin: 5% auto; padding: 25px;
+            border-radius: 8px; width: 90%; max-width: 450px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); position: relative;
+        }
+        .modal-content h2 { color: #00BFFF; margin-top: 0; text-align: center; margin-bottom: 20px; }
+        .close {
+            color: #aaa; position: absolute; top: 10px; right: 15px;
+            font-size: 28px; font-weight: bold; cursor: pointer;
+        }
+        .close:hover, .close:focus { color: white; }
+        .form-group label {
+            display: block; margin-top: 15px; margin-bottom: 5px;
+            font-weight: 500; color: #cccccc;
+        }
+        .form-group input[type="text"], .form-group input[type="email"],
+        .form-group input[type="password"] {
+            width: 100%; padding: 10px; background-color: #333;
+            color: white; border: 1px solid #555; border-radius: 5px;
+        }
+        .form-group input:focus {
+            border-color: #00BFFF; outline: none; box-shadow: 0 0 0 2px rgba(0, 191, 255, 0.25);
+        }
+        .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
+        .password-hint { font-size: 0.85em; color: #aaa; margin-top: 5px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div sec:authorize="isAuthenticated()" class="page-header">
+    <div class="logo-title">
+        <h1 sec:authorize="hasRole('ADMIN')">Painel Administrativo</h1>
+        <h1 sec:authorize="hasRole('TESTER') and !hasRole('ADMIN')">Painel do Testador</h1>
+        <p>GameTests Management Suite</p>
+    </div>
+    <div class="user-info">
+        <span>Olá, <strong sec:authentication="principal.username"></strong>!</span>
+        <!-- Formulário de Logout é mais seguro que um link GET -->
+        <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 20px;">
+            <button type="submit" class="logout-button">Sair</button>
+        </form>
+    </div>
+</div>
+
+<main sec:authorize="hasRole('ADMIN')">
+    <div class="dashboard-container">
+        <div class="content-card">
+            <h3>Gerenciar Testadores</h3>
+
+            <div class="page-controls">
+                <div class="sort-section">
+                    <label for="ordenarTesters">Ordenar por:</label>
+                    <select id="ordenarTesters" onchange="ordenarTabela()" class="button-secondary" style="padding: 8px;">
+                        <option value="name">Nome (A-Z)</option>
+                        <option value="email">E-mail (A-Z)</option>
+                    </select>
+                </div>
+                <button onclick="abrirModalCadastro()" class="button">+ Novo Testador</button>
+            </div>
+
+            <table id="tabelaDados">
+                <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>E-mail</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="tester : ${testersList}">
+                    <td th:text="${tester.name}">Nome do Testador</td>
+                    <td th:text="${tester.email}">email@testador.com</td>
+                    <td class="actions-cell">
+                        <button type="button"
+                                th:data-id="${tester.id}"
+                                th:data-name="${tester.name}"
+                                th:data-email="${tester.email}"
+                                onclick="abrirModalEditar(this)"
+                                title="Editar Testador">
+                            <i class="fas fa-pen"></i>
+                        </button>
+                        <button type="button"
+                                th:data-id="${tester.id}"
+                                onclick="abrirModalDeletar(this)"
+                                title="Deletar Testador">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div th:if="${#lists.isEmpty(testersList)}" style="text-align: center; padding: 20px; color: #888;">
+                <p>Nenhum testador encontrado.</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div sec:authorize="!hasRole('ADMIN')" class="dashboard-container" style="text-align: center;">
+    <h2>Acesso Negado</h2>
+    <p>Você não tem permissão para visualizar esta página.</p>
+    <a th:href="@{/}" class="button">Voltar para a Home</a>
+</div>
+
+<div id="modalGerenciar" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="fecharModal('modalGerenciar')" title="Fechar">&times;</span>
+        <h2 id="tituloModal">Novo Testador</h2>
+        <form id="formGerenciar" th:action="@{/admin/users/testers}" method="post">
+            <input type="hidden" id="id" name="id">
+            <input type="hidden" id="action" name="action">
+
+            <div class="form-group">
+                <label for="name">Nome Completo:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">E-mail:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Senha:</label>
+                <input type="password" id="password" name="password" minlength="6">
+                <p class="password-hint">Deixe em branco para manter a senha atual ao editar.</p>
+            </div>
+
+            <div class="form-actions" style="justify-content: center;">
+                <input type="submit" id="submitButton" value="Salvar" class="button">
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="modalDeletar" class="modal">
+    <div class="modal-content" style="text-align: center;">
+        <span class="close" onclick="fecharModal('modalDeletar')" title="Fechar">&times;</span>
+        <h2>Confirmar Exclusão</h2>
+        <p>Tem certeza que deseja excluir este testador? Esta ação não pode ser desfeita.</p>
+        <form id="formDeletar" th:action="@{/admin/users/testers}" method="post">
+            <input type="hidden" name="action" value="delete">
+            <input type="hidden" id="idDeletar" name="id">
+            <div class="form-actions">
+                <button type="button" onclick="fecharModal('modalDeletar')" class="button-secondary">Cancelar</button>
+                <input type="submit" value="Confirmar Exclusão" class="button" style="background-color: #DC143C;">
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer class="page-footer">
+    © <span th:text="${#dates.year(#dates.createNow())}">2024</span> GameTests Platform. Todos os direitos reservados.
+</footer>
+
+<script>
+    function abrirModalEditar(buttonElement) {
+        const id = buttonElement.dataset.id;
+        const name = buttonElement.dataset.name;
+        const email = buttonElement.dataset.email;
+
+        document.getElementById('tituloModal').innerText = 'Editar Testador';
+        document.getElementById('formGerenciar').reset();
+        document.getElementById('id').value = id;
+        document.getElementById('action').value = 'update';
+        document.getElementById('name').value = name;
+        document.getElementById('email').value = email;
+        document.getElementById('password').removeAttribute('required');
+        document.getElementById('password').placeholder = 'Deixe em branco para não alterar';
+        document.getElementById('submitButton').value = 'Salvar Alterações';
+        document.getElementById('modalGerenciar').style.display = 'block';
+        document.getElementById('name').focus();
+    }
+
+    function abrirModalDeletar(buttonElement) {
+        const id = buttonElement.dataset.id;
+        document.getElementById('idDeletar').value = id;
+        document.getElementById('modalDeletar').style.display = 'block';
+    }
+
+    function abrirModalCadastro() {
+        document.getElementById('tituloModal').innerText = 'Cadastrar Novo Testador';
+        document.getElementById('formGerenciar').reset();
+        document.getElementById('id').value = '';
+        document.getElementById('action').value = 'create';
+        document.getElementById('password').setAttribute('required', 'required');
+        document.getElementById('password').placeholder = 'Mínimo 6 caracteres';
+        document.getElementById('submitButton').value = 'Cadastrar';
+        document.getElementById('modalGerenciar').style.display = 'block';
+        document.getElementById('name').focus();
+    }
+
+    function fecharModal(idModal) {
+        document.getElementById(idModal).style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            fecharModal(event.target.id);
+        }
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === "Escape") {
+            fecharModal('modalGerenciar');
+            fecharModal('modalDeletar');
+        }
+    });
+
+    function ordenarTabela() {
+        const tabela = document.getElementById('tabelaDados').getElementsByTagName('tbody')[0];
+        const linhas = Array.from(tabela.getElementsByTagName('tr'));
+        const criterio = document.getElementById('ordenarTesters').value;
+        const columnIndex = (criterio === 'name') ? 0 : 1;
+
+        linhas.sort((a, b) => {
+            const valA = a.children[columnIndex].innerText.toLowerCase();
+            const valB = b.children[columnIndex].innerText.toLowerCase();
+            return valA.localeCompare(valB);
+        });
+        linhas.forEach(linha => tabela.appendChild(linha));
+    }
+</script>
+
+</body>
+</html>
