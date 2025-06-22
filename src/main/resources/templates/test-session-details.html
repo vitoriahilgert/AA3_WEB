@@ -37,6 +37,39 @@
         .footer-navigation { margin-top: 30px; text-align: center; }
         .footer-navigation a { color: #00BFFF; text-decoration: none; margin: 0 15px; font-weight: 500; }
         .footer-navigation a:hover { text-decoration: underline; }
+
+        .button-bug {
+            background-color: #00BFFF;
+            color: white
+            border: none;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            outline: none;
+        }
+
+        .button-bug:hover {
+            background-color: #009ACD;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+            margin-bottom: 15px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
     </style>
 </head>
 <body>
@@ -65,7 +98,6 @@
                 </span>
             </p>
             <p><strong>Duração Planejada:</strong> <span th:text="${sessao.duration} + ' minutos'"></span></p>
-            <p><strong>Descrição/Objetivos:</strong> <span th:text="${sessao.description}"></span></p>
             <p><strong>Data de Criação:</strong>
                 <span th:text="${#temporals.format(sessao.creationDateTime, 'dd/MM/yyyy HH:mm:ss')}"></span>
             </p>
@@ -87,6 +119,29 @@
             <!-- <p><strong>Descrição:</strong> <span th:text="${sessao.strategyDescription}"></span></p> -->
             <!-- <p><strong>Dicas:</strong> <span th:text="${sessao.strategyTips}"></span></p> -->
             <!-- <p><strong>Exemplos:</strong> <span th:text="${sessao.strategyExamples}"></span></p> -->
+        </div>
+
+        <!-- Bugs relatados -->
+        <div class="detail-card">
+            <h2>Bugs Relatados</h2>
+
+            <form id="formBug" th:action="@{/sessoes/atualizar-descricao}" method="post">
+                <input type="hidden" id="id" name="id" th:value="${sessao.id}">
+
+                <label for="new_description">Descreva o novo bug:</label>
+                <textarea id="new_description" name="new_description" required>Bug: </textarea>
+
+                <button type="submit" class="button-bug">
+                    Adicionar Bug
+                </button>
+            </form>
+
+            <p th:if="${sessao.description == null || sessao.description == ''}">
+                Nenhum bug relatado!
+            </p>
+            <p th:if="${sessao.description != null && sessao.description != ''}">
+                <span th:text="${sessao.description}"></span>
+            </p>
         </div>
 
         <!-- Seção de Ações Condicionais -->

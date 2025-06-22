@@ -82,6 +82,19 @@ public class TestSessionController {
         return "redirect:/sessoes/detalhes?id=" + id;
     }
 
+    @PostMapping("/atualizar-descricao")
+    public String updateDescription(@RequestParam("id") UUID id,
+                                    @RequestParam("new_description") String description,
+                                    RedirectAttributes redirectAttributes) {
+        try {
+            testSessionService.updateTestSessionDescription(id, description);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Erro ao atualizar descrição!");
+        }
+
+        return "redirect:/sessoes/detalhes?id=" + id;
+    }
+
 
 //
 //    @PostMapping("/{projectId}")

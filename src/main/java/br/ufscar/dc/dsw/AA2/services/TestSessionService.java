@@ -45,7 +45,6 @@ public class TestSessionService {
                 .orElseThrow(() -> new ResourceNotFoundException("Tester", "id", dto.getTesterId().toString()));
 
         TestSession testSession = new TestSession();
-        testSession.setDescription(dto.getDescription());
         testSession.setDuration(dto.getDuration());
         testSession.setProject(project);
         testSession.setTester(tester);
@@ -89,6 +88,12 @@ public class TestSessionService {
         new GetTestSessionResponseDTO(testSession);
     }
 
-    // public TestSession updateTestSession(UUID sessionId, CreateTestSessionRequestDTO dto) {}
+    public void updateTestSessionDescription(UUID sessionId, String description) {
+        TestSession testSession = testSessionRepository.findById(sessionId)
+                .orElseThrow(() -> new ResourceNotFoundException("TestSession", "id", sessionId.toString()));
+
+        testSession.setDescription(description);
+        testSessionRepository.save(testSession);
+    }
 
 }

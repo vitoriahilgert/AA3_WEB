@@ -17,7 +17,7 @@ public class TestSession {
     @Column(nullable = false)
     private int duration;
 
-    @Column(nullable = false)
+    @Column()
     private String description;
 
     @Column(nullable = false)
