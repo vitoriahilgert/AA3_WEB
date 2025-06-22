@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Gerenciar Administradores</title>
+    <title>Gerenciar Testadores</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -54,7 +54,7 @@
         .button-secondary { background-color: #444; }
         .button-secondary:hover { background-color: #555; }
 
-        /* === ESTILOS ESPECÍFICOS DESTA PÁGINA (Gerenciar Admins) === */
+        /* === ESTILOS ESPECÍFICOS DESTA PÁGINA (Gerenciar) === */
         .page-controls {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 20px; flex-wrap: wrap; gap: 15px;
@@ -78,7 +78,7 @@
         }
         .actions-cell button:hover { background-color: #483D8B; }
 
-        /* === ESTILOS DOS MODAIS (geralmente para formulários) === */
+        /* === ESTILOS DOS MODAIS === */
         .modal {
             display: none; position: fixed; z-index: 1000; left: 0; top: 0;
             width: 100%; height: 100%; background-color: rgba(0,0,0,0.8);
@@ -121,6 +121,7 @@
     </div>
     <div class="user-info">
         <span>Olá, <strong sec:authentication="principal.username"></strong>!</span>
+        <!-- Formulário de Logout é mais seguro que um link GET -->
         <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 20px;">
             <button type="submit" class="logout-button">Sair</button>
         </form>
@@ -130,20 +131,20 @@
 <main sec:authorize="hasRole('ADMIN')">
     <div class="dashboard-container">
         <div class="content-card">
-            <h3>Gerenciar Administradores</h3>
+            <h3>Gerenciar Testadores</h3>
 
             <div class="page-controls">
                 <div class="sort-section">
-                    <label for="ordenar">Ordenar por:</label>
-                    <select id="ordenar" onchange="ordenarAdministradores()" class="button-secondary" style="padding: 8px;">
-                        <option value="nome">Nome (A-Z)</option>
+                    <label for="ordenarTesters">Ordenar por:</label>
+                    <select id="ordenarTesters" onchange="ordenarTabela()" class="button-secondary" style="padding: 8px;">
+                        <option value="name">Nome (A-Z)</option>
                         <option value="email">E-mail (A-Z)</option>
                     </select>
                 </div>
-                <button onclick="abrirModalCadastro()" class="button">+ Novo Administrador</button>
+                <button onclick="abrirModalCadastro()" class="button">+ Novo Testador</button>
             </div>
 
-            <table id="tabelaAdministradores">
+            <table id="tabelaDados">
                 <thead>
                 <tr>
                     <th>Nome</th>
@@ -152,31 +153,30 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="admin : ${adminsList}">
-                    <td th:text="${admin.name}">Nome do Admin</td>
-                    <td th:text="${admin.email}">email@admin.com</td>
+                <tr th:each="tester : ${testersList}">
+                    <td th:text="${tester.name}">Nome do Testador</td>
+                    <td th:text="${tester.email}">email@testador.com</td>
                     <td class="actions-cell">
                         <button type="button"
-                                th:data-id="${admin.id}"
-                                th:data-name="${admin.name}"
-                                th:data-email="${admin.email}"
+                                th:data-id="${tester.id}"
+                                th:data-name="${tester.name}"
+                                th:data-email="${tester.email}"
                                 onclick="abrirModalEditar(this)"
-                                title="Editar Administrador">
+                                title="Editar Testador">
                             <i class="fas fa-pen"></i>
                         </button>
-
                         <button type="button"
-                                th:data-id="${admin.id}"
+                                th:data-id="${tester.id}"
                                 onclick="abrirModalDeletar(this)"
-                                title="Deletar Administrador">
+                                title="Deletar Testador">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>
                 </tr>
                 </tbody>
             </table>
-            <div th:if="${#lists.isEmpty(listaAdministradores)}" style="text-align: center; padding: 20px; color: #888;">
-                <p>Nenhum administrador encontrado.</p>
+            <div th:if="${#lists.isEmpty(testersList)}" style="text-align: center; padding: 20px; color: #888;">
+                <p>Nenhum testador encontrado.</p>
             </div>
         </div>
     </div>
@@ -188,18 +188,17 @@
     <a th:href="@{/}" class="button">Voltar para a Home</a>
 </div>
 
-
-<div id="modalAdministrador" class="modal">
+<div id="modalGerenciar" class="modal">
     <div class="modal-content">
-        <span class="close" onclick="fecharModal('modalAdministrador')" title="Fechar">&times;</span>
-        <h2 id="tituloModal">Novo Administrador</h2>
-        <form id="formAdministrador" th:action="@{/admin/users/admins}" method="post">
+        <span class="close" onclick="fecharModal('modalGerenciar')" title="Fechar">&times;</span>
+        <h2 id="tituloModal">Novo Testador</h2>
+        <form id="formGerenciar" th:action="@{/admin/users/testers}" method="post">
             <input type="hidden" id="id" name="id">
-            <input type="hidden" id="acaoModal" name="action">
+            <input type="hidden" id="action" name="action">
 
             <div class="form-group">
-                <label for="nome">Nome Completo:</label>
-                <input type="text" id="nome" name="name" required>
+                <label for="name">Nome Completo:</label>
+                <input type="text" id="name" name="name" required>
             </div>
 
             <div class="form-group">
@@ -208,13 +207,13 @@
             </div>
 
             <div class="form-group">
-                <label for="senha">Senha:</label>
-                <input type="password" id="senha" name="password" minlength="6">
+                <label for="password">Senha:</label>
+                <input type="password" id="password" name="password" minlength="6">
                 <p class="password-hint">Deixe em branco para manter a senha atual ao editar.</p>
             </div>
 
             <div class="form-actions" style="justify-content: center;">
-                <input type="submit" id="cadastroSubmit" value="Salvar" class="button">
+                <input type="submit" id="submitButton" value="Salvar" class="button">
             </div>
         </form>
     </div>
@@ -224,9 +223,8 @@
     <div class="modal-content" style="text-align: center;">
         <span class="close" onclick="fecharModal('modalDeletar')" title="Fechar">&times;</span>
         <h2>Confirmar Exclusão</h2>
-        <p>Tem certeza que deseja excluir este administrador? Esta ação não pode ser desfeita.</p>
-
-        <form id="formDeletar" th:action="@{/admin/users/admins}" method="post">
+        <p>Tem certeza que deseja excluir este testador? Esta ação não pode ser desfeita.</p>
+        <form id="formDeletar" th:action="@{/admin/users/testers}" method="post">
             <input type="hidden" name="action" value="delete">
             <input type="hidden" id="idDeletar" name="id">
             <div class="form-actions">
@@ -237,29 +235,27 @@
     </div>
 </div>
 
-
 <footer class="page-footer">
     © <span th:text="${#dates.year(#dates.createNow())}">2024</span> GameTests Platform. Todos os direitos reservados.
 </footer>
 
 <script>
-
     function abrirModalEditar(buttonElement) {
         const id = buttonElement.dataset.id;
         const name = buttonElement.dataset.name;
         const email = buttonElement.dataset.email;
 
-        document.getElementById('tituloModal').innerText = 'Editar Administrador';
-        document.getElementById('formAdministrador').reset();
+        document.getElementById('tituloModal').innerText = 'Editar Testador';
+        document.getElementById('formGerenciar').reset();
         document.getElementById('id').value = id;
-        document.getElementById('acaoModal').value = 'update';
-        document.getElementById('nome').value = name;
+        document.getElementById('action').value = 'update';
+        document.getElementById('name').value = name;
         document.getElementById('email').value = email;
-        document.getElementById('senha').removeAttribute('required');
-        document.getElementById('senha').placeholder = 'Deixe em branco para não alterar';
-        document.getElementById('cadastroSubmit').value = 'Salvar Alterações';
-        document.getElementById('modalAdministrador').style.display = 'block';
-        document.getElementById('nome').focus();
+        document.getElementById('password').removeAttribute('required');
+        document.getElementById('password').placeholder = 'Deixe em branco para não alterar';
+        document.getElementById('submitButton').value = 'Salvar Alterações';
+        document.getElementById('modalGerenciar').style.display = 'block';
+        document.getElementById('name').focus();
     }
 
     function abrirModalDeletar(buttonElement) {
@@ -269,15 +265,15 @@
     }
 
     function abrirModalCadastro() {
-        document.getElementById('tituloModal').innerText = 'Cadastrar Novo Administrador';
-        document.getElementById('formAdministrador').reset();
+        document.getElementById('tituloModal').innerText = 'Cadastrar Novo Testador';
+        document.getElementById('formGerenciar').reset();
         document.getElementById('id').value = '';
-        document.getElementById('acaoModal').value = 'create';
-        document.getElementById('senha').setAttribute('required', 'required');
-        document.getElementById('senha').placeholder = 'Mínimo 6 caracteres';
-        document.getElementById('cadastroSubmit').value = 'Cadastrar';
-        document.getElementById('modalAdministrador').style.display = 'block';
-        document.getElementById('nome').focus();
+        document.getElementById('action').value = 'create';
+        document.getElementById('password').setAttribute('required', 'required');
+        document.getElementById('password').placeholder = 'Mínimo 6 caracteres';
+        document.getElementById('submitButton').value = 'Cadastrar';
+        document.getElementById('modalGerenciar').style.display = 'block';
+        document.getElementById('name').focus();
     }
 
     function fecharModal(idModal) {
@@ -285,24 +281,23 @@
     }
 
     window.onclick = function(event) {
-        const modalCadastro = document.getElementById('modalAdministrador');
-        const modalDeletar = document.getElementById('modalDeletar');
-        if (event.target == modalCadastro) fecharModal('modalAdministrador');
-        if (event.target == modalDeletar) fecharModal('modalDeletar');
+        if (event.target.classList.contains('modal')) {
+            fecharModal(event.target.id);
+        }
     }
 
     document.addEventListener('keydown', function(event) {
         if (event.key === "Escape") {
-            fecharModal('modalAdministrador');
+            fecharModal('modalGerenciar');
             fecharModal('modalDeletar');
         }
     });
 
-    function ordenarAdministradores() {
-        const tabela = document.getElementById('tabelaAdministradores').getElementsByTagName('tbody')[0];
+    function ordenarTabela() {
+        const tabela = document.getElementById('tabelaDados').getElementsByTagName('tbody')[0];
         const linhas = Array.from(tabela.getElementsByTagName('tr'));
-        const criterio = document.getElementById('ordenar').value;
-        const columnIndex = (criterio === 'nome') ? 0 : 1;
+        const criterio = document.getElementById('ordenarTesters').value;
+        const columnIndex = (criterio === 'name') ? 0 : 1;
 
         linhas.sort((a, b) => {
             const valA = a.children[columnIndex].innerText.toLowerCase();
