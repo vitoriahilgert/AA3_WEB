@@ -7,6 +7,8 @@ public class Routes {
     public static final String LOGIN = "/login";
     public static final String LOGOUT = "/logout";
     public static final String STRATEGIES = "/strategies";
+    public static final String DELETE = "/delete";
+    public static final String CREATE = "/create";
 
 
     // resources

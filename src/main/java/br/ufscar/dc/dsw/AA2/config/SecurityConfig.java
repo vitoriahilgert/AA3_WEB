@@ -43,7 +43,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, @Lazy JPAUserDetailsService customUserDetailsService) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(Routes.ROOT, Routes.HOME, Routes.LOGIN, Routes.CSS, Routes.JS, Routes.IMAGES, Routes.PROJETOS, Routes.STRATEGIES).permitAll()
+                        .requestMatchers(Routes.ROOT, Routes.HOME, Routes.LOGIN, Routes.CSS, Routes.JS, Routes.IMAGES, Routes.PROJETOS, Routes.STRATEGIES, Routes.STRATEGIES + Routes.CREATE).permitAll()
                         .anyRequest().authenticated()
                 )
             .formLogin((form) -> form
