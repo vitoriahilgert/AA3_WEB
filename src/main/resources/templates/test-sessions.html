@@ -273,7 +273,10 @@
             <td style="display: flex; align-items: center; justify-content: space-between;">
                 <span th:text="${sessao.strategyName ?: 'N/A'}">Nome da Estratégia</span>
                 <button th:if="${sessao.strategyName != null}"
-                        th:attr="data-estrategia-nome=${sessao.strategyName}, data-estrategia-descricao=${sessao.strategyDescription}, data-estrategia-exemplos=${sessao.strategyExamples}, data-estrategia-dicas=${sessao.strategyTips}"
+                        th:attr="data-strategy-name=${sessao.strategyName},
+                        data-strategy-description=${sessao.strategyDescription},
+                        data-strategy-examples=${sessao.strategyExamples},
+                        data-strategy-tips=${sessao.strategyTips}"
                         onclick="abrirModalEstrategia(this)"
                         title="Info Estratégia"
                         class="btn-action"
@@ -299,25 +302,34 @@
                 </a>
 
                 <!-- Ações para status "CRIADO" -->
-                <div th:if="${sessao.status.name() == 'CRIADO'}" style="display:inline-flex; gap: 8px;">
-                    <form th:action="@{/sessoes/iniciar}" method="post" style="display:inline;">
+                <div th:if="${sessao.status.name() == 'CREATED'}" style="display:inline-flex; gap: 8px;">
+                    <form th:action="@{/sessoes/atualizar-status}" method="post" style="display:inline;">
                         <input type="hidden" name="id" th:value="${sessao.id}"/>
                         <button type="submit" title="Iniciar Sessão" class="btn-action"><i class="fas fa-play"></i></button>
                     </form>
-                    <button th:attr="data-sessao-id=${sessao.id}, data-project-id=${sessao.projectId}, data-strategy-id=${sessao.strategyId}, data-duration=${sessao.duration}, data-description=${sessao.description}"
-                            onclick="abrirModalEditar(this)" title="Editar" class="btn-action"><i class="fas fa-pen"></i></button>
-                    <button th:attr="data-sessao-id=${sessao.id}"
-                            onclick="abrirModalDeletar(this)" title="Deletar" class="btn-action"><i class="fas fa-trash"></i></button>
+                    <button th:attr="data-session-id=${sessao.id},
+                            data-session-duration=${sessao.duration},
+                           data-session-description=${sessao.description},
+                           data-session-strategyId=${sessao.strategyId},
+                           data-session-projectId=${sessao.projectId}
+                            "
+                            onclick="abrirModalEditar(this)"
+                            title="Editar"
+                            class="btn-action">
+                        <i class="fas fa-pen"></i>
+                    </button>
                 </div>
 
                 <!-- Ações para status "EM_EXECUCAO" -->
-                <div th:if="${sessao.status.name() == 'EM_EXECUCAO'}" style="display:inline-flex; gap: 8px;">
-                    <form th:action="@{/sessoes/finalizar}" method="post" style="display:inline;">
+                <div th:if="${sessao.status.name() == 'IN_PROGRESS'}" style="display:inline-flex; gap: 8px;">
+                    <form th:action="@{/sessoes/atualizar-status}" method="post" style="display:inline;">
                         <input type="hidden" name="id" th:value="${sessao.id}"/>
                         <button type="submit" title="Finalizar Sessão" class="btn-action"><i class="fas fa-stop-circle"></i></button>
                     </form>
-                    <a th:href="@{/bugs/listarPorSessao(idSessao=${sessao.id})}" title="Registrar/Ver Bugs" class="btn-action"><i class="fas fa-bug"></i></a>
                 </div>
+
+                <button th:attr="data-sessao-id=${sessao.id}"
+                        onclick="abrirModalDeletar(this)" title="Deletar" class="btn-action"><i class="fas fa-trash"></i></button>
             </td>
         </tr>
         </tbody>
@@ -330,6 +342,7 @@
         <span class="close" onclick="fecharModal('modalSessao')">×</span>
         <h2 id="tituloModal">Nova Sessão de Teste</h2>
         <form id="formSessao" th:action="@{/sessoes/salvar}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             <input type="hidden" id="id" name="id">
 
             <!-- MUDANÇA 3: Dropdown para SELECIONAR o projeto -->
@@ -353,6 +366,9 @@
 
             <label for="duration">Tempo da Sessão (minutos):</label>
             <input type="number" id="duration" name="duration" required min="1">
+
+            <label for="description">Descrição:</label>
+            <textarea id="description" name="description" rows="4" required></textarea>
 
             <div id="cadastroSubmitContainer">
                 <input type="submit" id="cadastroSubmit" value="Salvar">
@@ -382,6 +398,14 @@
         <span class="close" onclick="fecharModal('modalEstrategia')">×</span>
         <h2 id="estrategiaNomeModal">Nome da Estratégia</h2>
         <p id="estrategiaDescricaoModal">Descrição detalhada da estratégia...</p>
+        <h3 style="color:#00BFFF; margin-top:25px; margin-bottom: 5px;">Exemplos Práticos:</h3>
+        <p id="estrategiaExemplosModal" style="white-space: pre-wrap; background-color: #272727; padding: 10px; border-radius: 5px; color: #e0e0e0; font-size: 0.9em;">
+            <!-- O JavaScript vai inserir os exemplos aqui -->
+        </p>
+        <h3 style="color:#00BFFF; margin-top:25px; margin-bottom: 5px;">Dicas para Execução:</h3>
+        <p id="estrategiaDicasModal" style="white-space: pre-wrap; background-color: #272727; padding: 10px; border-radius: 5px; color: #e0e0e0; font-size: 0.9em;">
+            <!-- O JavaScript vai inserir as dicas aqui -->
+        </p>
     </div>
 </div>
 
@@ -392,6 +416,8 @@
 
     function abrirModalCadastro() {
         document.getElementById('tituloModal').innerText = 'Nova Sessão de Teste';
+        const form = document.getElementById('formSessao');
+        form.action = '/sessoes/salvar';
         document.getElementById('formSessao').reset(); // Limpa o formulário
         document.getElementById('id').value = ''; // Garante que o ID está vazio
         document.getElementById('modalSessao').style.display = 'block';
@@ -400,18 +426,20 @@
     function abrirModalEditar(button) {
         document.getElementById('tituloModal').innerText = 'Editar Sessão de Teste';
 
-        const id = button.getAttribute('data-sessao-id');
-        // MUDANÇA 4: Pegar o ID do projeto para pré-selecionar no dropdown
-        const projectId = button.getAttribute('data-project-id');
-        const estrategiaId = button.getAttribute('data-estrategia-id');
-        const tempo = button.getAttribute('data-tempo');
-        const descricao = button.getAttribute('data-descricao');
+        const form = document.getElementById('formSessao');
+        form.action = '/sessoes/atualizar';
+
+        const id = button.getAttribute('data-session-id');
+        const projectId = button.getAttribute('data-session-projectId');
+        const strategyId = button.getAttribute('data-session-strategyId');
+        const duration = button.getAttribute('data-session-duration');
+        const description = button.getAttribute('data-session-description');
 
         document.getElementById('id').value = id;
-        document.getElementById('projectId').value = projectId; // Pré-seleciona o projeto
-        document.getElementById('estrategiaId').value = estrategiaId;
-        document.getElementById('tempo').value = tempo;
-        document.getElementById('descricao').value = descricao;
+        document.getElementById('projectId').value = projectId;
+        document.getElementById('strategyId').value = strategyId;
+        document.getElementById('duration').value = duration;
+        document.getElementById('description').value = description;
 
         document.getElementById('modalSessao').style.display = 'block';
     }
@@ -423,11 +451,15 @@
     }
 
     function abrirModalEstrategia(button) {
-        const nome = button.getAttribute('data-estrategia-nome');
-        const descricao = button.getAttribute('data-estrategia-descricao');
+        const name = button.getAttribute('data-strategy-name');
+        const description = button.getAttribute('data-strategy-description');
+        const examples = button.getAttribute('data-strategy-examples');
+        const tips = button.getAttribute('data-strategy-tips');
 
-        document.getElementById('estrategiaNomeModal').innerText = nome || "Estratégia não definida";
-        document.getElementById('estrategiaDescricaoModal').innerText = descricao || "Nenhuma descrição disponível.";
+        document.getElementById('estrategiaNomeModal').innerText = name || "Estratégia não definida";
+        document.getElementById('estrategiaDescricaoModal').innerText = description || "Nenhuma descrição disponível.";
+        document.getElementById('estrategiaExemplosModal').innerText = examples || "Nenhum exemplo disponível.";
+        document.getElementById('estrategiaDicasModal').innerText = tips || "Nenhuma dica disponível.";
 
         document.getElementById('modalEstrategia').style.display = 'block';
     }

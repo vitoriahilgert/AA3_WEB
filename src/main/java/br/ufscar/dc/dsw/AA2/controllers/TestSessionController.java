@@ -3,10 +3,12 @@ package br.ufscar.dc.dsw.AA2.controllers;
 import br.ufscar.dc.dsw.AA2.dtos.StrategyDTO;
 import br.ufscar.dc.dsw.AA2.dtos.testSession.CreateTestSessionRequestDTO;
 import br.ufscar.dc.dsw.AA2.dtos.testSession.GetTestSessionResponseDTO;
+import br.ufscar.dc.dsw.AA2.dtos.testSession.UpdateSessionRequestDTO;
 import br.ufscar.dc.dsw.AA2.models.Project;
 import br.ufscar.dc.dsw.AA2.models.Strategy;
 import br.ufscar.dc.dsw.AA2.models.TestSession;
 import br.ufscar.dc.dsw.AA2.models.User;
+import br.ufscar.dc.dsw.AA2.models.enums.TestSessionStatusEnum;
 import br.ufscar.dc.dsw.AA2.services.ProjectService;
 import br.ufscar.dc.dsw.AA2.services.StrategyService;
 import br.ufscar.dc.dsw.AA2.services.TestSessionService;
@@ -58,7 +60,22 @@ public class TestSessionController {
         dto.setTesterId(user.getId());
 
         testSessionService.createTestSession(projectId, dto);
-        redirectAttributes.addFlashAttribute("message", "Test session created successfully!");
+        redirectAttributes.addFlashAttribute("message", "Sessão de teste criada com sucesso!");
+
+        return "redirect:/sessoes";
+    }
+
+    @PostMapping("/atualizar")
+    public String updateSession(@ModelAttribute UpdateSessionRequestDTO dto,
+                                RedirectAttributes redirectAttributes) {
+
+
+        try {
+            testSessionService.updateSession(dto.getId(), dto);
+            System.out.println("Atualizado com sucesso!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Erro ao atualizar sessão!");
+        }
 
         return "redirect:/sessoes";
     }
@@ -74,7 +91,12 @@ public class TestSessionController {
     public String updateSession(@RequestParam("id") UUID id, RedirectAttributes redirectAttributes) {
         try {
             testSessionService.updateSessionStatus(id);
-            redirectAttributes.addFlashAttribute("success", "Sessão iniciada com sucesso!");
+            GetTestSessionResponseDTO testSession = testSessionService.getTestSessionById(id);
+            if (testSession.getStatus().equals(TestSessionStatusEnum.IN_PROGRESS)) {
+                redirectAttributes.addFlashAttribute("success", "Sessão iniciada com sucesso!");
+            } else {
+                redirectAttributes.addFlashAttribute("success", "Sessão finalizada com sucesso!");
+            }
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Erro ao iniciar a sessão: " + e.getMessage());
         }
@@ -93,6 +115,16 @@ public class TestSessionController {
         }
 
         return "redirect:/sessoes/detalhes?id=" + id;
+    }
+
+    @PostMapping("/deletar")
+    public String deleteSession(@RequestParam("id") UUID id, RedirectAttributes redirectAttributes) {
+        try {
+            testSessionService.deleteTestSession(id);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Erro ao deletar sessão de teste.");
+        }
+        return "redirect:/sessoes";
     }
 
 

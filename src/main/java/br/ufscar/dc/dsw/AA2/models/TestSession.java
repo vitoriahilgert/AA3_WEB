@@ -23,6 +23,9 @@ public class TestSession {
     @Column(nullable = false)
     private TestSessionStatusEnum status = TestSessionStatusEnum.CREATED;
 
+    @Column(length = 5000)
+    private String bugs;
+
     @CreationTimestamp
     private LocalDateTime creationDateTime;
 
@@ -133,5 +136,13 @@ public class TestSession {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public String getBugs() {
+        return bugs;
+    }
+
+    public void setBugs(String bugs) {
+        this.bugs = bugs;
     }
 }
