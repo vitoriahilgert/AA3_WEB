@@ -106,10 +106,21 @@ public class TestSessionController {
 
     @PostMapping("/atualizar-descricao")
     public String updateDescription(@RequestParam("id") UUID id,
-                                    @RequestParam("new_description") String description,
+                                    @RequestParam("new_description") String new_description,
                                     RedirectAttributes redirectAttributes) {
         try {
-            testSessionService.updateTestSessionDescription(id, description);
+            GetTestSessionResponseDTO testSession = testSessionService.getTestSessionById(id);
+
+            String currentDescription = testSession.getDescription();
+            String updatedDescription;
+            if (currentDescription == null || currentDescription.trim().isEmpty()) {
+                updatedDescription = new_description;
+            } else {
+                updatedDescription = currentDescription + "\n" + new_description;
+            }
+
+            testSessionService.updateTestSessionDescription(id, updatedDescription);
+            redirectAttributes.addFlashAttribute("success", "Bug adicionado com sucesso!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Erro ao atualizar descrição!");
         }

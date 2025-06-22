@@ -58,7 +58,7 @@
 
         textarea {
             width: 100%;
-            height: 150px;
+            height: 100px;
             padding: 10px;
             font-size: 14px;
             border: 1px solid #ccc;
@@ -68,7 +68,36 @@
             margin-top: 5px;
             box-sizing: border-box;
             font-family: Arial, sans-serif;
+            background: #eeeeee;
         }
+
+.current-description {
+    background: #121212;
+    padding: 15px;
+    border-radius: 4px;
+    white-space: pre-wrap;
+    white-space: pre-line;
+    font-family: monospace, monospace;
+    margin-top: 15px;
+    color: #e0e0e0;
+    line-height: 1.5;
+    text-align: left;
+}
+
+.current-description strong {
+    color: #fff; /* Branco para títulos */
+    font-weight: bold;
+    margin: 0; /* Remove possíveis margens automáticas */
+    padding: 0; /* Remove possíveis espaçamentos automáticos */
+    display: inline-block; /* Garante que o alinhamento é inline */
+    text-align: left;
+}
+
+.current-description span {
+    color: #b2b2b2;
+    text-align: left;
+    display: block;
+}
 
     </style>
 </head>
@@ -125,7 +154,7 @@
         <div class="detail-card">
             <h2>Bugs Relatados</h2>
 
-            <form id="formBug" th:action="@{/sessoes/atualizar-descricao}" method="post">
+            <form th:if="${sessao.status.name() == 'IN_PROGRESS'}" id="formBug" th:action="@{/sessoes/atualizar-descricao}" method="post">
                 <input type="hidden" id="id" name="id" th:value="${sessao.id}">
 
                 <label for="new_description">Descreva o novo bug:</label>
@@ -139,9 +168,11 @@
             <p th:if="${sessao.description == null || sessao.description == ''}">
                 Nenhum bug relatado!
             </p>
-            <p th:if="${sessao.description != null && sessao.description != ''}">
+
+            <div th:if="${sessao.description != null && sessao.description != ''}" class="current-description">
+                <strong>Bugs Relatados:</strong>
                 <span th:text="${sessao.description}"></span>
-            </p>
+            </div>
         </div>
 
         <!-- Seção de Ações Condicionais -->
