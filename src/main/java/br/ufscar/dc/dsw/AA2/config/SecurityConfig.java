@@ -43,21 +43,21 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, @Lazy JPAUserDetailsService customUserDetailsService) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(Routes.ROOT, Routes.HOME, Routes.LOGIN, Routes.CSS, Routes.JS, Routes.IMAGES, Routes.PROJETOS, Routes.STRATEGIES, Routes.STRATEGIES + Routes.CREATE).permitAll()
+                        .requestMatchers(Routes.ROOT, Routes.HOME, Routes.LOGIN, Routes.CSS, Routes.JS, Routes.IMAGES, Routes.PROJETOS, Routes.STRATEGIES).permitAll()
+                        .requestMatchers(Routes.STRATEGIES + Routes.CREATE).hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-            .formLogin((form) -> form
-                    .loginPage(Routes.LOGIN)
-                    .usernameParameter("email")
-                    .defaultSuccessUrl(Routes.HOME, true) // <-- IMPORTANTE: para onde ir após o login
-                    .failureUrl(Routes.LOGIN + "?error")
-                    .permitAll()
-            )
-        .logout(logout -> logout
-                .logoutUrl(Routes.LOGOUT)
-                .logoutSuccessUrl(Routes.LOGIN + "?logout")
-        )
-                .userDetailsService(customUserDetailsService);
+                .formLogin((form) -> form
+                        .loginPage(Routes.LOGIN)
+                        .usernameParameter("email")
+                        .defaultSuccessUrl(Routes.HOME, true) // <-- IMPORTANTE: para onde ir após o login
+                        .failureUrl(Routes.LOGIN + "?error")
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl(Routes.LOGOUT)
+                        .logoutSuccessUrl(Routes.LOGIN + "?logout")
+                ).userDetailsService(customUserDetailsService);
         return http.build();
     }
 }
