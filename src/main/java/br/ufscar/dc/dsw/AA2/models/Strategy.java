@@ -20,10 +20,10 @@ public class Strategy {
     @Column(nullable = false)
     private String description;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2000)
     private String examples;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2000)
     private String tips;
 
     @OneToMany(mappedBy = "strategy", cascade = CascadeType.ALL, orphanRemoval = true)
