@@ -1,7 +1,6 @@
 package br.ufscar.dc.dsw.AA2.services;
 
 import br.ufscar.dc.dsw.AA2.dtos.testSession.CreateTestSessionRequestDTO;
-import br.ufscar.dc.dsw.AA2.dtos.testSession.CreateTestSessionResponseDTO;
 import br.ufscar.dc.dsw.AA2.dtos.testSession.GetTestSessionResponseDTO;
 import br.ufscar.dc.dsw.AA2.dtos.testSession.GetTestSessionsResponseDTO;
 import br.ufscar.dc.dsw.AA2.exceptions.ResourceNotFoundException;
@@ -36,7 +35,7 @@ public class TestSessionService {
     @Autowired
     private ProjectRepository projectRepository;
 
-    public CreateTestSessionResponseDTO createTestSession(UUID projectId, CreateTestSessionRequestDTO dto) {
+    public GetTestSessionResponseDTO createTestSession(UUID projectId, CreateTestSessionRequestDTO dto) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId.toString()));
 
@@ -55,7 +54,7 @@ public class TestSessionService {
 
         testSessionRepository.save(testSession);
 
-        return new CreateTestSessionResponseDTO(testSession);
+        return new GetTestSessionResponseDTO(testSession);
     }
 
     public void deleteTestSession(UUID sessionId) {

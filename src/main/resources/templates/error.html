@@ -1,34 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <link rel="icon" th:href="@{/image/favicon.png}" />
+    <meta charset="UTF-8">
+    <title th:text="|Erro ${status} - ${error}|">Página de Erro</title>
+    <link rel="stylesheet" th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css}">
+    <style>
+        body { background-color: #121212; color: #f0f0f0; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .container { background-color: #1f1f1f; padding: 40px; border-radius: 10px; text-align: center; box-shadow: 0 0 15px rgba(0,0,0,0.7); max-width: 500px; }
+        h1 { font-size: 72px; margin: 0; }
+        p { font-size: 18px; margin: 20px 0; }
+        button { margin-top: 20px; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; }
 
-    <title th:text="${status}"></title>
+        /* CSS Condicional com Thymeleaf */
+        .status-404 { color: #6A5ACD; }
+        .button-404 { background-color: #6A5ACD; }
+        .button-404:hover { background-color: #483D8B; }
 
-    <!-- Bootstrap core CSS -->
-    <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet" />
-    <link th:href="@{/webjars/open-iconic/font/css/open-iconic-bootstrap.min.css}" rel="stylesheet" />
-    <!-- Custom styles for this template -->
-    <link th:href="@{/css/style.css}" rel="stylesheet" />
+        .status-500 { color: #00BFFF; }
+        .button-500 { background-color: #00BFFF; }
+        .button-500:hover { background-color: #009ACD; }
+    </style>
 </head>
-<body class="text-center">
-<div>
-    <h1 class="h3 mb-3 font-weight-normal">
-        <i class="oi oi-warning"></i>
-        <span th:text="${status}"></span>
-    </h1>
+<body>
+<!-- Adiciona classes CSS dinamicamente baseadas no status do erro -->
+<div class="container" th:with="statusClass=${'status-' + status}, buttonClass=${'button-' + status}">
 
-    <h2 th:text="${error}"></h2>
+    <h1 th:text="${status}" th:class="${statusClass}">ERRO</h1>
 
-    <div>
-        <span th:text="${message}"></span><br/><br/>
-        <a class="btn btn-primary" type="button" href="javascript:history.back()">Voltar a página anterior</a>
-    </div>
+    <p th:text="${message}">Uma mensagem de erro detalhada aparecerá aqui.</p>
+
+    <button th:onclick="|window.location.href='@{/home}'|" th:class="${buttonClass}">
+        Voltar para o início
+    </button>
 </div>
 </body>
 </html>

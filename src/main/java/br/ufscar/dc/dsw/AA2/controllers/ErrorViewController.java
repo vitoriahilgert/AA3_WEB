@@ -4,11 +4,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Map;
 
 @Component
+@RequestMapping("/error")
 public class ErrorViewController implements ErrorViewResolver {
 
     @Override

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>Gerenciar Sessões de Teste</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #121212;
+            color: #f0f0f0;
+            margin: 0;
+            padding-bottom: 40px; /* Adiciona espaço no final da página */
+        }
+
+        h1 {
+            color: #00BFFF;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            margin-top: 20px;
+            background-color: #1f1f1f;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.7);
+        }
+
+        button, select, input[type="submit"] {
+            background-color: #00BFFF;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+
+        button:hover, select:hover, input[type="submit"]:hover {
+            background-color: #009ACD;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #272727;
+            font-size: 14px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #1f1f1f;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 0 10px black;
+            position: relative;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: white;
+            text-decoration: none;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            background-color: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 5px;
+            box-sizing: border-box; /* Garante que padding não afete a largura total */
+        }
+
+        #formDeletar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        #formDeletar input[type="submit"],
+        #formDeletar button {
+            flex-grow: 1;
+            max-width: 150px;
+            font-size: 16px;
+        }
+
+        #cadastroSubmitContainer {
+            margin-top: 30px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        #cadastroSubmit {
+            width: 40%;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .actions button, .actions a {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            font-size: 14px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #6A5ACD;
+            transition: background-color 0.3s;
+            margin: 0;
+            border: none;
+            color: white;
+            text-decoration: none;
+        }
+
+        .actions button:hover, .actions a:hover {
+            background-color: #483D8B;
+        }
+
+        .actions i {
+            color: white;
+            pointer-events: none; /* Garante que o clique seja no botão, não no ícone */
+        }
+
+        .page-header {
+            background-color: #1f1f1f;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #00BFFF;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .page-header .logo-title h1 {
+            color: #00BFFF;
+            margin: 0;
+            font-size: 2em;
+        }
+        .page-header .logo-title p {
+            margin: 5px 0 0;
+            font-size: 0.9em;
+            color: #aaaaaa;
+        }
+
+        .page-header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .page-header .user-info a {
+            color: #00BFFF;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .page-header .user-info a:hover {
+            text-decoration: underline;
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            display: inline-block;
+            min-width: 90px;
+        }
+        .status-criado { background-color: #3498db; }
+        .status-em_execucao { background-color: #f1c40f; color: #333; } /* Corrigido para "em_execucao" */
+        .status-finalizado { background-color: #2ecc71; }
+    </style>
+</head>
+<body>
+<!-- HEADER DA PÁGINA -->
+<header class="page-header">
+    <div class="logo-title">
+        <!-- MUDANÇA 1: Título genérico, pois não estamos em um projeto específico -->
+        <h1>Gerenciamento de Sessões</h1>
+        <p>Visão geral de todas as sessões de teste</p>
+    </div>
+    <div class="user-info">
+        <a th:href="@{/logout}">Sair</a>
+    </div>
+</header>
+
+<!-- CONTAINER PRINCIPAL -->
+<div class="container">
+    <h1>Todas as Sessões</h1>
+    <div>
+        <button onclick="abrirModalCadastro()">+ Nova Sessão</button>
+    </div>
+
+    <!-- TABELA DE SESSÕES -->
+    <table id="tabelaProjetos">
+        <thead>
+        <tr>
+            <!-- MUDANÇA 2: Adicionada coluna "Projeto" -->
+            <th>Projeto</th>
+            <th>Testador</th>
+            <th>Estratégia</th>
+            <th>Status</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <!-- Em test-sessions.html -->
+
+        <tbody>
+        <tr th:each="sessao : ${sessionList}">
+            <td th:text="${sessao.projectName ?: 'N/A'}">Nome do Projeto</td>
+            <td th:text="${sessao.testerName ?: 'N/A'}">Nome do Testador</td>
+
+            <!-- MUDANÇA 1: Célula da Estratégia com o botão de info ao lado -->
+            <td style="display: flex; align-items: center; justify-content: space-between;">
+                <span th:text="${sessao.strategyName ?: 'N/A'}">Nome da Estratégia</span>
+                <button th:if="${sessao.strategyName != null}"
+                        th:attr="data-estrategia-nome=${sessao.strategyName}, data-estrategia-descricao=${sessao.strategyDescription}, data-estrategia-exemplos=${sessao.strategyExamples}, data-estrategia-dicas=${sessao.strategyTips}"
+                        onclick="abrirModalEstrategia(this)"
+                        title="Info Estratégia"
+                        class="btn-action"
+                        style="width: 28px; height: 28px; font-size: 12px;"> <!-- Estilo opcional para ajustar o tamanho -->
+                    <i class="fas fa-info-circle"></i>
+                </button>
+            </td>
+
+            <td>
+            <span class="status"
+                  th:classappend="${'status-' + #strings.toLowerCase(sessao.status.name())}"
+                  th:text="${sessao.status.name()}">
+                Status
+            </span>
+            </td>
+
+            <!-- MUDANÇA 2: Coluna de Ações sem o botão de info da estratégia -->
+            <td class="actions">
+                <a th:href="@{/sessoes/detalhes(id=${sessao.id})}"
+                   title="Ver Detalhes"
+                   class="btn-action">
+                    <i class="fas fa-eye"></i>
+                </a>
+
+                <!-- Ações para status "CRIADO" -->
+                <div th:if="${sessao.status.name() == 'CRIADO'}" style="display:inline-flex; gap: 8px;">
+                    <form th:action="@{/sessoes/iniciar}" method="post" style="display:inline;">
+                        <input type="hidden" name="id" th:value="${sessao.id}"/>
+                        <button type="submit" title="Iniciar Sessão" class="btn-action"><i class="fas fa-play"></i></button>
+                    </form>
+                    <button th:attr="data-sessao-id=${sessao.id}, data-project-id=${sessao.projectId}, data-strategy-id=${sessao.strategyId}, data-duration=${sessao.duration}, data-description=${sessao.description}"
+                            onclick="abrirModalEditar(this)" title="Editar" class="btn-action"><i class="fas fa-pen"></i></button>
+                    <button th:attr="data-sessao-id=${sessao.id}"
+                            onclick="abrirModalDeletar(this)" title="Deletar" class="btn-action"><i class="fas fa-trash"></i></button>
+                </div>
+
+                <!-- Ações para status "EM_EXECUCAO" -->
+                <div th:if="${sessao.status.name() == 'EM_EXECUCAO'}" style="display:inline-flex; gap: 8px;">
+                    <form th:action="@{/sessoes/finalizar}" method="post" style="display:inline;">
+                        <input type="hidden" name="id" th:value="${sessao.id}"/>
+                        <button type="submit" title="Finalizar Sessão" class="btn-action"><i class="fas fa-stop-circle"></i></button>
+                    </form>
+                    <a th:href="@{/bugs/listarPorSessao(idSessao=${sessao.id})}" title="Registrar/Ver Bugs" class="btn-action"><i class="fas fa-bug"></i></a>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- MODAL DE CADASTRO/EDIÇÃO DE SESSÃO -->
+<div id="modalSessao" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="fecharModal('modalSessao')">×</span>
+        <h2 id="tituloModal">Nova Sessão de Teste</h2>
+        <form id="formSessao" th:action="@{/sessoes/salvar}" method="post">
+            <input type="hidden" id="id" name="id">
+
+            <!-- MUDANÇA 3: Dropdown para SELECIONAR o projeto -->
+            <label for="projectId">Projeto:</label>
+            <select id="projectId" name="projectId" required>
+                <option value="">Selecione um projeto...</option>
+                <option th:each="proj : ${allProjects}"
+                        th:value="${proj.id}"
+                        th:text="${proj.name}">
+                </option>
+            </select>
+
+            <label for="strategyId">Estratégia:</label>
+            <select id="strategyId" name="strategyId" required>
+                <option value="">Selecione uma estratégia...</option>
+                <option th:each="estrategia : ${allEstrategias}"
+                        th:value="${estrategia.id}"
+                        th:text="${estrategia.name}">
+                </option>
+            </select>
+
+            <label for="duration">Tempo da Sessão (minutos):</label>
+            <input type="number" id="duration" name="duration" required min="1">
+
+            <label for="description">Descrição:</label>
+            <textarea id="description" name="description" rows="4" required></textarea>
+
+            <div id="cadastroSubmitContainer">
+                <input type="submit" id="cadastroSubmit" value="Salvar">
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- MODAL DE DELEÇÃO -->
+<div id="modalDeletar" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="fecharModal('modalDeletar')">×</span>
+        <h2>Confirmar Exclusão</h2>
+        <p>Deseja realmente excluir esta sessão de teste?</p>
+        <form id="formDeletar" method="post" th:action="@{/sessoes/deletar}">
+            <input type="hidden" id="idDeletar" name="id">
+            <input type="submit" value="Confirmar">
+            <button type="button" onclick="fecharModal('modalDeletar')">Cancelar</button>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL DE INFO DA ESTRATÉGIA -->
+<div id="modalEstrategia" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="fecharModal('modalEstrategia')">×</span>
+        <h2 id="estrategiaNomeModal">Nome da Estratégia</h2>
+        <p id="estrategiaDescricaoModal">Descrição detalhada da estratégia...</p>
+    </div>
+</div>
+
+<script>
+    function fecharModal(idModal) {
+        document.getElementById(idModal).style.display = 'none';
+    }
+
+    function abrirModalCadastro() {
+        document.getElementById('tituloModal').innerText = 'Nova Sessão de Teste';
+        document.getElementById('formSessao').reset(); // Limpa o formulário
+        document.getElementById('id').value = ''; // Garante que o ID está vazio
+        document.getElementById('modalSessao').style.display = 'block';
+    }
+
+    function abrirModalEditar(button) {
+        document.getElementById('tituloModal').innerText = 'Editar Sessão de Teste';
+
+        const id = button.getAttribute('data-sessao-id');
+        // MUDANÇA 4: Pegar o ID do projeto para pré-selecionar no dropdown
+        const projectId = button.getAttribute('data-project-id');
+        const estrategiaId = button.getAttribute('data-estrategia-id');
+        const tempo = button.getAttribute('data-tempo');
+        const descricao = button.getAttribute('data-descricao');
+
+        document.getElementById('id').value = id;
+        document.getElementById('projectId').value = projectId; // Pré-seleciona o projeto
+        document.getElementById('estrategiaId').value = estrategiaId;
+        document.getElementById('tempo').value = tempo;
+        document.getElementById('descricao').value = descricao;
+
+        document.getElementById('modalSessao').style.display = 'block';
+    }
+
+    function abrirModalDeletar(button) {
+        const id = button.getAttribute('data-sessao-id');
+        document.getElementById('idDeletar').value = id;
+        document.getElementById('modalDeletar').style.display = 'block';
+    }
+
+    function abrirModalEstrategia(button) {
+        const nome = button.getAttribute('data-estrategia-nome');
+        const descricao = button.getAttribute('data-estrategia-descricao');
+
+        document.getElementById('estrategiaNomeModal').innerText = nome || "Estratégia não definida";
+        document.getElementById('estrategiaDescricaoModal').innerText = descricao || "Nenhuma descrição disponível.";
+
+        document.getElementById('modalEstrategia').style.display = 'block';
+    }
+</script>
+</body>
+</html>
