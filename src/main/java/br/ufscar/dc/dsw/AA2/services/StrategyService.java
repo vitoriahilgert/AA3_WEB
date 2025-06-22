@@ -22,7 +22,7 @@ public class StrategyService {
         strategyRepository.deleteById(id);
     }
 
-    public Strategy insert(StrategyDTO strategyDTO) {
+    public void insert(StrategyDTO strategyDTO) {
         Strategy strategy = new Strategy();
         strategy.setName(strategyDTO.name());
         strategy.setDescription(strategyDTO.description());
@@ -30,6 +30,6 @@ public class StrategyService {
         strategy.setImages(strategyDTO.images());
         strategy.setExamples(strategyDTO.examples());
 
-        return strategyRepository.save(strategy);
+        strategyRepository.save(strategy);
     }
 }

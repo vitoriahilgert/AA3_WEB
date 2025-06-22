@@ -160,7 +160,7 @@
         <div class="management-card" style="max-width: 500px; text-align: center;">
             <h3>Estratégias de Teste</h3>
             <p>Navegue por diversas estratégias, cada uma com descrições detalhadas, exemplos práticos e dicas.</p>
-            <a th:href="@{/estrategias/listar}" class="management-card .button">Visualizar Estratégias</a>
+            <a th:href="@{/strategies}" class="management-card .button">Visualizar Estratégias</a>
         </div>
     </div>
 
@@ -180,8 +180,8 @@
                 <h3>Gerenciar Estratégias</h3>
                 <p>Defina e refine as estratégias de teste que podem ser aplicadas nas sessões.</p>
                 <div class="actions" style="display: flex; flex-direction: column; gap: 10px;">
-                    <a th:href="@{/estrategias/listar}" class="button secondary">Listar/Gerenciar</a>
-                    <a th:href="@{/estrategias/criar}" class="button">Criar Nova</a>
+                    <a th:href="@{/strategies}" class="button secondary">Listar/Gerenciar</a>
+                    <a th:href="@{/strategies/create}" class="button">Criar Nova</a>
                 </div>
             </div>
             <div class="management-card">
@@ -250,7 +250,7 @@
                             <h4 th:text="${estrategia.nome}">Nome da Estratégia</h4>
                             <p th:title="${estrategia.descricao}" th:text="${#strings.abbreviate(estrategia.descricao, 100)}">Descrição...</p>
                         </div>
-                        <a th:href="@{/estrategias/listar}" class="view-all-link">Ver Todas as Estratégias</a>
+                        <a th:href="@{/strategies}" class="view-all-link">Ver Todas as Estratégias</a>
                     </div>
                     <div th:if="${#lists.isEmpty(estrategias)}">
                         <p class="no-data">Nenhuma estratégia de teste cadastrada.</p>
