@@ -295,7 +295,7 @@
 
             <!-- MUDANÇA 2: Coluna de Ações sem o botão de info da estratégia -->
             <td class="actions">
-                <a th:href="@{/sessoes/detalhes(id=${sessao.id})}"
+                <a th:href="@{/sessions/detalhes(id=${sessao.id})}"
                    title="Ver Detalhes"
                    class="btn-action">
                     <i class="fas fa-eye"></i>
@@ -303,7 +303,7 @@
 
                 <!-- Ações para status "CRIADO" -->
                 <div th:if="${sessao.status.name() == 'CREATED'}" style="display:inline-flex; gap: 8px;">
-                    <form th:action="@{/sessoes/atualizar-status}" method="post" style="display:inline;">
+                    <form th:action="@{/sessions/atualizar-status}" method="post" style="display:inline;">
                         <input type="hidden" name="id" th:value="${sessao.id}"/>
                         <button type="submit" title="Iniciar Sessão" class="btn-action"><i class="fas fa-play"></i></button>
                     </form>
@@ -322,7 +322,7 @@
 
                 <!-- Ações para status "EM_EXECUCAO" -->
                 <div th:if="${sessao.status.name() == 'IN_PROGRESS'}" style="display:inline-flex; gap: 8px;">
-                    <form th:action="@{/sessoes/atualizar-status}" method="post" style="display:inline;">
+                    <form th:action="@{/sessions/atualizar-status}" method="post" style="display:inline;">
                         <input type="hidden" name="id" th:value="${sessao.id}"/>
                         <button type="submit" title="Finalizar Sessão" class="btn-action"><i class="fas fa-stop-circle"></i></button>
                     </form>
@@ -341,7 +341,7 @@
     <div class="modal-content">
         <span class="close" onclick="fecharModal('modalSessao')">×</span>
         <h2 id="tituloModal">Nova Sessão de Teste</h2>
-        <form id="formSessao" th:action="@{/sessoes/salvar}" method="post">
+        <form id="formSessao" th:action="@{/sessions/salvar}" method="post">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             <input type="hidden" id="id" name="id">
 
@@ -384,7 +384,7 @@
         <span class="close" onclick="fecharModal('modalDeletar')">×</span>
         <h2>Confirmar Exclusão</h2>
         <p>Deseja realmente excluir esta sessão de teste?</p>
-        <form id="formDeletar" method="post" th:action="@{/sessoes/deletar}">
+        <form id="formDeletar" method="post" th:action="@{/sessions/deletar}">
             <input type="hidden" id="idDeletar" name="id">
             <input type="submit" value="Confirmar">
             <button type="button" onclick="fecharModal('modalDeletar')">Cancelar</button>
@@ -417,7 +417,7 @@
     function abrirModalCadastro() {
         document.getElementById('tituloModal').innerText = 'Nova Sessão de Teste';
         const form = document.getElementById('formSessao');
-        form.action = '/sessoes/salvar';
+        form.action = '/sessions/salvar';
         document.getElementById('formSessao').reset(); // Limpa o formulário
         document.getElementById('id').value = ''; // Garante que o ID está vazio
         document.getElementById('modalSessao').style.display = 'block';
@@ -427,7 +427,7 @@
         document.getElementById('tituloModal').innerText = 'Editar Sessão de Teste';
 
         const form = document.getElementById('formSessao');
-        form.action = '/sessoes/atualizar';
+        form.action = '/sessions/atualizar';
 
         const id = button.getAttribute('data-session-id');
         const projectId = button.getAttribute('data-session-projectId');

@@ -107,7 +107,7 @@
         <!-- O título da página agora é dinâmico com th:text -->
         <h1>Detalhes da Sessão</h1>
         <!-- O link de voltar usa a sintaxe de URL do Thymeleaf -->
-        <a th:href="@{/sessoes}" class="back-link">Voltar para Lista</a>
+        <a th:href="@{/sessions}" class="back-link">Voltar para Lista</a>
     </div>
 
     <!-- Mensagens de sucesso/erro (flash attributes) -->
@@ -127,6 +127,7 @@
                 </span>
             </p>
             <p><strong>Duração Planejada:</strong> <span th:text="${sessao.duration} + ' minutos'"></span></p>
+            <p><strong>Descrição/Objetivos:</strong> <span th:text="${sessao.description}"></span></p>
             <p><strong>Data de Criação:</strong>
                 <span th:text="${#temporals.format(sessao.creationDateTime, 'dd/MM/yyyy HH:mm:ss')}"></span>
             </p>
@@ -154,24 +155,24 @@
         <div class="detail-card">
             <h2>Bugs Relatados</h2>
 
-            <form th:if="${sessao.status.name() == 'IN_PROGRESS'}" id="formBug" th:action="@{/sessoes/atualizar-descricao}" method="post">
+            <form th:if="${sessao.status.name() == 'IN_PROGRESS'}" id="formBug" th:action="@{/sessions/atualizar-bugs}" method="post">
                 <input type="hidden" id="id" name="id" th:value="${sessao.id}">
 
-                <label for="new_description">Descreva o novo bug:</label>
-                <textarea id="new_description" name="new_description" required>Bug: </textarea>
+                <label for="new_bug">Descreva o novo bug:</label>
+                <textarea id="new_bug" name="new_bug" required>Bug: </textarea>
 
                 <button type="submit" class="button-bug">
                     Adicionar Bug
                 </button>
             </form>
 
-            <p th:if="${sessao.description == null || sessao.description == ''}">
+            <p th:if="${sessao.bugs == null || sessao.bugs == ''}">
                 Nenhum bug relatado!
             </p>
 
-            <div th:if="${sessao.description != null && sessao.description != ''}" class="current-description">
+            <div th:if="${sessao.bugs != null && sessao.bugs != ''}" class="current-description">
                 <strong>Bugs Relatados:</strong>
-                <span th:text="${sessao.description}"></span>
+                <span th:text="${sessao.bugs}"></span>
             </div>
         </div>
 
@@ -181,14 +182,14 @@
             <div th:switch="${sessao.status.name()}">
                 <div th:case="'CREATED'">
                     <!-- Formulário para o botão Iniciar -->
-                    <form th:action="@{/sessoes/atualizar-status}" method="post" style="display:inline;">
+                    <form th:action="@{/sessions/atualizar-status}" method="post" style="display:inline;">
                         <input type="hidden" name="id" th:value="${sessao.id}" />
                         <button type="submit" class="button-action start-button">Iniciar Sessão</button>
                     </form>
                 </div>
                 <div th:case="'IN_PROGRESS'">
                     <!-- Formulário para o botão Finalizar -->
-                    <form th:action="@{/sessoes/atualizar-status}" method="post" style="display:inline;">
+                    <form th:action="@{/sessions/atualizar-status}" method="post" style="display:inline;">
                         <input type="hidden" name="id" th:value="${sessao.id}" />
                         <button type="submit" class="button-action finalize-button">Finalizar Sessão</button>
                     </form>

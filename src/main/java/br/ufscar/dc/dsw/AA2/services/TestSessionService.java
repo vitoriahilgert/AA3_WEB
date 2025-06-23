@@ -114,11 +114,11 @@ public class TestSessionService {
         new GetTestSessionResponseDTO(testSession);
     }
 
-    public void updateTestSessionDescription(UUID sessionId, String description) {
+    public void updateTestSessionBugs(UUID sessionId, String bugs) {
         TestSession testSession = testSessionRepository.findById(sessionId)
                 .orElseThrow(() -> new ResourceNotFoundException("TestSession", "id", sessionId.toString()));
 
-        testSession.setDescription(description);
+        testSession.setBugs(bugs);
         testSessionRepository.save(testSession);
     }
 
