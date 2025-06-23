@@ -9,6 +9,7 @@ import br.ufscar.dc.dsw.AA2.models.Strategy;
 import br.ufscar.dc.dsw.AA2.models.TestSession;
 import br.ufscar.dc.dsw.AA2.models.User;
 import br.ufscar.dc.dsw.AA2.models.enums.TestSessionStatusEnum;
+import br.ufscar.dc.dsw.AA2.models.enums.UserRoleEnum;
 import br.ufscar.dc.dsw.AA2.repositories.ProjectRepository;
 import br.ufscar.dc.dsw.AA2.repositories.StrategyRepository;
 import br.ufscar.dc.dsw.AA2.repositories.TestSessionRepository;
@@ -122,6 +123,11 @@ public class TestSessionService {
         testSessionRepository.save(testSession);
     }
 
+    public List<GetTestSessionResponseDTO> getAllowedTestSessions(User user) {
+        List<TestSession> testSessions = testSessionRepository.findByTester(user);
+        return testSessions.stream().map(GetTestSessionResponseDTO::new).collect(Collectors.toList());
+    }
+
     private void finishTestSession(UUID sessionId) {
         TestSession testSession = testSessionRepository.findById(sessionId)
                 .orElseThrow(() -> new ResourceNotFoundException("TestSession", "id", sessionId.toString()));
@@ -134,4 +140,14 @@ public class TestSessionService {
         System.out.println("Sessão de teste de id igual a " + sessionId + " finalizada pelo taskScheduler");
     }
 
+    public List<GetTestSessionResponseDTO> findAllByProjectId(UUID id, User user) {
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Project", "id", id.toString()));
+
+        List<TestSession> testSessions = (user.getRole().equals(UserRoleEnum.ADMIN)) ?
+                testSessionRepository.findAllByProject(project) :
+                testSessionRepository.findAllByProjectAndTester(project, user);
+
+        return testSessions.stream().map(GetTestSessionResponseDTO::new).collect(Collectors.toList());
+    }
 }

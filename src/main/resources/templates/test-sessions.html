@@ -227,6 +227,56 @@
             display: inline-block;
             min-width: 90px;
         }
+        .filter-bar {
+            display: flex; /* Transforma o contêiner em um flexbox */
+            align-items: center; /* Alinha todos os itens verticalmente ao centro */
+            gap: 15px; /* Espaço entre os elementos */
+            background-color: #2a2a2e;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid #3a3a40;
+        }
+
+        .filter-bar label {
+            margin: 0; /* Remove a margem padrão do label */
+            font-weight: 600;
+            color: #ccc;
+            white-space: nowrap; /* Impede que o texto do label quebre a linha */
+        }
+
+        .filter-bar select {
+            flex-grow: 1; /* Faz o select crescer e ocupar todo o espaço livre */
+            margin: 0; /* Remove a margem padrão */
+            background-color: #333;
+            border: 1px solid #555;
+            padding: 10px; /* Um padding um pouco menor para a linha única */
+        }
+
+        .filter-bar .clear-filter-btn {
+            background-color: transparent;
+            color: #00BFFF;
+            border: none;
+            padding: 10px;
+            margin: 0;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: color 0.2s;
+        }
+
+        .filter-bar .clear-filter-btn:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        /* Oculta o botão de submit padrão se o JavaScript estiver ativo */
+        .filter-bar .submit-btn {
+            display: none;
+        }
+        /* Exibe o botão de submit se o JavaScript estiver desativado */
+        noscript .submit-btn {
+            display: inline-block;
+        }
         .status-criado { background-color: #3498db; }
         .status-em_execucao { background-color: #f1c40f; color: #333; } /* Corrigido para "em_execucao" */
         .status-finalizado { background-color: #2ecc71; }
@@ -236,7 +286,6 @@
 <!-- HEADER DA PÁGINA -->
 <header class="page-header">
     <div class="logo-title">
-        <!-- MUDANÇA 1: Título genérico, pois não estamos em um projeto específico -->
         <h1 th:text="#{session.page.subtitle}"></h1>
         <p th:text="#{session.page.description}"></p>
     </div>
@@ -250,6 +299,29 @@
     <h1 th:text="#{session.page.all}"></h1>
     <div>
         <button onclick="abrirModalCadastro()" th:text="#{session.page.add}"></button>
+    </div>
+
+    <div class="filter-bar">
+        <form th:action="@{/sessions}" method="get" style="display: contents;">
+            <label for="projetoFiltro">
+                <i class="fas fa-filter" style="margin-right: 8px; color: #00BFFF;"></i>
+                Filtrar:
+            </label>
+
+            <select id="projetoFiltro" name="projetoId" onchange="this.form.submit()">
+                <option value="">-- Todos os Projetos --</option>
+                <option th:each="proj : ${allProjects}"
+                        th:value="${proj.id}"
+                        th:text="${proj.name}"
+                        th:selected="${proj.id == filtroAplicado}">
+                </option>
+            </select>
+
+            <button type="submit" class="submit-btn">Aplicar</button>
+            <noscript><button type="submit">Aplicar</button></noscript>
+
+            <a th:href="@{/sessions}" class="clear-filter-btn">Limpar Filtro</a>
+        </form>
     </div>
 
     <!-- TABELA DE SESSÕES -->

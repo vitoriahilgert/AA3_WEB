@@ -136,7 +136,7 @@
             <div class="management-card">
                 <h3 th:text="#{session.card.title}"></h3>
                 <p th:text="#{session.card.description}"></p>
-                <div class="actions"><a th:href="@{/sessoes}" class="button secondary" th:text="#{session.card.button}"></a></div>
+                <div class="actions"><a th:href="@{/sessions}" class="button secondary" th:text="#{session.card.button}"></a></div>
             </div>
         </div>
     </div>
@@ -147,55 +147,30 @@
             <h2 th:text="#{home.welcome.tester}"></h2>
             <p th:text="#{home.welcome.tester.subtitle}"></p>
             <div class="quick-action">
-                <a th:href="@{/sessions/nova}" class="button-primary" th:text="#{session.card.tester.button}"></a>
+                <a th:href="@{/sessions}" class="button-primary" th:text="#{session.card.tester.button}"></a>
             </div>
         </div>
         <div class="dashboard-grid">
             <div class="main-content-area">
-                <div class="content-card">
-                    <h3 th:text="#{session.card.tester.title}"></h3>
-                    <div th:if="${not #lists.isEmpty(sessoesRecentes)}">
-                        <div th:each="sessao : ${sessoesRecentes}" class="list-item">
-                            <p><strong th:text="#{session.card.ID}"></strong> <span th:text="${sessao.id}">1</span> | <strong th:text="#{session.card.project.ID}"></strong> <span th:text="${sessao.idProjeto}">1</span></p>
-                            <p><strong th:text="#{session.card.strategy}"></strong> <span th:text="${sessao.estrategia != null ? sessao.estrategia.nome : 'N/A'}">TDD</span></p>
-                            <p><strong>Status:</strong> <span class="status" th:classappend="'status-' + ${sessao.status}" th:text="${sessao.status}">EM_EXECUCAO</span></p>
-                            <p><strong th:text="#{session.card.created}"></strong> <span th:text="${#temporals.format(sessao.dataCriacao, 'dd/MM/yy HH:mm')}">01/01/24 10:00</span></p>
-                            <a th:href="@{/sessions/detalhes(id=${sessao.id})}" class="action-link" th:text="#{session.card.button.details}"></a>
-                        </div>
-                        <a th:href="@{/sessions/listar}" class="view-all-link" th:text="#{session.card.button.all}"></a>
-
-                    </div>
-                    <div th:if="${#lists.isEmpty(sessoesRecentes)}">
-                        <p class="no-data" th:text="#{session.card.empty}"></p>
-                    </div>
+                <div class="management-card">
+                    <h3 th:text="#{session.card.title}"></h3>
+                    <p th:text="#{session.card.description}"></p>
+                    <div class="actions"><a th:href="@{/sessions}" class="button secondary" th:text="#{session.card.button}"></a></div>
                 </div>
                 <div class="content-card">
-                    <h3 th:text="#{project.card.tester.title}"></h3>
-                    <div th:if="${not #lists.isEmpty(projetosDisponiveis)}">
-                        <div th:each="projeto : ${projetosDisponiveis}" class="list-item">
-                            <p><strong><span th:text="${projeto.nome}"></span></strong> (ID: <span th:text="${projeto.id}"></span>)</p>
-                            <p th:text="${projeto.descricao}"></p>
-                            <a th:href="@{/sessions/nova(idProjeto=${projeto.id})}" class="action-link" th:text="#{project.card.button.start}"></a>
-                        </div>
-                        <a th:href="@{/projetos/listar}" class="view-all-link" th:text="#{project.card.button.all}"></a>
-                    </div>
-                    <div th:if="${#lists.isEmpty(projetosDisponiveis)}">
-                        <p class="no-data" th:text="#{project.card.empty}"></p>
+                    <div class="management-card">
+                        <h3 th:text="#{project.card.title.view}"></h3>
+                        <p th:text="#{project.card.description.view}"></p>
+                        <div class="actions"><a th:href="@{/projetos}" class="button secondary" th:text="#{project.card.button.view}"></a></div>
                     </div>
                 </div>
             </div>
             <div class="sidebar-area">
-                <div class="content-card">
+                <div class="management-card">
                     <h3 th:text="#{strategy.card.title}"></h3>
-                    <div th:if="${not #lists.isEmpty(estrategias)}">
-                        <div th:each="estrategia : ${estrategias}" class="estrategia-item">
-                            <h4 th:text="${estrategia.nome}">Nome da Estratégia</h4>
-                            <p th:title="${estrategia.descricao}" th:text="${#strings.abbreviate(estrategia.descricao, 100)}">Descrição...</p>
-                        </div>
-                        <a th:href="@{/strategies}" class="view-all-link" th:text="#{strategy.card.button.all}"></a>
-                    </div>
-                    <div th:if="${#lists.isEmpty(estrategias)}">
-                        <p class="no-data" th:text="#{strategy.card.empty}"></p>
+                    <p th:text="#{strategy.card.description}"></p>
+                    <div class="actions" style="display: flex; flex-direction: column; gap: 10px;">
+                        <a th:href="@{/strategies}" class="button secondary" th:text="#{strategy.card.button.view}"></a>
                     </div>
                 </div>
             </div>

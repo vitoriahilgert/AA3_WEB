@@ -10,6 +10,8 @@ import br.ufscar.dc.dsw.AA2.models.Strategy;
 import br.ufscar.dc.dsw.AA2.models.TestSession;
 import br.ufscar.dc.dsw.AA2.models.User;
 import br.ufscar.dc.dsw.AA2.models.enums.TestSessionStatusEnum;
+import br.ufscar.dc.dsw.AA2.models.enums.UserRoleEnum;
+import br.ufscar.dc.dsw.AA2.repositories.ProjectRepository;
 import br.ufscar.dc.dsw.AA2.services.ProjectService;
 import br.ufscar.dc.dsw.AA2.services.StrategyService;
 import br.ufscar.dc.dsw.AA2.services.TestSessionService;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Controller
@@ -36,17 +39,31 @@ public class TestSessionController {
 
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private ProjectRepository projectRepository;
 
     @GetMapping
-    public String listSessions(ModelMap model) {
-        List<GetTestSessionResponseDTO> sessionList = testSessionService.getAllTestSessions();
+    public String listSessions(ModelMap model, Authentication auth, @RequestParam("projetoId") Optional<UUID> projetoIdFiltro) {
+        User user = (User) auth.getPrincipal();
+
+        List<GetTestSessionResponseDTO> sessionList;
 
         List<Strategy> strategyList = strategyService.getAll();
-        List<Project> projectList = projectService.getAllProjects();
+
+        List<Project> projectList = (user.getRole().equals(UserRoleEnum.ADMIN)) ? projectService.getAllProjects() :
+                projectService.getAllowedProjects(user.getId());
+
+        if (projetoIdFiltro.isPresent()) {
+            sessionList = testSessionService.findAllByProjectId(projetoIdFiltro.get(), user);
+        } else {
+            sessionList = (user.getRole().equals(UserRoleEnum.ADMIN)) ? testSessionService.getAllTestSessions() :
+                    testSessionService.getAllowedTestSessions(user);
+        }
 
         model.addAttribute("sessionList", sessionList);
-        model.addAttribute("allProjects", projectList); // Para o dropdown no formulário
-        model.addAttribute("allEstrategias", strategyList); // Para o dropdown no formulário
+        model.addAttribute("allProjects", projectList);
+        model.addAttribute("allEstrategias", strategyList);
+        model.addAttribute("filtroAplicado", projetoIdFiltro.orElse(null));
 
         return "test-sessions";
     }

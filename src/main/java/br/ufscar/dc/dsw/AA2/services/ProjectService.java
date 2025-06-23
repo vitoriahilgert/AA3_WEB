@@ -65,4 +65,10 @@ public class ProjectService {
         projectRepository.deleteById(id);
     }
 
+    public List<Project> getAllowedProjects(UUID id) {
+        User user = userRepository.findById(id).orElse(null);
+        return projectRepository.findProjectsWhereMemberIsAllowed(user);
+
+    }
+
 }
