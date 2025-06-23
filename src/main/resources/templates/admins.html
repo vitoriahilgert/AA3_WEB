@@ -153,7 +153,7 @@
                                 th:data-name="${admin.name}"
                                 th:data-email="${admin.email}"
                                 onclick="abrirModalEditar(this)"
-                                title="Editar Testador">
+                                th:title="#{admins.edit}">
                             <i class="fas fa-pen"></i>
                         </button>
 
@@ -202,7 +202,7 @@
             <div class="form-group">
                 <label for="senha"th:text="#{admins.page.password}"></label>
                 <input type="password" id="senha" name="password" minlength="6">
-                <p class="password-hint" th:text="#{admins.page.password.hint}"></p>
+                <p class="password-hint" th:text="#{admins.page.password.tip}"></p>
             </div>
 
             <div class="form-actions" style="justify-content: center;">

@@ -278,8 +278,8 @@
             <th th:text="#{strategy.table.name}"></th>
             <th th:text="#{strategy.table.description}"></th>
             <th th:text="#{strategy.table.example}"></th>
-            <th th:text="#{strategy.table.hint}"></th>
-            <th>Imagens</th>
+            <th th:text="#{strategy.table.tip}"></th>
+            <th th:text="#{strategy.table.image}"></th>
             <th th:if="${role == 'ADMIN'}" th:text="#{strategy.table.delete}"></th>
         </tr>
         </thead>
@@ -305,7 +305,7 @@
             </td>
 
             <td sec:authorize="hasRole('ADMIN')" class="action-buttons">
-                <form th:action="@{/strategies/delete}" method="post" style="display: inline;" onsubmit="return confirm(th:text"#{}");">
+                <form th:action="@{/strategies/delete}" method="post" style="display: inline;" onsubmit="return confirm('text');">
                     <input type="hidden" name="id" th:value="${strategy.id}" />
                     <button type="submit" class="btn-delete" th:title="#{strategy.table.delete}">
                         <i class="fas fa-trash"></i>
@@ -320,7 +320,7 @@
 <div id="imageGalleryModal" class="modal">
     <div class="gallery-modal-content">
         <span class="close" onclick="closeImageGallery()">×</span>
-        <h2>Galeria de Imagens da Estratégia</h2>
+        <h2 th:text="#{strategy.gallery}">Galeria de Imagens da Estratégia</h2>
         <div id="image-gallery-container" class="image-gallery">
             <!-- O JavaScript irá preencher as imagens aqui -->
         </div>

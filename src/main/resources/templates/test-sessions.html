@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <title>Gerenciar Sessões de Teste</title>
+    <title th:text="#{session.page.title}"></title>
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
@@ -237,19 +237,19 @@
 <header class="page-header">
     <div class="logo-title">
         <!-- MUDANÇA 1: Título genérico, pois não estamos em um projeto específico -->
-        <h1>Gerenciamento de Sessões</h1>
-        <p>Visão geral de todas as sessões de teste</p>
+        <h1 th:text="#{session.page.subtitle}"></h1>
+        <p th:text="#{session.page.description}"></p>
     </div>
     <div class="user-info">
-        <a th:href="@{/logout}">Sair</a>
+        <a th:href="@{/logout}" th:text="#{logout.button}"></a>
     </div>
 </header>
 
 <!-- CONTAINER PRINCIPAL -->
 <div class="container">
-    <h1>Todas as Sessões</h1>
+    <h1 th:text="#{session.page.all}"></h1>
     <div>
-        <button onclick="abrirModalCadastro()">+ Nova Sessão</button>
+        <button onclick="abrirModalCadastro()" th:text="#{session.page.add}"></button>
     </div>
 
     <!-- TABELA DE SESSÕES -->
@@ -257,18 +257,18 @@
         <thead>
         <tr>
             <!-- MUDANÇA 2: Adicionada coluna "Projeto" -->
-            <th>Projeto</th>
-            <th>Testador</th>
-            <th>Estratégia</th>
-            <th>Status</th>
-            <th>Ações</th>
+            <th th:text="#{session.table.project}"></th>
+            <th th:text="#{session.table.tester}"></th>
+            <th th:text="#{session.table.strategy}"></th>
+            <th th:text="#{session.table.status}"></th>
+            <th th:text="#{session.table.actions}"></th>
         </tr>
         </thead>
         <!-- Em test-sessions.html -->
 
         <tbody>
         <tr th:each="sessao : ${sessionList}">
-            <td th:text="${sessao.projectName ?: 'N/A'}">Nome do Projeto</td>
+            <td th:text="${sessao.projectName ?: 'N/A'}" >Nome do Projeto</td>
             <td th:text="${sessao.testerName ?: 'N/A'}">Nome do Testador</td>
 
             <!-- MUDANÇA 1: Célula da Estratégia com o botão de info ao lado -->
@@ -280,7 +280,7 @@
                         data-strategy-examples=${sessao.strategyExamples},
                         data-strategy-tips=${sessao.strategyTips}"
                         onclick="abrirModalEstrategia(this)"
-                        title="Info Estratégia"
+                        th:title="#{session.info}"
                         class="btn-action"
                         style="width: 28px; height: 28px; font-size: 12px;"> <!-- Estilo opcional para ajustar o tamanho -->
                     <i class="fas fa-info-circle"></i>
@@ -316,7 +316,7 @@
                            data-session-projectId=${sessao.projectId}
                             "
                             onclick="abrirModalEditar(this)"
-                            title="Editar"
+                            th:title="#{session.edit}"
                             class="btn-action">
                         <i class="fas fa-pen"></i>
                     </button>
@@ -326,12 +326,12 @@
                 <div th:if="${sessao.status.name() == 'IN_PROGRESS'}" style="display:inline-flex; gap: 8px;">
                     <form th:action="@{/sessions/atualizar-status}" method="post" style="display:inline;">
                         <input type="hidden" name="id" th:value="${sessao.id}"/>
-                        <button type="submit" title="Finalizar Sessão" class="btn-action"><i class="fas fa-stop-circle"></i></button>
+                        <button type="submit" th:title="#{session.end}" class="btn-action"><i class="fas fa-stop-circle"></i></button>
                     </form>
                 </div>
 
                 <button th:attr="data-sessao-id=${sessao.id}"
-                        onclick="abrirModalDeletar(this)" title="Deletar" class="btn-action"><i class="fas fa-trash"></i></button>
+                        onclick="abrirModalDeletar(this)" th:title="#{session.delete}" class="btn-action"><i class="fas fa-trash"></i></button>
             </td>
         </tr>
         </tbody>
@@ -342,38 +342,38 @@
 <div id="modalSessao" class="modal">
     <div class="modal-content">
         <span class="close" onclick="fecharModal('modalSessao')">×</span>
-        <h2 id="tituloModal">Nova Sessão de Teste</h2>
+        <h2 id="tituloModal" th:text="#{session.new}"></h2>
         <form id="formSessao" th:action="@{/sessions/salvar}" method="post">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             <input type="hidden" id="id" name="id">
 
             <!-- MUDANÇA 3: Dropdown para SELECIONAR o projeto -->
-            <label for="projectId">Projeto:</label>
+            <label for="projectId" th:text="#{session.project}"></label>
             <select id="projectId" name="projectId" required>
-                <option value="">Selecione um projeto...</option>
+                <option value="" th:text="#{session.project.select}"></option>
                 <option th:each="proj : ${allProjects}"
                         th:value="${proj.id}"
                         th:text="${proj.name}">
                 </option>
             </select>
 
-            <label for="strategyId">Estratégia:</label>
+            <label for="strategyId" th:text="#{session.strategy}"></label>
             <select id="strategyId" name="strategyId" required>
-                <option value="">Selecione uma estratégia...</option>
+                <option value="" th:text="#{session.strategy.select}"></option>
                 <option th:each="estrategia : ${allEstrategias}"
                         th:value="${estrategia.id}"
                         th:text="${estrategia.name}">
                 </option>
             </select>
 
-            <label for="duration">Tempo da Sessão (minutos):</label>
+            <label for="duration" th:text="#{session.time}"></label>
             <input type="number" id="duration" name="duration" required min="1">
 
-            <label for="description">Descrição:</label>
+            <label for="description" th:text="#{session.description}"></label>
             <textarea id="description" name="description" rows="4" required></textarea>
 
             <div id="cadastroSubmitContainer">
-                <input type="submit" id="cadastroSubmit" value="Salvar">
+                <input type="submit" id="cadastroSubmit" th:value="#{session.save}">
             </div>
         </form>
     </div>
@@ -384,12 +384,12 @@
 <div id="modalDeletar" class="modal">
     <div class="modal-content">
         <span class="close" onclick="fecharModal('modalDeletar')">×</span>
-        <h2>Confirmar Exclusão</h2>
-        <p>Deseja realmente excluir esta sessão de teste?</p>
+        <h2 th:text="#{session.delete.confirm}"></h2>
+        <p th:text="#{session.delete.description}"></p>
         <form id="formDeletar" method="post" th:action="@{/sessions/deletar}">
             <input type="hidden" id="idDeletar" name="id">
-            <input type="submit" value="Confirmar">
-            <button type="button" onclick="fecharModal('modalDeletar')">Cancelar</button>
+            <input type="submit" th:value="#{session.confirm}">
+            <button type="button" onclick="fecharModal('modalDeletar')" th:text="#{session.cancel}"></button>
         </form>
     </div>
 </div>
@@ -398,13 +398,13 @@
 <div id="modalEstrategia" class="modal">
     <div class="modal-content">
         <span class="close" onclick="fecharModal('modalEstrategia')">×</span>
-        <h2 id="estrategiaNomeModal">Nome da Estratégia</h2>
-        <p id="estrategiaDescricaoModal">Descrição detalhada da estratégia...</p>
-        <h3 style="color:#00BFFF; margin-top:25px; margin-bottom: 5px;">Exemplos Práticos:</h3>
+        <h2 id="estrategiaNomeModal" th:text="#{session.strategy.name}"></h2>
+        <p id="estrategiaDescricaoModal" th:text="#{session.strategy.description}"></p>
+        <h3 style="color:#00BFFF; margin-top:25px; margin-bottom: 5px;" th:text="#{session.example}"></h3>
         <p id="estrategiaExemplosModal" style="white-space: pre-wrap; background-color: #272727; padding: 10px; border-radius: 5px; color: #e0e0e0; font-size: 0.9em;">
             <!-- O JavaScript vai inserir os exemplos aqui -->
         </p>
-        <h3 style="color:#00BFFF; margin-top:25px; margin-bottom: 5px;">Dicas para Execução:</h3>
+        <h3 style="color:#00BFFF; margin-top:25px; margin-bottom: 5px;" th:text="#{session.tip}"></h3>
         <p id="estrategiaDicasModal" style="white-space: pre-wrap; background-color: #272727; padding: 10px; border-radius: 5px; color: #e0e0e0; font-size: 0.9em;">
             <!-- O JavaScript vai inserir as dicas aqui -->
         </p>

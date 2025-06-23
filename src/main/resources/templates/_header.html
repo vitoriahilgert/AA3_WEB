@@ -10,26 +10,26 @@
         <div th:switch="${#strings.trim(user.role).toUpperCase()}">
             <div th:case="'ADMIN'" class="page-header">
                 <div class="logo-title">
-                    <h1>Painel Administrativo</h1>
-                    <p>GameTests Management Suite</p>
+                    <h1 th:text="#{header.admin.title}"></h1>
+                    <p th:text="#{header.admin.subtitle}"></p>
                 </div>
                 <div class="user-info">
                     <span th:text="${'Olá, ' + user.name + '!'}">Olá, <strong><span th:text="${user.name}"></span></strong>!</span>
                     <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 20px;">
-                        <button type="submit" class="logout-button">Sair</button>
+                        <button type="submit" class="logout-button" th:text="#{logout.button}"></button>
                     </form>
                 </div>
             </div>
 
             <div th:case="'TESTER'" class="page-header">
                 <div class="logo-title">
-                    <h1>Painel do Testador</h1>
-                    <p>Gerencie suas sessões de teste</p>
+                    <h1 th:text="#{header.tester.title}"</h1>
+                    <p th:text="#{header.tester.subtitle}"></p>
                 </div>
                 <div class="user-info">
                     <span th:text="${'Olá, ' + user.name + '!'}">Olá, <strong><span th:text="${user.name}"></span></strong>!</span>
                     <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 20px;">
-                        <button type="submit">Sair</button>
+                        <button type="submit" th:text="#{logout.button}"></button>
                     </form>
                 </div>
             </div>
@@ -39,8 +39,8 @@
 
     <div th:unless="${user != null}" class="page-header public-header">
         <div class="logo-title">
-            <h1>GameTests Plataform</h1>
-            <p>Sistema de Gerenciamento de Testes</p>
+            <h1 th:text="#{header.title}">GameTests Plataform</h1>
+            <p th:text="#{header.subtitle}">Sistema de Gerenciamento de Testes</p>
         </div>
         <div class="user-info">
             <form th:action="@{/login}" method="get">
