@@ -1,5 +1,7 @@
 package br.ufscar.dc.dsw.AA2.services;
 
+import br.ufscar.dc.dsw.AA2.exceptions.ResourceNotFoundException;
+import br.ufscar.dc.dsw.AA2.models.Project;
 import br.ufscar.dc.dsw.AA2.models.User;
 import br.ufscar.dc.dsw.AA2.models.enums.UserRoleEnum;
 import br.ufscar.dc.dsw.AA2.repositories.UserRepository;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,6 +45,13 @@ public class UserService {
 
     @Transactional
     public void deleteUser(UUID id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id.toString()));
+
+        for (Project project : new ArrayList<>(user.getProjects())) {
+            project.getAllowedMembers().remove(user);
+        }
+
         userRepository.deleteById(id);
     }
 
