@@ -23,7 +23,7 @@ public class TestSession {
     @Column(nullable = false)
     private TestSessionStatusEnum status = TestSessionStatusEnum.CREATED;
 
-    @Column(length = 5000)
+    @Column()
     private String bugs;
 
     @CreationTimestamp

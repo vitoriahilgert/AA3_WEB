@@ -63,7 +63,7 @@ public class TestSessionController {
         testSessionService.createTestSession(projectId, dto);
         redirectAttributes.addFlashAttribute("message", "Sessão de teste criada com sucesso!");
 
-        return "redirect:/sessoes";
+        return "redirect:/sessions";
     }
 
     @PostMapping("/atualizar")
@@ -78,7 +78,7 @@ public class TestSessionController {
             redirectAttributes.addFlashAttribute("error", "Erro ao atualizar sessão!");
         }
 
-        return "redirect:/sessoes";
+        return "redirect:/sessions";
     }
 
     @GetMapping("/detalhes")
@@ -102,31 +102,31 @@ public class TestSessionController {
             redirectAttributes.addFlashAttribute("error", "Erro ao iniciar a sessão: " + e.getMessage());
         }
 
-        return "redirect:/sessoes/detalhes?id=" + id;
+        return "redirect:/sessions/detalhes?id=" + id;
     }
 
-    @PostMapping("/atualizar-descricao")
-    public String updateDescription(@RequestParam("id") UUID id,
-                                    @RequestParam("new_description") String new_description,
+    @PostMapping("/atualizar-bugs")
+    public String updateBugs(@RequestParam("id") UUID id,
+                                    @RequestParam("new_bug") String new_bug,
                                     RedirectAttributes redirectAttributes) {
         try {
             GetTestSessionResponseDTO testSession = testSessionService.getTestSessionById(id);
 
-            String currentDescription = testSession.getDescription();
-            String updatedDescription;
-            if (currentDescription == null || currentDescription.trim().isEmpty()) {
-                updatedDescription = new_description;
+            String currentBugs = testSession.getBugs();
+            String updatedBugs;
+            if (currentBugs == null || currentBugs.trim().isEmpty()) {
+                updatedBugs = new_bug;
             } else {
-                updatedDescription = currentDescription + "\n" + new_description;
+                updatedBugs = currentBugs + "\n" + new_bug;
             }
 
-            testSessionService.updateTestSessionDescription(id, updatedDescription);
+            testSessionService.updateTestSessionBugs(id, updatedBugs);
             redirectAttributes.addFlashAttribute("success", "Bug adicionado com sucesso!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Erro ao atualizar descrição!");
+            redirectAttributes.addFlashAttribute("error", "Erro ao atualizar bugs!");
         }
 
-        return "redirect:/sessoes/detalhes?id=" + id;
+        return "redirect:/sessions/detalhes?id=" + id;
     }
 
     @PostMapping("/deletar")
@@ -136,7 +136,7 @@ public class TestSessionController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Erro ao deletar sessão de teste.");
         }
-        return "redirect:/sessoes";
+        return "redirect:/sessions";
     }
 
 

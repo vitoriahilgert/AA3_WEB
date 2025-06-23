@@ -24,6 +24,7 @@ public class GetTestSessionResponseDTO {
     private String strategyTips;
     private String strategyExamples;
     private String testerName;
+    private String bugs;
 
 
     public GetTestSessionResponseDTO(TestSession testSession) {
@@ -44,6 +45,7 @@ public class GetTestSessionResponseDTO {
         this.strategyTips = testSession.getStrategy().getTips();
         this.strategyExamples = testSession.getStrategy().getExamples();
         this.strategyDescription = testSession.getStrategy().getDescription();
+        this.bugs = testSession.getBugs();
     }
 
     public UUID getId() {
@@ -172,5 +174,9 @@ public class GetTestSessionResponseDTO {
 
     public void setStrategyExamples(String strategyExamples) {
         this.strategyExamples = strategyExamples;
+    }
+
+    public String getBugs() {
+        return bugs;
     }
 }
