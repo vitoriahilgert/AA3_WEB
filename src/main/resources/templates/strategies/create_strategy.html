@@ -226,13 +226,12 @@
       </div>
 
       <div class="form-group">
-        <label for="tips" class="required-field" th:text="#{create.hint}"></label>
+        <label for="tips" class="required-field" th:text="#{create.tip}"></label>
         <textarea type="text" id="tips" name="tips" required></textarea>
       </div>
 
-
       <div class="form-group">
-        <label for="images">Imagens para auxiliar a exemplificação (opcional - Se quiser adicionar múltiplas imagens, seleciona-se de uma vez):</label>
+        <label for="images" th:text="#{create.images}"></label>
         <input type="file" id="images" name="images" multiple="multiple" accept="image/png, image/jpeg, image/gif" onchange="displayFileNames()"/>
       </div>
 
