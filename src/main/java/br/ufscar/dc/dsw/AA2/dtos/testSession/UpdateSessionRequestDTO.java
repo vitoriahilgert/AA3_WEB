@@ -1,15 +1,23 @@
 package br.ufscar.dc.dsw.AA2.dtos.testSession;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class CreateTestSessionRequestDTO {
+public class UpdateSessionRequestDTO {
+    private UUID id;
     private int duration;
     private UUID testerId;
     private UUID strategyId;
     private String description;
 
-    public CreateTestSessionRequestDTO() {}
+    public UpdateSessionRequestDTO() {}
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public int getDuration() {
         return duration;
