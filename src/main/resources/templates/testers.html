@@ -113,20 +113,9 @@
 </head>
 <body>
 
-<div sec:authorize="isAuthenticated()" class="page-header">
-    <div class="logo-title">
-        <h1 sec:authorize="hasRole('ADMIN')">Painel Administrativo</h1>
-        <h1 sec:authorize="hasRole('TESTER') and !hasRole('ADMIN')">Painel do Testador</h1>
-        <p>GameTests Management Suite</p>
-    </div>
-    <div class="user-info">
-        <span>Olá, <strong sec:authentication="principal.username"></strong>!</span>
-        <!-- Formulário de Logout é mais seguro que um link GET -->
-        <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 20px;">
-            <button type="submit" class="logout-button">Sair</button>
-        </form>
-    </div>
-</div>
+<header>
+    <div th:replace="_header :: headerContent(user=${user})"></div>
+</header>
 
 <main sec:authorize="hasRole('ADMIN')">
     <div class="dashboard-container">

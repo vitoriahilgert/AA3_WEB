@@ -50,7 +50,7 @@ public class SecurityConfig {
                 .formLogin((form) -> form
                         .loginPage(Routes.LOGIN)
                         .usernameParameter("email")
-                        .defaultSuccessUrl(Routes.HOME, true) // <-- IMPORTANTE: para onde ir após o login
+                        .defaultSuccessUrl(Routes.HOME, true)
                         .failureUrl(Routes.LOGIN + "?error")
                         .permitAll()
                 )

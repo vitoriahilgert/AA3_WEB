@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+</head>
+<body>
+
+<header th:fragment="headerContent(user)">
+    <div th:if="${user != null}">
+        <div th:switch="${#strings.trim(user.role).toUpperCase()}">
+            <div th:case="'ADMIN'" class="page-header">
+                <div class="logo-title">
+                    <h1>Painel Administrativo</h1>
+                    <p>GameTests Management Suite</p>
+                </div>
+                <div class="user-info">
+                    <span th:text="${'Olá, ' + user.name + '!'}">Olá, <strong><span th:text="${user.name}"></span></strong>!</span>
+                    <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 20px;">
+                        <button type="submit" class="logout-button">Sair</button>
+                    </form>
+                </div>
+            </div>
+
+            <div th:case="'TESTER'" class="page-header">
+                <div class="logo-title">
+                    <h1>Painel do Testador</h1>
+                    <p>Gerencie suas sessões de teste</p>
+                </div>
+                <div class="user-info">
+                    <span th:text="${'Olá, ' + user.name + '!'}">Olá, <strong><span th:text="${user.name}"></span></strong>!</span>
+                    <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 20px;">
+                        <button type="submit">Sair</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div th:unless="${user != null}" class="page-header public-header">
+        <div class="logo-title">
+            <h1>GameTests Plataform</h1>
+            <p>Sistema de Gerenciamento de Testes</p>
+        </div>
+        <div class="user-info">
+            <form th:action="@{/login}" method="get">
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+</body>
+</html>
