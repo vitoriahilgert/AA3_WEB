@@ -87,6 +87,7 @@
             font-size: 1.1em;
             transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
             margin-top: 10px;
+            margin-bottom: 10px;
         }
 
         button[type="submit"]:hover {
@@ -98,22 +99,10 @@
             transform: translateY(0);
         }
 
-        .signup-link {
-            margin-top: 25px;
-            font-size: 0.9em;
-            color: #bbbbbb;
+        .home-link a {
+            color: #00BFFF;
         }
 
-        .signup-link a {
-            color: #87CEFA;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .signup-link a:hover {
-            color: #ADD8E6;
-            text-decoration: underline;
-        }
     </style>
 </head>
 <body>
@@ -131,6 +120,7 @@
 
         <button type="submit">Login</button>
     </form>
+    <span class="home-link">Não possui uma conta? <a th:href="@{/home}">Entrar como visitante</a></span>
 </div>
 </body>
 </html>

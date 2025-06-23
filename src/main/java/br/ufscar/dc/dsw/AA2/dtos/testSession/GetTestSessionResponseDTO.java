@@ -18,6 +18,14 @@ public class GetTestSessionResponseDTO {
     private UUID testerId;
     private UUID projectId;
     private UUID strategyId;
+    private String projectName;
+    private String strategyName;
+    private String strategyDescription;
+    private String strategyTips;
+    private String strategyExamples;
+    private String testerName;
+    private String bugs;
+
 
     public GetTestSessionResponseDTO(TestSession testSession) {
         this.id = testSession.getId();
@@ -31,6 +39,13 @@ public class GetTestSessionResponseDTO {
         this.strategyId = testSession.getStrategy().getId();
         this.startDateTime = testSession.getStartDateTime();
         this.finishDateTime = testSession.getFinishDateTime();
+        this.projectName = testSession.getProject().getName();
+        this.testerName = testSession.getTester().getName();
+        this.strategyName = testSession.getStrategy().getName();
+        this.strategyTips = testSession.getStrategy().getTips();
+        this.strategyExamples = testSession.getStrategy().getExamples();
+        this.strategyDescription = testSession.getStrategy().getDescription();
+        this.bugs = testSession.getBugs();
     }
 
     public UUID getId() {
@@ -111,5 +126,57 @@ public class GetTestSessionResponseDTO {
 
     public void setStrategyId(UUID strategyId) {
         this.strategyId = strategyId;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public String getTesterName() {
+        return testerName;
+    }
+
+    public void setTesterName(String testerName) {
+        this.testerName = testerName;
+    }
+
+    public String getStrategyName() {
+        return strategyName;
+    }
+
+    public void setStrategyName(String strategyName) {
+        this.strategyName = strategyName;
+    }
+
+    public String getStrategyDescription() {
+        return strategyDescription;
+    }
+
+    public void setStrategyDescription(String strategyDescription) {
+        this.strategyDescription = strategyDescription;
+    }
+
+    public String getStrategyTips() {
+        return strategyTips;
+    }
+
+    public void setStrategyTips(String strategyTips) {
+        this.strategyTips = strategyTips;
+    }
+
+    public String getStrategyExamples() {
+        return strategyExamples;
+    }
+
+    public void setStrategyExamples(String strategyExamples) {
+        this.strategyExamples = strategyExamples;
+    }
+
+    public String getBugs() {
+        return bugs;
     }
 }

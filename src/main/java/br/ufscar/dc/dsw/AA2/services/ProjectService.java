@@ -61,6 +61,8 @@ public class ProjectService {
     }
 
     @Transactional
-    public void deleteProject(UUID id) {projectRepository.deleteById(id);}
+    public void deleteProject(UUID id) {
+        projectRepository.deleteById(id);
+    }
 
 }

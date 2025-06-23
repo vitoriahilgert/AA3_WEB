@@ -2,7 +2,10 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <title th:text="#{project.page.title}"></title> <style>
+     <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <title th:text="#{project.page.title}"></title> 
+  <style>
+
     body {
         font-family: 'Segoe UI', sans-serif;
         background-color: #121212;
@@ -210,90 +213,12 @@
         background-color: #f0f0f0;
     }
 
-    .testador-header {
-        background-color: #1f1f1f;
-        padding: 20px 40px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 2px solid #00BFFF;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-    }
-
-    .testador-header .logo-title h1 {
-        color: #00BFFF;
-        margin: 0;
-        font-size: 2em;
-    }
-    .testador-header .logo-title p {
-        margin: 5px 0 0;
-        font-size: 0.9em;
-        color: #aaaaaa;
-    }
-
-    .testador-header .user-info a {
-        color: #00BFFF;
-        text-decoration: none;
-        font-weight: bold;
-        margin-left: 20px;
-    }
-    .testador-header .user-info a:hover {
-        text-decoration: underline;
-    }
-
-    .admin-header {
-        background-color: #1f1f1f;
-        padding: 20px 40px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 2px solid #00BFFF;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-    }
-
-    .admin-header .logo-title h1 {
-        color: #00BFFF;
-        margin: 0;
-        font-size: 2em;
-    }
-    .admin-header .logo-title p {
-        margin: 5px 0 0;
-        font-size: 0.9em;
-        color: #aaaaaa;
-    }
-
-    .admin-header .user-info a {
-        color: #00BFFF;
-        text-decoration: none;
-        font-weight: bold;
-        margin-left: 20px;
-    }
-    .admin-header .user-info a:hover {
-        text-decoration: underline;
-    }
-
 </style>
 </head>
 <body>
-<header th:switch="${session.usuario?.papel}">
-    <div th:case="'ADMIN'" class="admin-header">
-        <div class="logo-title">
-            <h1 th:text="#{header.admin.title}"></h1> <p th:text="#{header.slogan.logged}"></p> </div>
-        <div class="user-info">
-            <span th:text="${'Olá, ' + session.usuario.nome + '!'}">Olá, <strong><span th:text="${session.usuario.nome}"></span></strong>!</span> <a th:href="@{/logout}">Sair</a> </div>
-    </div>
-    <div th:case="'TESTADOR'" class="testador-header">
-        <div class="logo-title">
-            <h1 th:text="#{header.tester.title}"></h1> <p th:text="#{project.page.tester.subtitle}"></p> </div>
-        <div class="user-info">
-            <span th:text="${'Olá, ' + session.usuario.nome + '!'}">Olá, <strong><span th:text="${session.usuario.nome}"></span></strong>!</span> <a th:href="@{/logout}">Sair</a> </div>
-    </div>
-    <div th:case="*" class="testador-header">
-        <div class="logo-title">
-            <h1 th:text="#{header.logo}"></h1> <p th:text="#{project.page.tester.slogan}"></p> </div>
-        <div class="user-info">
-            <a th:href="@{/login}">Login</a> </div>
-    </div>
+
+<header>
+    <div th:replace="_header :: headerContent(user=${user})"></div>
 </header>
 
 <div class="container">
@@ -333,7 +258,7 @@
                     <i class="fas fa-trash"></i>
                 </button>
 
-                <a th:href="@{/sessoes/listarPorProjeto(idProjeto=${project.id})}"
+                <a th:href="@{/sessions/listarPorProjeto(idProjeto=${project.id})}"
                    th:title="#{project.page.see}"
                    class="btn-action">
                     <i class="fas fa-clipboard-list"></i>

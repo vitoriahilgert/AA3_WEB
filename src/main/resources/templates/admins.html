@@ -6,7 +6,7 @@
     <title th:text="#{admins.page.title}"></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
     <style>
         /* === ESTILOS GERAIS E DO 'HOME' === */
         *, *::before, *::after { box-sizing: border-box; }
@@ -35,7 +35,7 @@
         }
         .page-header .user-info button:hover { text-decoration: underline; }
         .dashboard-container {
-            flex-grow: 1; padding: 30px 5%; max-width: 1200px; margin: 0 auto;
+            flex-grow: 1; padding: 30px 5%; min-height: 85vh; max-width: 1200px; margin: 0 auto;
             width: 100%;
         }
         .content-card {
@@ -114,19 +114,9 @@
 </head>
 <body>
 
-<div sec:authorize="isAuthenticated()" class="page-header">
-    <div class="logo-title">
-        <h1 sec:authorize="hasRole('ADMIN')" th:text="#{header.admin.title}"></h1>
-        <h1 sec:authorize="hasRole('TESTER') and !hasRole('ADMIN')" th:text="#{header.tester.title}"></h1>
-        <p th:text="#{header.slogan.logged}"></p>
-    </div>
-    <div class="user-info">
-        <span th:text="${'Olá, ' + user.name + '!'}">Olá, <strong><span th:text="${user.name}"></span></strong>!</span>
-        <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 20px;">
-            <button type="submit" class="logout-button" th:text="#{logout.button}"></button>
-        </form>
-    </div>
-</div>
+<header>
+    <div th:replace="_header :: headerContent(user=${user})"></div>
+</header>
 
 <main sec:authorize="hasRole('ADMIN')">
     <div class="dashboard-container">
@@ -294,8 +284,8 @@
     window.onclick = function(event) {
         const modalCadastro = document.getElementById('modalAdministrador');
         const modalDeletar = document.getElementById('modalDeletar');
-        if (event.target == modalCadastro) fecharModal('modalAdministrador');
-        if (event.target == modalDeletar) fecharModal('modalDeletar');
+        if (event.target === modalCadastro) fecharModal('modalAdministrador');
+        if (event.target === modalDeletar) fecharModal('modalDeletar');
     }
 
     document.addEventListener('keydown', function(event) {

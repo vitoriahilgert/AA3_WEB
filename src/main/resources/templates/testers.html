@@ -35,7 +35,7 @@
         }
         .page-header .user-info button:hover { text-decoration: underline; }
         .dashboard-container {
-            flex-grow: 1; padding: 30px 5%; max-width: 1200px; margin: 0 auto;
+            flex-grow: 1; padding: 30px 5%; max-width: 1200px; min-height: 85vh; margin: 0 auto;
             width: 100%;
         }
         .content-card {
@@ -114,20 +114,10 @@
 </head>
 <body>
 
-<div sec:authorize="isAuthenticated()" class="page-header">
-    <div class="logo-title">
-        <h1 sec:authorize="hasRole('ADMIN')" th:text="#{header.admin.title}"></h1>
-        <h1 sec:authorize="hasRole('TESTER') and !hasRole('ADMIN')" th:text="#{header.tester.title}"></h1>
-        <p>GameTests Management Suite</p>
-    </div>
-    <div class="user-info">
-        <span th:text="${'Olá, ' + user.name + '!'}">Olá, <strong><span th:text="${user.name}"></span></strong>!</span>
-        <!-- Formulário de Logout é mais seguro que um link GET -->
-        <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 20px;">
-            <button type="submit" class="logout-button" th:text="#{logout.button}"></button>
-        </form>
-    </div>
-</div>
+
+<header>
+    <div th:replace="_header :: headerContent(user=${user})"></div>
+</header>
 
 <main sec:authorize="hasRole('ADMIN')">
     <div class="dashboard-container">

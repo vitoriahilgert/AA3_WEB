@@ -17,11 +17,14 @@ public class TestSession {
     @Column(nullable = false)
     private int duration;
 
-    @Column(nullable = false)
+    @Column()
     private String description;
 
     @Column(nullable = false)
     private TestSessionStatusEnum status = TestSessionStatusEnum.CREATED;
+
+    @Column()
+    private String bugs;
 
     @CreationTimestamp
     private LocalDateTime creationDateTime;
@@ -133,5 +136,13 @@ public class TestSession {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public String getBugs() {
+        return bugs;
+    }
+
+    public void setBugs(String bugs) {
+        this.bugs = bugs;
     }
 }

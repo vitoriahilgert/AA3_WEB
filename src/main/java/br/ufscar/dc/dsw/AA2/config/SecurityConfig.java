@@ -1,6 +1,7 @@
 package br.ufscar.dc.dsw.AA2.config;
 
 import br.ufscar.dc.dsw.AA2.services.JPAUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -13,12 +14,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    @Autowired
+    private AuthenticationFailureHandler customAuthenticationFailureHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -43,15 +47,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, @Lazy JPAUserDetailsService customUserDetailsService) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(Routes.ROOT, Routes.HOME, Routes.LOGIN, Routes.CSS, Routes.JS, Routes.IMAGES, Routes.PROJETOS, Routes.STRATEGIES).permitAll()
+                        .requestMatchers(Routes.ROOT, Routes.HOME, Routes.LOGIN, Routes.CSS, Routes.JS, Routes.IMAGES, Routes.STRATEGIES, Routes.UPLOADS).permitAll()
                         .requestMatchers(Routes.STRATEGIES + Routes.CREATE).hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
                         .loginPage(Routes.LOGIN)
                         .usernameParameter("email")
-                        .defaultSuccessUrl(Routes.HOME, true) // <-- IMPORTANTE: para onde ir após o login
-                        .failureUrl(Routes.LOGIN + "?error")
+                        .defaultSuccessUrl(Routes.HOME, true)
+                        .failureHandler(customAuthenticationFailureHandler)
                         .permitAll()
                 )
                 .logout(logout -> logout
