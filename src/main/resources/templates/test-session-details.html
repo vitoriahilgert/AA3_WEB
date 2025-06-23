@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Detalhes da Sessão</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <style>
+        /* --- Seu CSS completo entra aqui --- */
+        body { font-family: 'Segoe UI', sans-serif; background-color: #121212; color: #f0f0f0; margin: 0; padding: 20px; box-sizing: border-box; line-height: 1.6; }
+        .page-container { max-width: 900px; margin: 20px auto; background-color: #1f1f1f; padding: 25px; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.7); }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #333; }
+        .page-header h1 { color: #00BFFF; margin: 0; font-size: 2em; }
+        .page-header .back-link { color: #00BFFF; text-decoration: none; font-weight: 500; font-size: 0.9em; padding: 8px 12px; border: 1px solid #00BFFF; border-radius: 5px; transition: background-color 0.2s, color 0.2s; }
+        .page-header .back-link:hover { background-color: #00BFFF; color: #121212; }
+        .message, .error { padding: 12px; border-radius: 5px; margin-bottom: 20px; }
+        .message { background-color: rgba(0, 128, 0, 0.2); color: #32CD32; border: 1px solid #32CD32; }
+        .error { background-color: rgba(220, 20, 60, 0.2); color: #DC143C; border: 1px solid #DC143C; }
+        .detail-card { background-color: #272727; padding: 20px; margin-bottom: 25px; border-radius: 8px; border: 1px solid #383838; }
+        .detail-card h2 { color: #00BFFF; margin-top: 0; margin-bottom: 15px; font-size: 1.5em; padding-bottom: 10px; border-bottom: 1px solid #444; }
+        .detail-card p { margin: 8px 0; color: #cccccc; font-size: 0.95em; }
+        .detail-card strong { color: #e0e0e0; margin-right: 5px; }
+        .detail-card .status { font-weight: bold; padding: 3px 8px; border-radius: 4px; display: inline-block; font-size: 0.9em; }
+        .detail-card .status-CRIADO, .detail-card .status-criado { background-color: #87CEFA; color: #121212; }
+        .detail-card .status-EM_EXECUCAO, .detail-card .status-em_execucao { background-color: #FFD700; color: #121212; }
+        .detail-card .status-FINALIZADO, .detail-card .status-finalizado { background-color: #32CD32; color: #1f1f1f; }
+        .detail-card .status-CANCELADO { background-color: #FF6347; color: #fff; }
+        .detail-card .status-PENDENTE { color: #aaaaaa; }
+        .estrategia-images { margin-top: 10px; display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+        .estrategia-images img { width: 100%; height: auto; border-radius: 4px; border: 1px solid #444; cursor: pointer; transition: transform 0.2s; }
+        .estrategia-images img:hover { transform: scale(1.05); }
+        .actions-section .button-action { display: inline-block; padding: 10px 20px; margin: 10px 10px 0 0; text-decoration: none; border-radius: 5px; color: white; cursor: pointer; border: none; font-weight: bold; font-size: 0.95em; transition: background-color 0.2s, transform 0.1s; }
+        .actions-section .start-button { background-color: #28a745; }
+        .actions-section .start-button:hover { background-color: #218838; transform: translateY(-1px); }
+        .actions-section .finalize-button { background-color: #DC143C; }
+        .actions-section .finalize-button:hover { background-color: #c82333; transform: translateY(-1px); }
+        .actions-section .disabled-text { color: #aaaaaa; font-style: italic; }
+        .footer-navigation { margin-top: 30px; text-align: center; }
+        .footer-navigation a { color: #00BFFF; text-decoration: none; margin: 0 15px; font-weight: 500; }
+        .footer-navigation a:hover { text-decoration: underline; }
+
+        .button-bug {
+            background-color: #00BFFF;
+            color: white
+            border: none;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            outline: none;
+        }
+
+        .button-bug:hover {
+            background-color: #009ACD;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+            margin-bottom: 15px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            background: #eeeeee;
+        }
+
+.current-description {
+    background: #121212;
+    padding: 15px;
+    border-radius: 4px;
+    white-space: pre-wrap;
+    white-space: pre-line;
+    font-family: monospace, monospace;
+    margin-top: 15px;
+    color: #e0e0e0;
+    line-height: 1.5;
+    text-align: left;
+}
+
+.current-description strong {
+    color: #fff; /* Branco para títulos */
+    font-weight: bold;
+    margin: 0; /* Remove possíveis margens automáticas */
+    padding: 0; /* Remove possíveis espaçamentos automáticos */
+    display: inline-block; /* Garante que o alinhamento é inline */
+    text-align: left;
+}
+
+.current-description span {
+    color: #b2b2b2;
+    text-align: left;
+    display: block;
+}
+
+    </style>
+</head>
+<body>
+<div class="page-container">
+    <div class="page-header">
+        <!-- O título da página agora é dinâmico com th:text -->
+        <h1>Detalhes da Sessão</h1>
+        <!-- O link de voltar usa a sintaxe de URL do Thymeleaf -->
+        <a th:href="@{/sessoes}" class="back-link">Voltar para Lista</a>
+    </div>
+
+    <!-- Mensagens de sucesso/erro (flash attributes) -->
+    <p th:if="${success}" class="message" th:text="${success}"></p>
+    <p th:if="${error}" class="error" th:text="${error}"></p>
+
+    <!-- Estrutura principal com th:if/th:unless -->
+    <div th:if="${sessao != null}">
+        <div class="detail-card">
+            <h2>Informações da Sessão</h2>
+            <p><strong>ID da Sessão:</strong> <span th:text="${sessao.id}"></span></p>
+            <p><strong>Nome do Projeto:</strong> <span th:text="${sessao.projectName}"></span></p>
+            <p><strong>Status:</strong>
+                <span class="status"
+                      th:classappend="${'status-' + #strings.toLowerCase(sessao.status.name())}"
+                      th:text="${sessao.status.name()}">
+                </span>
+            </p>
+            <p><strong>Duração Planejada:</strong> <span th:text="${sessao.duration} + ' minutos'"></span></p>
+            <p><strong>Data de Criação:</strong>
+                <span th:text="${#temporals.format(sessao.creationDateTime, 'dd/MM/yyyy HH:mm:ss')}"></span>
+            </p>
+            <p><strong>Data/Hora Início:</strong>
+                <span th:if="${sessao.startDateTime != null}" th:text="${#temporals.format(sessao.startDateTime, 'dd/MM/yyyy HH:mm:ss')}"></span>
+                <span th:unless="${sessao.startDateTime != null}" class="status-PENDENTE">Pendente</span>
+            </p>
+            <p><strong>Data/Hora Fim:</strong>
+                <span th:if="${sessao.finishDateTime != null}" th:text="${#temporals.format(sessao.finishDateTime, 'dd/MM/yyyy HH:mm:ss')}"></span>
+                <span th:unless="${sessao.finishDateTime != null}" class="status-PENDENTE">Pendente</span>
+            </p>
+        </div>
+
+        <!-- Detalhes da Estratégia -->
+        <div th:if="${sessao.strategyName != null}" class="detail-card">
+            <h2>Detalhes da Estratégia Associada</h2>
+            <p><strong>Nome:</strong> <span th:text="${sessao.strategyName}"></span></p>
+            <!-- Você precisará adicionar esses campos ao seu DTO se quiser exibi-los aqui -->
+            <!-- <p><strong>Descrição:</strong> <span th:text="${sessao.strategyDescription}"></span></p> -->
+            <!-- <p><strong>Dicas:</strong> <span th:text="${sessao.strategyTips}"></span></p> -->
+            <!-- <p><strong>Exemplos:</strong> <span th:text="${sessao.strategyExamples}"></span></p> -->
+        </div>
+
+        <!-- Bugs relatados -->
+        <div class="detail-card">
+            <h2>Bugs Relatados</h2>
+
+            <form th:if="${sessao.status.name() == 'IN_PROGRESS'}" id="formBug" th:action="@{/sessoes/atualizar-descricao}" method="post">
+                <input type="hidden" id="id" name="id" th:value="${sessao.id}">
+
+                <label for="new_description">Descreva o novo bug:</label>
+                <textarea id="new_description" name="new_description" required>Bug: </textarea>
+
+                <button type="submit" class="button-bug">
+                    Adicionar Bug
+                </button>
+            </form>
+
+            <p th:if="${sessao.description == null || sessao.description == ''}">
+                Nenhum bug relatado!
+            </p>
+
+            <div th:if="${sessao.description != null && sessao.description != ''}" class="current-description">
+                <strong>Bugs Relatados:</strong>
+                <span th:text="${sessao.description}"></span>
+            </div>
+        </div>
+
+        <!-- Seção de Ações Condicionais -->
+        <div class="detail-card actions-section">
+            <h2>Ações da Sessão</h2>
+            <div th:switch="${sessao.status.name()}">
+                <div th:case="'CREATED'">
+                    <!-- Formulário para o botão Iniciar -->
+                    <form th:action="@{/sessoes/atualizar-status}" method="post" style="display:inline;">
+                        <input type="hidden" name="id" th:value="${sessao.id}" />
+                        <button type="submit" class="button-action start-button">Iniciar Sessão</button>
+                    </form>
+                </div>
+                <div th:case="'IN_PROGRESS'">
+                    <!-- Formulário para o botão Finalizar -->
+                    <form th:action="@{/sessoes/atualizar-status}" method="post" style="display:inline;">
+                        <input type="hidden" name="id" th:value="${sessao.id}" />
+                        <button type="submit" class="button-action finalize-button">Finalizar Sessão</button>
+                    </form>
+                </div>
+                <div th:case="'FINISHED'">
+                    <p class="disabled-text">Esta sessão foi finalizada e não pode mais ser modificada.</p>
+                </div>
+                <div th:case="*">
+                    <p class="disabled-text" th:text="|Nenhuma ação disponível para o status '${sessao.status.name()}'|"></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div th:unless="${sessao != null}">
+        <div class="detail-card">
+            <p>Sessão de teste não encontrada ou você não tem permissão para visualizá-la.</p>
+        </div>
+    </div>
+
+    <div class="footer-navigation">
+        <a th:href="@{/home}">Voltar para Painel Principal</a>
+    </div>
+</div>
+</body>
+</html>
