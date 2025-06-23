@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-br" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title th:text="|Erro ${status} - ${error}|">Página de Erro</title>
@@ -16,22 +16,83 @@
         .button-404 { background-color: #6A5ACD; }
         .button-404:hover { background-color: #483D8B; }
 
-        .status-500 { color: #00BFFF; }
-        .button-500 { background-color: #00BFFF; }
-        .button-500:hover { background-color: #009ACD; }
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet" />
+    <link th:href="@{/webjars/open-iconic/font/css/open-iconic-bootstrap.min.css}" rel="stylesheet" />
+    <!-- Custom styles for this template -->
+    <link th:href="@{/css/style.css}" rel="stylesheet" />
+
+    <style>
+        body {
+           font-family: 'Segoe UI', sans-serif;
+           background-color: #121212;
+           color: #f0f0f0;
+           margin: 0;
+           justify-content: center;
+           align-items: center;
+       }
+
+        h1 {
+           color: #00BFFF;
+       }
+
+        .container {
+               max-width: 1000px;
+               margin: auto;
+               margin-top: 80px;
+               margin-bottom: 80px;
+               background-color: #1f1f1f;
+               padding: 20px;
+               border-radius: 10px;
+               box-shadow: 0 0 15px rgba(0,0,0,0.7);
+               text-align: center;
+           }
+
+            button, select, input[type="submit"] {
+               background-color: #00BFFF;
+               color: white;
+               border: none;
+               padding: 8px 16px;
+               border-radius: 5px;
+               cursor: pointer;
+               margin: 5px;
+           }
+
+           button:hover, select:hover, input[type="submit"]:hover {
+               background-color: #009ACD;
+           }
+
+
+        .btn-primary {
+                background-color: #00BFFF;
+                color: white
+                border: none;
+                font-size: 16px;
+                transition: background-color 0.3s ease;
+            }
+
+            .btn-primary:hover {
+                background-color: #009ACD;
+            }
     </style>
 </head>
 <body>
-<!-- Adiciona classes CSS dinamicamente baseadas no status do erro -->
-<div class="container" th:with="statusClass=${'status-' + status}, buttonClass=${'button-' + status}">
+    <div class="container">
+        <h1 class="h3 mb-3 font-weight-normal">
+            <i class="oi oi-warning"></i>
+            <span th:text="${status}"></span>
+        </h1>
 
-    <h1 th:text="${status}" th:class="${statusClass}">ERRO</h1>
+        <h2 th:text="${error}"></h2>
 
-    <p th:text="${message}">Uma mensagem de erro detalhada aparecerá aqui.</p>
 
-    <button th:onclick="|window.location.href='@{/home}'|" th:class="${buttonClass}">
-        Voltar para o início
-    </button>
-</div>
+        <span th:text="${message}"></span>
+        <br/><br/>
+        <form action="javascript:history.back()" method="get" style="display: inline;">
+            <button type="submit" class="btn-primary" title="Voltar">
+                Voltar à página anterior
+            </button>
+        </form>
+    </div>
 </body>
 </html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastrar Novo Administrador</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <style>
+          body {
+               font-family: 'Segoe UI', sans-serif;
+               background-color: #121212;
+               color: #f0f0f0;
+               margin: 0;
+           }
+
+           h1 {
+               color: #00BFFF;
+           }
+
+           .container {
+               max-width: 1000px;
+               margin: auto;
+               margin-top: 80px;
+               margin-bottom: 80px;
+               background-color: #1f1f1f;
+               padding: 20px;
+               border-radius: 10px;
+               box-shadow: 0 0 15px rgba(0,0,0,0.7);
+           }
+
+           button, select, input[type="submit"] {
+               background-color: #00BFFF;
+               color: white;
+               border: none;
+               padding: 8px 16px;
+               border-radius: 5px;
+               cursor: pointer;
+               margin: 5px;
+           }
+
+           button:hover, select:hover, input[type="submit"]:hover {
+               background-color: #009ACD;
+           }
+
+           table {
+               width: 100%;
+               border-collapse: collapse;
+               margin-top: 15px;
+           }
+
+           label {
+               display: block;
+               margin-top: 10px;
+           }
+
+           input, textarea, select {
+               width: 100%;
+               padding: 12px;
+               margin-top: 7px;
+               background-color: #333;
+               color: white;
+               border: 1px solid #555;
+               border-radius: 5px;
+               box-sizing: border-box;
+               transition: border-color 0.3s ease;
+               font-family: 'Segoe UI', sans-serif;
+               font-size: 14px;
+           }
+
+           .actions button, .actions a {
+               width: 30px;
+               height: 30px;
+               padding: 0;
+               font-size: 14px;
+               border-radius: 50%;
+               display: inline-flex;
+               align-items: center;
+               justify-content: center;
+               background-color: #6A5ACD;
+               transition: background-color 0.3s;
+           }
+
+           .actions button:hover, .actions a:hover{
+               background-color: #483D8B;
+           }
+
+           .actions i {
+               color: white;
+               pointer-events: none;
+           }
+
+           .language-selector {
+               padding: 6px 10px;
+               border-radius: 5px;
+               border: none;
+               background-color: white;
+               color: #6A0DAD;
+               font-weight: bold;
+               cursor: pointer;
+           }
+
+           .language-selector:hover {
+               background-color: #f0f0f0;
+           }
+
+           .action-buttons a, .action-buttons button {
+               display: inline-flex;
+               align-items: center;
+               justify-content: center;
+               width: 40px;
+               height: 40px;
+               border-radius: 50%;
+               background-color: #6a4fc8;
+               border: none;
+               color: white;
+               text-align: center;
+               font-size: 18px;
+               cursor: pointer;
+               transition: background-color 0.3s ease;
+               margin: 0 5px;
+           }
+
+           .action-buttons a:hover, .action-buttons button:hover {
+               background-color: #5639a8;
+           }
+
+           .action-buttons i {
+               pointer-events: none;
+           }
+
+           .btn-create {
+               background-color: #5639a8;
+           }
+
+          a {
+               display: inline-block;
+               margin-top: 20px;
+               color: #6A0DAD;
+               text-decoration: none;
+               transition: color 0.3s ease;
+            }
+
+            .btn-action {
+                background-color: #00BFFF;
+                color: white;
+                border: none;
+                font-size: 16px;
+                transition: background-color 0.3s ease;
+            }
+
+            .btn-action:hover {
+                background-color: #009ACD;
+            }
+
+            .form-group {
+               margin-bottom: 20px;
+            }
+
+            .required-field::after {
+                 content: " *";
+                 color: #e74c3c;
+              }
+
+            textarea {
+              resize: vertical;
+            }
+  </style>
+</head>
+<body>
+
+<header>
+  <div th:replace="_header :: headerContent(user=${user})"></div>
+</header>
+
+<div class="container">
+  <div class="header">
+    <form th:action="@{/strategies}" method="get" style="display: inline;">
+      <button type="submit" class="btn-action" title="Voltar">
+        Voltar para listagem
+      </button>
+    </form>
+
+    <h1>Cadastrar Nova Estratégia</h1>
+  </div>
+
+  <div class="modal-body">
+    <form method="POST" th:action="@{/strategies/create}">
+      <div class="form-group">
+        <label for="name" class="required-field">Nome:</label>
+        <input type="text" id="name" name="name" required />
+      </div>
+
+      <div class="form-group">
+        <label for="description" class="required-field">Descrição:</label>
+        <textarea type="text" id="description" name="description" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="examples" class="required-field">Exemplos:</label>
+        <textarea type="text" id="examples" name="examples" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="tips" class="required-field">Dicas:</label>
+        <textarea type="text" id="tips" name="tips" required></textarea>
+      </div>
+
+      <button type="submit" class="btn-action">
+        Cadastrar Estratégia
+      </button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

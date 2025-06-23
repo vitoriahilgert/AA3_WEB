@@ -1,8 +1,9 @@
 package br.ufscar.dc.dsw.AA2.config;
 
+import br.ufscar.dc.dsw.AA2.services.JPAUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -39,20 +40,25 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, @Lazy JPAUserDetailsService customUserDetailsService) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/", "/home", "/login", "/css/**", "/js/**",
-                                "/images/**", "/error").permitAll()
+                        .requestMatchers(Routes.ROOT, Routes.HOME, Routes.LOGIN, Routes.CSS, Routes.JS, Routes.IMAGES, Routes.STRATEGIES).permitAll()
+                        .requestMatchers(Routes.STRATEGIES + Routes.CREATE).hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
-            .formLogin((form) -> form
-                    .loginPage("/login")
-                    .usernameParameter("email")
-                    .defaultSuccessUrl("/home", true) // <-- IMPORTANTE: para onde ir após o login
-                    .failureUrl("/login?error")
-                    .permitAll()
-            );
+                .formLogin((form) -> form
+                        .loginPage(Routes.LOGIN)
+                        .usernameParameter("email")
+                        .defaultSuccessUrl(Routes.HOME, true)
+                        .failureUrl(Routes.LOGIN + "?error")
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl(Routes.LOGOUT)
+                        .logoutSuccessUrl(Routes.LOGIN + "?logout")
+                ).userDetailsService(customUserDetailsService);
         return http.build();
     }
 }

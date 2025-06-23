@@ -6,6 +6,7 @@ import br.ufscar.dc.dsw.AA2.repositories.UserRepository;
 import br.ufscar.dc.dsw.AA2.dtos.UserRecordDto;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +17,9 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -24,12 +28,14 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
 
+    public List<User> findByRole(UserRoleEnum role) { return userRepository.findByRole(role); }
+
     @Transactional
     public User saveUser(UserRecordDto userDto) {
         User user = new User();
         user.setName(userDto.name());
         user.setEmail(userDto.email());
-        user.setPassword(userDto.password());
+        user.setPassword(passwordEncoder.encode(userDto.password()));
         user.setRole(userDto.role());
         return userRepository.save(user);
     }
@@ -39,16 +45,20 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    @Transactional
     public User updateUser(UUID id, UserRecordDto userDto) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user != null) {
-            user.setName(userDto.name());
-            user.setEmail(userDto.email());
-            user.setPassword(userDto.password());
-            user.setRole(userDto.role());
-            return userRepository.save(user);
+        User userToUpdate = this.getUserById(id);
+
+        if (userToUpdate != null) {
+            userToUpdate.setName(userDto.name());
+            userToUpdate.setEmail(userDto.email());
+
+            if (userDto.password() != null && !userDto.password().isEmpty()) {
+                userToUpdate.setPassword(passwordEncoder.encode(userDto.password()));
+            }
+
+            return userRepository.save(userToUpdate);
         }
+
         return null;
     }
 
