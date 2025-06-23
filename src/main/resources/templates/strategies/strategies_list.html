@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en" xmlns:th="http://www.thymeleaf.org/extras/spring-security" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,7 +20,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1300px;
             margin: auto;
             margin-top: 80px;
             background-color: #1f1f1f;
@@ -203,6 +203,43 @@
             word-wrap: break-word;
             white-space: normal;
         }
+        .gallery-modal-content {
+            background-color: #1f1f1f;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px; /* Maior para caber mais imagens */
+            box-shadow: 0 0 10px black;
+            position: relative;
+        }
+
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .image-gallery a {
+            display: block;
+            border: 2px solid #444;
+            border-radius: 5px;
+            overflow: hidden;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .image-gallery a:hover {
+            transform: scale(1.05);
+            border-color: #00BFFF;
+        }
+
+        .image-gallery img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -244,6 +281,7 @@
             <th>Descrição</th>
             <th>Exemplos</th>
             <th>Dicas</th>
+            <th>Imagens</th>
             <th th:if="${role == 'ADMIN'}">Deletar</th>
         </tr>
         </thead>
@@ -258,6 +296,15 @@
             <td th:text="${strategy.description}">Descrição da Estratégia</td>
             <td th:text="${strategy.examples}">Exemplo de Estratégia</td>
             <td th:text="${strategy.tips}">Dica da Estratégia</td>
+            <td class="action-buttons">
+                <button th:if="${!strategy.images.empty}"
+                        th:attr="data-images=${#strings.arrayJoin(strategy.images.![url], ',')}"
+                        onclick="openImageGallery(this)"
+                        title="Ver Imagens">
+                    <i class="fas fa-images"></i>
+                </button>
+                <span th:if="${strategy.images.empty}" style="color: #666;">-</span>
+            </td>
 
             <td sec:authorize="hasRole('ADMIN')" class="action-buttons">
                 <form th:action="@{/strategies/delete}" method="post" style="display: inline;" onsubmit="return confirm('Tem certeza que deseja excluir esta estratégia?');">
@@ -271,6 +318,56 @@
         </tbody>
     </table>
 </div>
+
+<div id="imageGalleryModal" class="modal">
+    <div class="gallery-modal-content">
+        <span class="close" onclick="closeImageGallery()">×</span>
+        <h2>Galeria de Imagens da Estratégia</h2>
+        <div id="image-gallery-container" class="image-gallery">
+            <!-- O JavaScript irá preencher as imagens aqui -->
+        </div>
+    </div>
+</div>
+
+<script>
+    const galleryModal = document.getElementById('imageGalleryModal');
+    const galleryContainer = document.getElementById('image-gallery-container');
+
+    function openImageGallery(button) {
+    galleryContainer.innerHTML = '';
+
+    const imageUrlsString = button.getAttribute('data-images');
+
+    if (imageUrlsString) {
+    const imageUrls = imageUrlsString.split(',');
+
+    imageUrls.forEach(url => {
+    const link = document.createElement('a');
+    link.href = `/${url}`;
+    link.target = '_blank';
+
+    const img = document.createElement('img');
+    img.src = `/${url}`;
+    img.alt = 'Imagem da Estratégia';
+
+    link.appendChild(img);
+    galleryContainer.appendChild(link);
+    });
+    }
+
+    galleryModal.style.display = 'block';
+    }
+
+    function closeImageGallery() {
+    galleryModal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+    if (event.target == galleryModal) {
+    closeImageGallery();
+    }
+    }
+</script>
 
 <script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.bundle.min.js}"></script>
