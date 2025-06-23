@@ -147,6 +147,7 @@
                     <td th:text="${tester.email}">email@testador.com</td>
                     <td class="actions-cell">
                         <button type="button"
+                                th:attr="data-edit-title=#{tester.modal.editTitle}"
                                 th:data-id="${tester.id}"
                                 th:data-name="${tester.name}"
                                 th:data-email="${tester.email}"
