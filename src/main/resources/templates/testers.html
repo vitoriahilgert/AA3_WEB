@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Gerenciar Testadores</title>
+    <title th:text="#{testers.page.title}"></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -19,6 +19,7 @@
         .page-footer {
             text-align: center; padding: 15px 5%; background-color: #1f1f1f;
             color: #888; font-size: 0.85em; border-top: 1px solid #2f2f2f;
+            position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1000;
         }
         .page-header {
             background-color: #1f1f1f; padding: 20px 40px; display: flex;
@@ -113,6 +114,7 @@
 </head>
 <body>
 
+
 <header>
     <div th:replace="_header :: headerContent(user=${user})"></div>
 </header>
@@ -120,25 +122,25 @@
 <main sec:authorize="hasRole('ADMIN')">
     <div class="dashboard-container">
         <div class="content-card">
-            <h3>Gerenciar Testadores</h3>
+            <h3 th:text="#{management.users.card.tester}"></h3>
 
             <div class="page-controls">
                 <div class="sort-section">
-                    <label for="ordenarTesters">Ordenar por:</label>
+                    <label for="ordenarTesters" th:text="#{project.orderby}"></label>
                     <select id="ordenarTesters" onchange="ordenarTabela()" class="button-secondary" style="padding: 8px;">
-                        <option value="name">Nome (A-Z)</option>
-                        <option value="email">E-mail (A-Z)</option>
+                        <option value="name" th:text="#{tester.orderby.name}"></option>
+                        <option value="email" th:text="#{tester.orderby.email}">E-mail (A-Z)</option>
                     </select>
                 </div>
-                <button onclick="abrirModalCadastro()" class="button">+ Novo Testador</button>
+                <button onclick="abrirModalCadastro(this)" class="button" th:text="#{tester.page.new}" th:attr="data-register-title=#{tester.modal.registerTitle}, data-placeholder-register=#{tester.modal.placeholderRegister}"></button>
             </div>
 
             <table id="tabelaDados">
                 <thead>
                 <tr>
-                    <th>Nome</th>
-                    <th>E-mail</th>
-                    <th>Ações</th>
+                    <th th:text="#{tester.table.name}">Nome</th>
+                    <th th:text="#{tester.table.email}">E-mail</th>
+                    <th th:text="#{tester.table.actions}">Ações</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -147,17 +149,18 @@
                     <td th:text="${tester.email}">email@testador.com</td>
                     <td class="actions-cell">
                         <button type="button"
+                                th:attr="data-edit-title=#{tester.modal.editTitle}, data-placeholder-edit=#{tester.modal.placeholderEdit}"
                                 th:data-id="${tester.id}"
                                 th:data-name="${tester.name}"
                                 th:data-email="${tester.email}"
                                 onclick="abrirModalEditar(this)"
                                 title="Editar Testador">
-                            <i class="fas fa-pen"></i>
+                        <i class="fas fa-pen"></i>
                         </button>
                         <button type="button"
                                 th:data-id="${tester.id}"
                                 onclick="abrirModalDeletar(this)"
-                                title="Deletar Testador">
+                                th:title="#{tester.delete}">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>
@@ -165,44 +168,44 @@
                 </tbody>
             </table>
             <div th:if="${#lists.isEmpty(testersList)}" style="text-align: center; padding: 20px; color: #888;">
-                <p>Nenhum testador encontrado.</p>
+                <p th:text="#{tester.empty}"></p>
             </div>
         </div>
     </div>
 </main>
 
 <div sec:authorize="!hasRole('ADMIN')" class="dashboard-container" style="text-align: center;">
-    <h2>Acesso Negado</h2>
-    <p>Você não tem permissão para visualizar esta página.</p>
-    <a th:href="@{/}" class="button">Voltar para a Home</a>
+    <h2 th:text="#{tester.page.denied}"></h2>
+    <p th:text="#{tester.page.denied.description}"></p>
+    <a th:href="@{/}" class="button" th:text="#{tester.page.return}"></a>
 </div>
 
 <div id="modalGerenciar" class="modal">
     <div class="modal-content">
         <span class="close" onclick="fecharModal('modalGerenciar')" title="Fechar">&times;</span>
-        <h2 id="tituloModal">Novo Testador</h2>
+        <h2 id="tituloModal" th:text="#{tester.new}"></h2>
         <form id="formGerenciar" th:action="@{/admin/users/testers}" method="post">
             <input type="hidden" id="id" name="id">
             <input type="hidden" id="action" name="action">
 
             <div class="form-group">
-                <label for="name">Nome Completo:</label>
+                <label for="name" th:text="#{tester.page.name}"></label>
                 <input type="text" id="name" name="name" required>
             </div>
 
             <div class="form-group">
-                <label for="email">E-mail:</label>
+                <label for="email" th:text="#{tester.page.email}"></label>
                 <input type="email" id="email" name="email" required>
             </div>
 
             <div class="form-group">
-                <label for="password">Senha:</label>
+                <label for="password" th:text="#{tester.page.password}"></label>
                 <input type="password" id="password" name="password" minlength="6">
-                <p class="password-hint">Deixe em branco para manter a senha atual ao editar.</p>
+                <p class="password-hint" th:text="#{tester.page.password.hint}"></p>
             </div>
 
             <div class="form-actions" style="justify-content: center;">
-                <input type="submit" id="submitButton" value="Salvar" class="button">
+                <input type="submit" id="submitButton" th:value="#{tester.page.save}" class="button">
             </div>
         </form>
     </div>
@@ -211,21 +214,21 @@
 <div id="modalDeletar" class="modal">
     <div class="modal-content" style="text-align: center;">
         <span class="close" onclick="fecharModal('modalDeletar')" title="Fechar">&times;</span>
-        <h2>Confirmar Exclusão</h2>
-        <p>Tem certeza que deseja excluir este testador? Esta ação não pode ser desfeita.</p>
+        <h2 th:text="#{tester.delete.title}"></h2>
+        <p th:text="#{tester.delete.description}"></p>
         <form id="formDeletar" th:action="@{/admin/users/testers}" method="post">
             <input type="hidden" name="action" value="delete">
             <input type="hidden" id="idDeletar" name="id">
             <div class="form-actions">
-                <button type="button" onclick="fecharModal('modalDeletar')" class="button-secondary">Cancelar</button>
-                <input type="submit" value="Confirmar Exclusão" class="button" style="background-color: #DC143C;">
+                <button type="button" onclick="fecharModal('modalDeletar')" class="button-secondary" th:text="#{tester.cancel}"></button>
+                <input type="submit" th:value="#{tester.confirm}" class="button" style="background-color: #DC143C;">
             </div>
         </form>
     </div>
 </div>
 
 <footer class="page-footer">
-    © <span th:text="${#dates.year(#dates.createNow())}">2024</span> GameTests Platform. Todos os direitos reservados.
+    © <span th:text="${#dates.year(#dates.createNow())}">2024</span> <span th:text="#{footer.text}"></span>
 </footer>
 
 <script>
@@ -233,15 +236,17 @@
         const id = buttonElement.dataset.id;
         const name = buttonElement.dataset.name;
         const email = buttonElement.dataset.email;
+        const editTitle = buttonElement.getAttribute('data-edit-title');
+        const placeholderEdit = buttonElement.getAttribute('data-placeholder-edit');
 
-        document.getElementById('tituloModal').innerText = 'Editar Testador';
+        document.getElementById('tituloModal').innerText = editTitle;
         document.getElementById('formGerenciar').reset();
         document.getElementById('id').value = id;
         document.getElementById('action').value = 'update';
         document.getElementById('name').value = name;
         document.getElementById('email').value = email;
         document.getElementById('password').removeAttribute('required');
-        document.getElementById('password').placeholder = 'Deixe em branco para não alterar';
+        document.getElementById('password').placeholder = placeholderEdit;
         document.getElementById('submitButton').value = 'Salvar Alterações';
         document.getElementById('modalGerenciar').style.display = 'block';
         document.getElementById('name').focus();
@@ -253,13 +258,16 @@
         document.getElementById('modalDeletar').style.display = 'block';
     }
 
-    function abrirModalCadastro() {
-        document.getElementById('tituloModal').innerText = 'Cadastrar Novo Testador';
+    function abrirModalCadastro(button) {
+        const tituloCadastro = button.getAttribute("data-register-title")
+        const placeholderCadastro = button.getAttribute("data-placeholder-register")
+
+        document.getElementById('tituloModal').innerText = tituloCadastro;
         document.getElementById('formGerenciar').reset();
         document.getElementById('id').value = '';
         document.getElementById('action').value = 'create';
         document.getElementById('password').setAttribute('required', 'required');
-        document.getElementById('password').placeholder = 'Mínimo 6 caracteres';
+        document.getElementById('password').placeholder = placeholderCadastro;
         document.getElementById('submitButton').value = 'Cadastrar';
         document.getElementById('modalGerenciar').style.display = 'block';
         document.getElementById('name').focus();
