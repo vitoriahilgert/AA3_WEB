@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -41,16 +42,17 @@ public class StrategyController {
             @RequestParam("description") String description,
             @RequestParam("examples") String examples,
             @RequestParam("tips") String tips,
+            @RequestParam("images") List<MultipartFile> imagesFiles,
             RedirectAttributes redirectAttributes
     ) {
         try {
             StrategyDTO strategyDTO = new StrategyDTO(name, description, examples, tips, null);
 
-            strategyService.insert(strategyDTO);
+            strategyService.insert(strategyDTO, imagesFiles);
 
             redirectAttributes.addFlashAttribute("successMessage", "Estratégia criada com sucesso!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao criar a estratégia!");
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao criar a estratégia!" + e.getMessage());
         }
         return "redirect:" + Routes.STRATEGIES;
     }

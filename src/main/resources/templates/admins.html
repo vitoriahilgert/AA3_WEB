@@ -34,7 +34,7 @@
         }
         .page-header .user-info button:hover { text-decoration: underline; }
         .dashboard-container {
-            flex-grow: 1; padding: 30px 5%; max-width: 1200px; margin: 0 auto;
+            flex-grow: 1; padding: 30px 5%; min-height: 85vh; max-width: 1200px; margin: 0 auto;
             width: 100%;
         }
         .content-card {
@@ -277,8 +277,8 @@
     window.onclick = function(event) {
         const modalCadastro = document.getElementById('modalAdministrador');
         const modalDeletar = document.getElementById('modalDeletar');
-        if (event.target == modalCadastro) fecharModal('modalAdministrador');
-        if (event.target == modalDeletar) fecharModal('modalDeletar');
+        if (event.target === modalCadastro) fecharModal('modalAdministrador');
+        if (event.target === modalDeletar) fecharModal('modalDeletar');
     }
 
     document.addEventListener('keydown', function(event) {
