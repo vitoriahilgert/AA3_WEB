@@ -129,6 +129,8 @@ public class TestSessionService {
         testSession.setStatus(TestSessionStatusEnum.FINISHED);
         testSession.setFinishDateTime(LocalDateTime.now());
 
+        testSessionRepository.save(testSession);
+
         System.out.println("Sessão de teste de id igual a " + sessionId + " finalizada pelo taskScheduler");
     }
 
