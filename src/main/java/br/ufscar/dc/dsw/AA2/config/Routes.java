@@ -12,6 +12,7 @@ public class Routes {
 
 
     // resources
+    public static final String UPLOADS = "/uploads/**";
     public static final String CSS = "/css/**";
     public static final String JS = "/js/**";
     public static final String IMAGES = "/images/**";
