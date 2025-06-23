@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cadastrar Novo Administrador</title>
+  <title th:text="#{create.strategy.title}"></title>
   <style>
           body {
                font-family: 'Segoe UI', sans-serif;
@@ -239,7 +239,7 @@
 
             .btn-action {
                 background-color: #00BFFF;
-                color: white
+                color: white;
                 border: none;
                 font-size: 16px;
                 transition: background-color 0.3s ease;
@@ -268,34 +268,34 @@
 <header th:switch="${role}">
   <div th:case="'ADMIN'" class="admin-header">
     <div class="logo-title">
-      <h1>Painel Administrativo</h1>
-      <p>GameTests Management Suite</p>
+      <h1 th:text="#{header.admin.title}"></h1>
+      <p th:text="#{header.slogan.logged}"></p>
     </div>
     <div class="user-info">
       <span th:text="${'Olá, ' + user.name + '!'}">Olá, <strong><span th:text="${user.name}"></span></strong>!</span>
-      <form th:action="@{/logout}" method="post">
-        <button type="submit">Sair</button>
+      <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 20px;">
+        <button type="submit" class="logout-button" th:text="#{logout.button}"></button>
       </form>
     </div>
   </div>
 
   <div th:case="'TESTER'" class="testador-header">
     <div class="logo-title">
-      <h1>Painel do Testador</h1>
-      <p>Gerencie suas sessões de teste</p>
+      <h1 th:text="#{header.tester.title}"></h1>
+      <p th:text="#{create.strategy.tester.subtitle}"></p>
     </div>
     <div class="user-info">
       <span th:text="${'Olá, ' + user.name + '!'}">Olá, <strong><span th:text="${user.name}"></span></strong>!</span>
       <form th:action="@{/logout}" method="post">
-        <button type="submit">Sair</button>
+        <button type="submit" th:text="#{logout.button}"></button>
       </form>
     </div>
   </div>
 
   <div th:case="*" class="testador-header">
     <div class="logo-title">
-      <h1>GameTests</h1>
-      <p>Sistema de Gerenciamento de Testes</p>
+      <h1 th:text="#{header.logo}"></h1>
+      <p th:text="#{create.strategy.tester.slogan}"></p>
     </div>
     <div class="auth-links">
       <form th:action="@{/login}" method="get">
@@ -308,39 +308,35 @@
 <div class="container">
   <div class="header">
     <form th:action="@{/strategies}" method="get" style="display: inline;">
-      <button type="submit" class="btn-action" title="Voltar">
-        Voltar para listagem
-      </button>
+      <button type="submit" class="btn-action" th:title="#{strategy.back}" th:text="#{create.strategy.return}"></button>
     </form>
 
-    <h1>Cadastrar Nova Estratégia</h1>
+    <h1 th:text="#{create.strategy.title}"></h1>
   </div>
 
   <div class="modal-body">
     <form method="POST" th:action="@{/strategies/create}">
       <div class="form-group">
-        <label for="name" class="required-field">Nome:</label>
+        <label for="name" class="required-field" th:text="#{create.name}"></label>
         <input type="text" id="name" name="name" required />
       </div>
 
       <div class="form-group">
-        <label for="description" class="required-field">Descrição:</label>
+        <label for="description" class="required-field" th:text="#{create.description}"></label>
         <textarea type="text" id="description" name="description" required></textarea>
       </div>
 
       <div class="form-group">
-        <label for="examples" class="required-field">Exemplos:</label>
+        <label for="examples" class="required-field" th:text="#{create.example}"></label>
         <textarea type="text" id="examples" name="examples" required></textarea>
       </div>
 
       <div class="form-group">
-        <label for="tips" class="required-field">Dicas:</label>
+        <label for="tips" class="required-field" th:text="#{create.hint}"></label>
         <textarea type="text" id="tips" name="tips" required></textarea>
       </div>
 
-      <button type="submit" class="btn-action">
-        Cadastrar Estratégia
-      </button>
+      <button type="submit" class="btn-action" th:text="#{create.strategy.register}"></button>
     </form>
   </div>
 </div>

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org/extras/spring-security">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <title>Gerenciar Projetos</title> <style>
+    <title th:text="#{project.page.title}"></title> <style>
     body {
         font-family: 'Segoe UI', sans-serif;
         background-color: #121212;
@@ -278,36 +278,36 @@
 <header th:switch="${session.usuario?.papel}">
     <div th:case="'ADMIN'" class="admin-header">
         <div class="logo-title">
-            <h1>Painel Administrativo</h1> <p>GameTests Management Suite</p> </div>
+            <h1 th:text="#{header.admin.title}"></h1> <p th:text="#{header.slogan.logged}"></p> </div>
         <div class="user-info">
             <span th:text="${'Olá, ' + session.usuario.nome + '!'}">Olá, <strong><span th:text="${session.usuario.nome}"></span></strong>!</span> <a th:href="@{/logout}">Sair</a> </div>
     </div>
     <div th:case="'TESTADOR'" class="testador-header">
         <div class="logo-title">
-            <h1>Painel do Testador</h1> <p>Gerencie suas sessões de teste</p> </div>
+            <h1 th:text="#{header.tester.title}"></h1> <p th:text="#{project.page.tester.subtitle}"></p> </div>
         <div class="user-info">
             <span th:text="${'Olá, ' + session.usuario.nome + '!'}">Olá, <strong><span th:text="${session.usuario.nome}"></span></strong>!</span> <a th:href="@{/logout}">Sair</a> </div>
     </div>
     <div th:case="*" class="testador-header">
         <div class="logo-title">
-            <h1>GameTests</h1> <p>Sistema de Gerenciamento de Testes</p> </div>
+            <h1 th:text="#{header.logo}"></h1> <p th:text="#{project.page.tester.slogan}"></p> </div>
         <div class="user-info">
             <a th:href="@{/login}">Login</a> </div>
     </div>
 </header>
 
 <div class="container">
-    <h1>Gerenciar Projetos</h1> <div>
-    <label>Ordenar por:</label>
+    <h1 th:text="#{project.page.title}"></h1> <div>
+    <label th:text="#{project.orderby}"></label>
     <select id="ordenar" onchange="ordenarProjetos()">
-    <option value="nome">Nome (A-Z)</option> <option value="data">Data de Criação</option>
+    <option value="nome" th:text="#{project.orderby.name}"></option> <option value="data" th:text="#{project.orderby.date}"></option>
     </select>
-    <button onclick="abrirModalCadastro()">+ Novo Projeto</button> </div>
+    <button onclick="abrirModalCadastro(this)" th:text="#{project.page.button.new}" th:attr="data-register-title=#{project.modal.registerTitle}"></button> </div>
 
     <table id="tabelaProjetos">
         <thead>
         <tr>
-            <th>Nome</th> <th>Descrição</th> <th>Data de Criação</th> <th>Ações</th> </tr>
+            <th th:text="#{project.table.name}"></th> <th th:text="#{project.table.description}"></th> <th th:text="#{project.table.date}"></th> <th th:text="#{project.table.action}"></th> </tr>
         </thead>
         <tbody>
         <tr th:each="project : ${projectList}">
@@ -318,22 +318,23 @@
                 <button th:attr="data-project-id=${project.id},
                    data-project-name=${project.name},
                    data-project-description=${project.description},
-                   data-project-allowed-members=${project.allowedMembers.![id] != null ? #strings.arrayJoin(project.allowedMembers.![id], ',') : ''}"
+                   data-project-allowed-members=${project.allowedMembers.![id] != null ? #strings.arrayJoin(project.allowedMembers.![id], ',') : ''},
+                   data-edit-title=#{project.modal.editTitle}"
                         onclick="abrirModalEditar(this)"
-                        title="Editar"
+                        th:title="#{project.page.edit}"
                         class="btn-action">
                     <i class="fas fa-pen"></i>
                 </button>
 
                 <button th:attr="data-project-id=${project.id}"
                         onclick="abrirModalDeletar(this)"
-                        title="Deletar"
+                        th:title="#{project.page.delete}"
                         class="btn-action">
                     <i class="fas fa-trash"></i>
                 </button>
 
                 <a th:href="@{/sessoes/listarPorProjeto(idProjeto=${project.id})}"
-                   title="Ver Sessões"
+                   th:title="#{project.page.see}"
                    class="btn-action">
                     <i class="fas fa-clipboard-list"></i>
                 </a>
@@ -346,15 +347,15 @@
 <div id="modalProjeto" class="modal">
     <div class="modal-content">
         <span class="close" onclick="fecharModal('modalProjeto')">&times;</span>
-        <h2 id="tituloModal" >Novo Projeto</h2>
+        <h2 id="tituloModal" th:text="#{project.page.new}"></h2>
         <form id="formProjeto" th:action="@{/projetos}" method="post">
             <input type="hidden" id="id" name="id">
-            <label >Nome:</label>
+            <label th:text="#{project.page.name}"></label>
             <input type="text" id="name" name="name" required>
 
-            <label >Descrição:</label>
+            <label th:text="#{project.page.description}"></label>
             <textarea id="description" name="description" required></textarea>
-            <label for="allowedMembersIds">Membros Permitidos:</label>
+            <label for="allowedMembersIds" th:text="#{project.page.members}"></label>
             <div id="allowedMembersCheckboxes" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px;">
                 <div th:each="user : ${allTesters}" style="display: flex; align-items: center;">
                     <input
@@ -368,7 +369,7 @@
                 </div>
             </div>
             <div id="cadastroSubmitContainer">
-                <input type="submit" id="cadastroSubmit" value="Salvar"> </div>
+                <input type="submit" id="cadastroSubmit" th:value="#{project.page.save}"> </div>
         </form>
     </div>
 </div>
@@ -376,10 +377,10 @@
 <div id="modalDeletar" class="modal">
     <div class="modal-content">
         <span class="close" onclick="fecharModal('modalDeletar')">&times;</span>
-        <h2>Confirmar Exclusão</h2> <p>Deseja realmente excluir este projeto?</p> <form id="formDeletar" method="get" th:action="@{/projetos}">
+        <h2 th:text="#{project.delete.title}"></h2> <p th:text="#{project.delete.description}"></p> <form id="formDeletar" method="get" th:action="@{/projetos}">
         <input type="hidden" name="acao" value="deletar">
         <input type="hidden" id="idDeletar" name="id">
-        <input type="submit" value="Confirmar"> <button type="button" onclick="fecharModal('modalDeletar')">Cancelar</button> </form>
+        <input type="submit" th:value="#{project.delete.confirm}"> <button type="button" onclick="fecharModal('modalDeletar')" th:text="#{project.delete.cancel}"></button> </form>
     </div>
 </div>
 
@@ -392,8 +393,10 @@
         window.location.href = 'trocarIdioma?lang=' + lang;
     }
 
-    function abrirModalCadastro() {
-        document.getElementById('tituloModal').innerText = 'Novo Projeto';
+    function abrirModalCadastro(button) {
+        const tituloCadastro = button.getAttribute("data-register-title")
+
+        document.getElementById('tituloModal').innerText = tituloCadastro;
         document.getElementById('id').value = '';
         document.getElementById('name').value = '';
         document.getElementById('description').value = '';
@@ -409,8 +412,9 @@
         const nome = button.getAttribute('data-project-name');
         const descricao = button.getAttribute('data-project-description');
         const allowedMembersString = button.getAttribute('data-project-allowed-members');
+        const editTitle = button.getAttribute('data-edit-title');
 
-        document.getElementById('tituloModal').innerText = 'Editar Projeto';
+        document.getElementById('tituloModal').innerText = editTitle;
         document.getElementById('id').value = id;
         document.getElementById('name').value = nome;
         document.getElementById('description').value = descricao;

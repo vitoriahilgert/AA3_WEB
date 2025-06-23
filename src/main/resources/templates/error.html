@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -59,7 +59,7 @@
 
         .btn-primary {
                 background-color: #00BFFF;
-                color: white
+                color: white;
                 border: none;
                 font-size: 16px;
                 transition: background-color 0.3s ease;
@@ -83,7 +83,7 @@
         <span th:text="${message}"></span>
         <br/><br/>
         <form action="javascript:history.back()" method="get" style="display: inline;">
-            <button type="submit" class="btn-primary" title="Voltar">
+            <button type="submit" class="btn-primary" th:title="#{error.return.title}" th:text="#{error.return}">
                 Voltar à página anterior
             </button>
         </form>

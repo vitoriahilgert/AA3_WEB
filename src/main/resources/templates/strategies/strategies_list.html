@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciar Estratégias</title>
+    <title th:text="#{strategy.page.title}"></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
     <style>
         body {
@@ -303,7 +303,7 @@
 
         .btn-create {
             background-color: #00BFFF;
-            color: white
+            color: white;
             border: none;
             font-size: 16px;
             transition: background-color 0.3s ease;
@@ -345,21 +345,21 @@
 <header th:switch="${role}">
     <div th:case="'ADMIN'" class="admin-header">
         <div class="logo-title">
-            <h1>Painel Administrativo</h1>
-            <p>GameTests Management Suite</p>
+            <h1 th:text="#{header.admin.title}"></h1>
+            <p th:text="#{header.slogan.logged}"></p>
         </div>
         <div class="user-info">
             <span th:text="${'Olá, ' + user.name + '!'}">Olá, <strong><span th:text="${user.name}"></span></strong>!</span>
-            <form th:action="@{/logout}" method="post">
-                <button type="submit">Sair</button>
+            <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 20px;">
+                <button type="submit" class="logout-button">Sair</button>
             </form>
         </div>
     </div>
 
     <div th:case="'TESTER'" class="testador-header">
         <div class="logo-title">
-            <h1>Painel do Testador</h1>
-            <p>Gerencie suas sessões de teste</p>
+            <h1 th:text="#{header.tester.title}"></h1>
+            <p th:text="#{strategy.page.tester.subtitle}"></p>
         </div>
         <div class="user-info">
             <span th:text="${'Olá, ' + user.name + '!'}">Olá, <strong><span th:text="${user.name}"></span></strong>!</span>
@@ -371,8 +371,8 @@
 
     <div th:case="*" class="testador-header">
         <div class="logo-title">
-            <h1>GameTests</h1>
-            <p>Sistema de Gerenciamento de Testes</p>
+            <h1 th:text="#{header.logo}"></h1>
+            <p th:text="#{strategy.page.tester.slogan}"></p>
         </div>
         <div class="auth-links">
             <form th:action="@{/login}" method="get">
@@ -385,18 +385,14 @@
 <div class="container">
     <div class="header">
         <form th:action="@{/home}" method="get" style="display: inline;">
-            <button type="submit" class="btn-create" title="Voltar">
-                Voltar
-            </button>
+            <button type="submit" class="btn-create" th:title="#{strategy.back} th:text="#{strategy.back}"></button>
         </form>
 
-        <h1 th:text="Estratégias">Estratégias</h1>
+        <h1 th:text="#{strategy.page.strat}"></h1>
 
         <div sec:authorize="hasRole('ADMIN')">
             <form th:action="@{/strategies/create}" method="get">
-                <button type="submit" title="Criar" class="btn-create">
-                    Criar Estratégia
-                </button>
+                <button type="submit" th:title="#{strategy.create}" class="btn-create" th:text="#{strategy.page.create}"></button>
             </form>
         </div>
     </div>
@@ -412,17 +408,17 @@
     <table>
         <thead>
         <tr>
-            <th>Nome</th>
-            <th>Descrição</th>
-            <th>Exemplos</th>
-            <th>Dicas</th>
-            <th th:if="${role == 'ADMIN'}">Deletar</th>
+            <th th:text="#{strategy.table.name}"></th>
+            <th th:text="#{strategy.table.description}"></th>
+            <th th:text="#{strategy.table.example}"></th>
+            <th th:text="#{strategy.table.hint}"></th>
+            <th th:if="${role == 'ADMIN'}" th:text="#{strategy.table.delete}"></th>
         </tr>
         </thead>
         <tbody>
 
         <tr th:if="${strategies.empty}">
-            <td colspan="5" class="no-data">Nenhuma estratégia cadastrada.</td>
+            <td colspan="5" class="no-data" th:text="#{strategy.page.empty}"></td>
         </tr>
 
         <tr th:each="strategy : ${strategies}">
@@ -432,9 +428,9 @@
             <td th:text="${strategy.tips}">Dica da Estratégia</td>
 
             <td sec:authorize="hasRole('ADMIN')" class="action-buttons">
-                <form th:action="@{/strategies/delete}" method="post" style="display: inline;" onsubmit="return confirm('Tem certeza que deseja excluir esta estratégia?');">
+                <form th:action="@{/strategies/delete}" method="post" style="display: inline;" onsubmit="return confirm(th:text"#{}");">
                     <input type="hidden" name="id" th:value="${strategy.id}" />
-                    <button type="submit" class="btn-delete" title="Deletar">
+                    <button type="submit" class="btn-delete" th:title="#{strategy.table.delete}">
                         <i class="fas fa-trash"></i>
                     </button>
                 </form>

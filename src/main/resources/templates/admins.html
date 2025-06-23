@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Gerenciar Administradores</title>
+    <title th:text="#{admins.page.title}"></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -19,6 +19,7 @@
         .page-footer {
             text-align: center; padding: 15px 5%; background-color: #1f1f1f;
             color: #888; font-size: 0.85em; border-top: 1px solid #2f2f2f;
+            position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1000;
         }
         .page-header {
             background-color: #1f1f1f; padding: 20px 40px; display: flex;
@@ -115,14 +116,14 @@
 
 <div sec:authorize="isAuthenticated()" class="page-header">
     <div class="logo-title">
-        <h1 sec:authorize="hasRole('ADMIN')">Painel Administrativo</h1>
-        <h1 sec:authorize="hasRole('TESTER') and !hasRole('ADMIN')">Painel do Testador</h1>
-        <p>GameTests Management Suite</p>
+        <h1 sec:authorize="hasRole('ADMIN')" th:text="#{header.admin.title}"></h1>
+        <h1 sec:authorize="hasRole('TESTER') and !hasRole('ADMIN')" th:text="#{header.tester.title}"></h1>
+        <p th:text="#{header.slogan.logged}"></p>
     </div>
     <div class="user-info">
-        <span>Olá, <strong sec:authentication="principal.username"></strong>!</span>
+        <span th:text="${'Olá, ' + user.name + '!'}">Olá, <strong><span th:text="${user.name}"></span></strong>!</span>
         <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 20px;">
-            <button type="submit" class="logout-button">Sair</button>
+            <button type="submit" class="logout-button" th:text="#{logout.button}"></button>
         </form>
     </div>
 </div>
@@ -130,25 +131,25 @@
 <main sec:authorize="hasRole('ADMIN')">
     <div class="dashboard-container">
         <div class="content-card">
-            <h3>Gerenciar Administradores</h3>
+            <h3 th:text="#{admins.page.title}"></h3>
 
             <div class="page-controls">
                 <div class="sort-section">
-                    <label for="ordenar">Ordenar por:</label>
+                    <label for="ordenar" th:text="#{project.orderby}"></label>
                     <select id="ordenar" onchange="ordenarAdministradores()" class="button-secondary" style="padding: 8px;">
-                        <option value="nome">Nome (A-Z)</option>
-                        <option value="email">E-mail (A-Z)</option>
+                        <option value="nome" th:text="#{admins.orderby.name}"></option>
+                        <option value="email" th:text="#{admins.orderby.email}"></option>
                     </select>
                 </div>
-                <button onclick="abrirModalCadastro()" class="button">+ Novo Administrador</button>
+                <button onclick="abrirModalCadastro(this)" class="button" th:text="#{admins.page.new}" th:attr="data-register-title=#{admins.modal.registerTitle}, data-placeholder-register=#{admins.modal.placeholderRegister}"></button>
             </div>
 
             <table id="tabelaAdministradores">
                 <thead>
                 <tr>
-                    <th>Nome</th>
-                    <th>E-mail</th>
-                    <th>Ações</th>
+                    <th th:text="#{admins.table.name}"></th>
+                    <th th:text="#{admins.table.email}"></th>
+                    <th th:text="#{admins.table.actions}"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -157,18 +158,19 @@
                     <td th:text="${admin.email}">email@admin.com</td>
                     <td class="actions-cell">
                         <button type="button"
+                                th:attr="data-edit-title=#{admins.modal.editTitle}, data-placeholder-edit=#{admins.modal.placeholderEdit}"
                                 th:data-id="${admin.id}"
                                 th:data-name="${admin.name}"
                                 th:data-email="${admin.email}"
                                 onclick="abrirModalEditar(this)"
-                                title="Editar Administrador">
+                                title="Editar Testador">
                             <i class="fas fa-pen"></i>
                         </button>
 
                         <button type="button"
                                 th:data-id="${admin.id}"
                                 onclick="abrirModalDeletar(this)"
-                                title="Deletar Administrador">
+                                th:title="#{admins.delete}">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>
@@ -176,45 +178,45 @@
                 </tbody>
             </table>
             <div th:if="${#lists.isEmpty(listaAdministradores)}" style="text-align: center; padding: 20px; color: #888;">
-                <p>Nenhum administrador encontrado.</p>
+                <p th:text="#{admins.empty}"></p>
             </div>
         </div>
     </div>
 </main>
 
 <div sec:authorize="!hasRole('ADMIN')" class="dashboard-container" style="text-align: center;">
-    <h2>Acesso Negado</h2>
-    <p>Você não tem permissão para visualizar esta página.</p>
-    <a th:href="@{/}" class="button">Voltar para a Home</a>
+    <h2 th:text="#{admins.page.denied}"></h2>
+    <p th:text="#{admins.page.denied.description}"></p>
+    <a th:href="@{/}" class="button" th:text="#{admins.page.return}"></a>
 </div>
 
 
 <div id="modalAdministrador" class="modal">
     <div class="modal-content">
         <span class="close" onclick="fecharModal('modalAdministrador')" title="Fechar">&times;</span>
-        <h2 id="tituloModal">Novo Administrador</h2>
+        <h2 id="tituloModal" th:text="#{admins.new}"></h2>
         <form id="formAdministrador" th:action="@{/admin/users/admins}" method="post">
             <input type="hidden" id="id" name="id">
             <input type="hidden" id="acaoModal" name="action">
 
             <div class="form-group">
-                <label for="nome">Nome Completo:</label>
+                <label for="nome" th:text="#{admins.page.name}"></label>
                 <input type="text" id="nome" name="name" required>
             </div>
 
             <div class="form-group">
-                <label for="email">E-mail:</label>
+                <label for="email" th:text="#{admins.page.email}"></label>
                 <input type="email" id="email" name="email" required>
             </div>
 
             <div class="form-group">
-                <label for="senha">Senha:</label>
+                <label for="senha"th:text="#{admins.page.password}"></label>
                 <input type="password" id="senha" name="password" minlength="6">
-                <p class="password-hint">Deixe em branco para manter a senha atual ao editar.</p>
+                <p class="password-hint" th:text="#{admins.page.password.hint}"></p>
             </div>
 
             <div class="form-actions" style="justify-content: center;">
-                <input type="submit" id="cadastroSubmit" value="Salvar" class="button">
+                <input type="submit" id="cadastroSubmit" th:value="#{admins.page.save}" class="button">
             </div>
         </form>
     </div>
@@ -223,15 +225,15 @@
 <div id="modalDeletar" class="modal">
     <div class="modal-content" style="text-align: center;">
         <span class="close" onclick="fecharModal('modalDeletar')" title="Fechar">&times;</span>
-        <h2>Confirmar Exclusão</h2>
-        <p>Tem certeza que deseja excluir este administrador? Esta ação não pode ser desfeita.</p>
+        <h2 th:text="#{admins.delete.title}"></h2>
+        <p th:text="#{admins.delete.description}"></p>
 
         <form id="formDeletar" th:action="@{/admin/users/admins}" method="post">
             <input type="hidden" name="action" value="delete">
             <input type="hidden" id="idDeletar" name="id">
             <div class="form-actions">
-                <button type="button" onclick="fecharModal('modalDeletar')" class="button-secondary">Cancelar</button>
-                <input type="submit" value="Confirmar Exclusão" class="button" style="background-color: #DC143C;">
+                <button type="button" onclick="fecharModal('modalDeletar')" class="button-secondary" th:text="#{admins.cancel}"></button>
+                <input type="submit" th:value="#{admins.confirm}" class="button" style="background-color: #DC143C;">
             </div>
         </form>
     </div>
@@ -239,7 +241,7 @@
 
 
 <footer class="page-footer">
-    © <span th:text="${#dates.year(#dates.createNow())}">2024</span> GameTests Platform. Todos os direitos reservados.
+    © <span th:text="${#dates.year(#dates.createNow())}">2024</span> <span th:text="#{footer.text}"></span>
 </footer>
 
 <script>
@@ -248,15 +250,17 @@
         const id = buttonElement.dataset.id;
         const name = buttonElement.dataset.name;
         const email = buttonElement.dataset.email;
+        const editTitle = buttonElement.getAttribute('data-edit-title');
+        const placeholderEdit = buttonElement.getAttribute('data-placeholder-edit');
 
-        document.getElementById('tituloModal').innerText = 'Editar Administrador';
+        document.getElementById('tituloModal').innerText = editTitle;
         document.getElementById('formAdministrador').reset();
         document.getElementById('id').value = id;
         document.getElementById('acaoModal').value = 'update';
         document.getElementById('nome').value = name;
         document.getElementById('email').value = email;
         document.getElementById('senha').removeAttribute('required');
-        document.getElementById('senha').placeholder = 'Deixe em branco para não alterar';
+        document.getElementById('senha').placeholder = placeholderEdit;
         document.getElementById('cadastroSubmit').value = 'Salvar Alterações';
         document.getElementById('modalAdministrador').style.display = 'block';
         document.getElementById('nome').focus();
@@ -268,13 +272,16 @@
         document.getElementById('modalDeletar').style.display = 'block';
     }
 
-    function abrirModalCadastro() {
-        document.getElementById('tituloModal').innerText = 'Cadastrar Novo Administrador';
+    function abrirModalCadastro(button) {
+        const tituloCadastro = button.getAttribute('data-register-title');
+        const placeholderCadastro = button.getAttribute('data-placeholder-register');
+
+        document.getElementById('tituloModal').innerText = tituloCadastro;
         document.getElementById('formAdministrador').reset();
         document.getElementById('id').value = '';
         document.getElementById('acaoModal').value = 'create';
         document.getElementById('senha').setAttribute('required', 'required');
-        document.getElementById('senha').placeholder = 'Mínimo 6 caracteres';
+        document.getElementById('senha').placeholder = placeholderCadastro;
         document.getElementById('cadastroSubmit').value = 'Cadastrar';
         document.getElementById('modalAdministrador').style.display = 'block';
         document.getElementById('nome').focus();
