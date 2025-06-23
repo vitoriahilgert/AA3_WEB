@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title th:text="|Erro ${status} - ${error}|">Página de Erro</title>
@@ -64,12 +64,12 @@
 
 
         .btn-primary {
-            background-color: #00BFFF;
-            color: white
-            border: none;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
+                background-color: #00BFFF;
+                color: white;
+                border: none;
+                font-size: 16px;
+                transition: background-color 0.3s ease;
+            }
 
         .btn-primary:hover {
             background-color: #009ACD;
@@ -85,14 +85,13 @@
 
     <h2 th:text="${error}"></h2>
 
-
-    <span th:text="${message}"></span>
-    <br/><br/>
-    <form action="javascript:history.back()" method="get" style="display: inline;">
-        <button type="submit" class="btn-primary" title="Voltar">
-            Voltar à página anterior
-        </button>
-    </form>
-</div>
+        <span th:text="${message}"></span>
+        <br/><br/>
+        <form action="javascript:history.back()" method="get" style="display: inline;">
+            <button type="submit" class="btn-primary" th:title="#{error.return.title}" th:text="#{error.return}">
+                Voltar à página anterior
+            </button>
+        </form>
+    </div>
 </body>
 </html>

@@ -12,7 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- CSS Unificado de todas as páginas -->
-    <style>
+    <style>     
         /* === Estilos do Conteúdo (Comuns e Específicos) === */
         .page-content-container, .dashboard-container {
             flex-grow: 1; padding: 30px 5%; max-width: 1200px; margin: 0 auto;
@@ -93,17 +93,14 @@
 <!-- ======================= CONTEÚDO PRINCIPAL CONDICIONAL ======================= -->
 <main>
     <!-- ===== CONTEÚDO PARA USUÁRIO NÃO LOGADO ===== -->
-    <div sec:authorize="isAnonymous()" class="page-content-container" id="container-anonymous">
-        <h2 class="welcome-title">Bem-vindo(a) à Nossa Plataforma!</h2>
-        <p class="welcome-subtitle">
-            Explore um repositório completo de estratégias de teste, projetado para ajudar você a
-            melhorar a qualidade e a eficiência dos seus projetos de software.
-        </p>
+    <div sec:authorize="isAnonymous()" class="page-content-container">
+        <h2 class="welcome-title" th:text="#{home.welcome}"></h2>
+        <p class="welcome-subtitle" th:text="#{home.welcome.subtitle}"></p>
         <div class="management-card" style="max-width: 500px; text-align: center;">
-            <h3>Estratégias de Teste</h3>
-            <p>Navegue por diversas estratégias, cada uma com descrições detalhadas, exemplos práticos e dicas.</p>
+            <h3 th:text="#{strategy.card.title}"></h3>
+            <p th:text="#{strategy.card.description}"></p>
             <div class="actions">
-                <a th:href="@{/strategies}" class="button" style="color: black; width: fit-content; margin-inline: auto">Visualizar Estratégias</a>
+                <a th:href="@{/strategies}" class="button" th:text="#{strategy.card.button.view}" style="color: black; width: fit-content; margin-inline: auto"></a>
             </div>
         </div>
     </div>
@@ -111,37 +108,35 @@
     <!-- ===== CONTEÚDO PARA ADMINISTRADOR ===== -->
     <div sec:authorize="hasRole('ADMIN')" class="dashboard-container">
         <div class="welcome-message">
-            <h2>Bem-vindo(a) de volta!</h2>
-            <p>Utilize os painéis abaixo para gerenciar os recursos do sistema.</p>
+            <h2 th:text="#{home.welcome.admin}"></h2>
+            <p th:text="#{home.welcome.admin.subtitle}"></p>
         </div>
         <div class="management-sections">
             <div class="management-card">
-                <h3>Gerenciar Projetos</h3>
-                <p>Crie novos projetos, edite informações existentes ou remova projetos obsoletos.</p>
-                <div class="actions">
-                    <a th:href="@{/projetos}" class="button secondary">Listar/Gerenciar Projetos</a>
-                </div>
+                <h3 th:text="#{project.card.title}"></h3>
+                <p th:text="#{project.card.description}"></p>
+                <div class="actions"><a th:href="@{/projetos}" class="button secondary" th:text="#{project.card.button}"></a></div>
             </div>
             <div class="management-card">
-                <h3>Gerenciar Estratégias</h3>
-                <p>Defina e refine as estratégias de teste que podem ser aplicadas nas sessões.</p>
+                <h3 th:text="#{strategy.card.admin.title}"></h3>
+                <p th:text="#{strategy.card.admin.description}"></p>
                 <div class="actions" style="display: flex; flex-direction: column; gap: 10px;">
-                    <a th:href="@{/strategies}" class="button secondary">Listar/Gerenciar</a>
-                    <a th:href="@{/strategies/create}" class="button">Criar Nova</a>
+                    <a th:href="@{/strategies}" class="button secondary" th:text="#{strategy.card.admin.button}"></a>
+                    <a th:href="@{/strategies/create} "class="button" th:text="#{strategy.card.button.create}"></a>
                 </div>
             </div>
             <div class="management-card">
-                <h3>Gerenciar Usuários</h3>
-                <p>Administre contas de usuário, atribua papéis e monitore atividades.</p>
+                <h3 th:text="#{management.users.card.title}"></h3>
+                <p th:text="#{management.users.card.description}"></p>
                 <div class="actions" style="display: flex; flex-direction: column; gap: 10px;">
-                    <a th:href="@{/admin/users/admins}" class="button secondary">Gerenciar Admins</a>
-                    <a th:href="@{/admin/users/testers}" class="button secondary">Gerenciar Testadores</a>
+                    <a th:href="@{/admin/users/admins}" class="button secondary" th:text="#{management.users.card.admin}"></a>
+                    <a th:href="@{/admin/users/testers}" class="button secondary" th:text="#{management.users.card.tester}"></a>
                 </div>
             </div>
             <div class="management-card">
-                <h3>Gerenciar Sessões de Teste</h3>
-                <p>Visualize todas as sessões de teste, edite detalhes ou remova sessões.</p>
-                <div class="actions"><a th:href="@{/sessions}" class="button secondary">Listar Todas as Sessões</a></div>
+                <h3 th:text="#{session.card.title}"></h3>
+                <p th:text="#{session.card.description}"></p>
+                <div class="actions"><a th:href="@{/sessoes}" class="button secondary" th:text="#{session.card.button}"></a></div>
             </div>
         </div>
     </div>
@@ -149,57 +144,58 @@
     <!-- ===== CONTEÚDO PARA TESTADOR ===== -->
     <div sec:authorize="hasRole('TESTER') and !hasRole('ADMIN')" class="dashboard-container">
         <div class="welcome-message">
-            <h2>Bem-vindo(a) ao seu painel!</h2>
-            <p>Aqui você pode iniciar novas sessões de teste, acompanhar seu progresso e visualizar estratégias.</p>
+            <h2 th:text="#{home.welcome.tester}"></h2>
+            <p th:text="#{home.welcome.tester.subtitle}"></p>
             <div class="quick-action">
-                <a th:href="@{/sessions/nova}" class="button-primary">Iniciar Nova Sessão de Teste</a>
+                <a th:href="@{/sessions/nova}" class="button-primary" th:text="#{session.card.tester.button}"></a>
             </div>
         </div>
         <div class="dashboard-grid">
             <div class="main-content-area">
                 <div class="content-card">
-                    <h3>Minhas Sessões Recentes</h3>
+                    <h3 th:text="#{session.card.tester.title}"></h3>
                     <div th:if="${not #lists.isEmpty(sessoesRecentes)}">
                         <div th:each="sessao : ${sessoesRecentes}" class="list-item">
-                            <p><strong>Sessão ID:</strong> <span th:text="${sessao.id}">1</span> | <strong>Projeto ID:</strong> <span th:text="${sessao.idProjeto}">1</span></p>
-                            <p><strong>Estratégia:</strong> <span th:text="${sessao.estrategia != null ? sessao.estrategia.nome : 'N/A'}">TDD</span></p>
+                            <p><strong th:text="#{session.card.ID}"></strong> <span th:text="${sessao.id}">1</span> | <strong th:text="#{session.card.project.ID}"></strong> <span th:text="${sessao.idProjeto}">1</span></p>
+                            <p><strong th:text="#{session.card.strategy}"></strong> <span th:text="${sessao.estrategia != null ? sessao.estrategia.nome : 'N/A'}">TDD</span></p>
                             <p><strong>Status:</strong> <span class="status" th:classappend="'status-' + ${sessao.status}" th:text="${sessao.status}">EM_EXECUCAO</span></p>
-                            <p><strong>Criada em:</strong> <span th:text="${#temporals.format(sessao.dataCriacao, 'dd/MM/yy HH:mm')}">01/01/24 10:00</span></p>
-                            <a th:href="@{/sessions/detalhes(id=${sessao.id})}" class="action-link">Ver Detalhes</a>
+                            <p><strong th:text="#{session.card.created}"></strong> <span th:text="${#temporals.format(sessao.dataCriacao, 'dd/MM/yy HH:mm')}">01/01/24 10:00</span></p>
+                            <a th:href="@{/sessions/detalhes(id=${sessao.id})}" class="action-link" th:text="#{session.card.button.details}"></a>
                         </div>
-                        <a th:href="@{/sessions/listar}" class="view-all-link">Ver Todas as Minhas Sessões</a>
+                        <a th:href="@{/sessions/listar}" class="view-all-link" th:text="#{session.card.button.all}"></a>
+
                     </div>
                     <div th:if="${#lists.isEmpty(sessoesRecentes)}">
-                        <p class="no-data">Nenhuma sessão de teste recente encontrada.</p>
+                        <p class="no-data" th:text="#{session.card.empty}"></p>
                     </div>
                 </div>
                 <div class="content-card">
-                    <h3>Projetos Disponíveis</h3>
+                    <h3 th:text="#{project.card.tester.title}"></h3>
                     <div th:if="${not #lists.isEmpty(projetosDisponiveis)}">
                         <div th:each="projeto : ${projetosDisponiveis}" class="list-item">
                             <p><strong><span th:text="${projeto.nome}"></span></strong> (ID: <span th:text="${projeto.id}"></span>)</p>
                             <p th:text="${projeto.descricao}"></p>
-                            <a th:href="@{/sessions/nova(idProjeto=${projeto.id})}" class="action-link">Iniciar Sessão neste Projeto</a>
+                            <a th:href="@{/sessions/nova(idProjeto=${projeto.id})}" class="action-link" th:text="#{project.card.button.start}"></a>
                         </div>
-                        <a th:href="@{/projetos/listar}" class="view-all-link">Ver Todos os Projetos</a>
+                        <a th:href="@{/projetos/listar}" class="view-all-link" th:text="#{project.card.button.all}"></a>
                     </div>
                     <div th:if="${#lists.isEmpty(projetosDisponiveis)}">
-                        <p class="no-data">Nenhum projeto disponível para iniciar sessões.</p>
+                        <p class="no-data" th:text="#{project.card.empty}"></p>
                     </div>
                 </div>
             </div>
             <div class="sidebar-area">
                 <div class="content-card">
-                    <h3>Estratégias de Teste</h3>
+                    <h3 th:text="#{strategy.card.title}"></h3>
                     <div th:if="${not #lists.isEmpty(estrategias)}">
                         <div th:each="estrategia : ${estrategias}" class="estrategia-item">
                             <h4 th:text="${estrategia.nome}">Nome da Estratégia</h4>
                             <p th:title="${estrategia.descricao}" th:text="${#strings.abbreviate(estrategia.descricao, 100)}">Descrição...</p>
                         </div>
-                        <a th:href="@{/strategies}" class="view-all-link">Ver Todas as Estratégias</a>
+                        <a th:href="@{/strategies}" class="view-all-link" th:text="#{strategy.card.button.all}"></a>
                     </div>
                     <div th:if="${#lists.isEmpty(estrategias)}">
-                        <p class="no-data">Nenhuma estratégia de teste cadastrada.</p>
+                        <p class="no-data" th:text="#{strategy.card.empty}"></p>
                     </div>
                 </div>
             </div>
@@ -208,7 +204,7 @@
 </main>
 
 <footer class="page-footer">
-    © <span th:text="${#dates.year(#dates.createNow())}">2024</span> GameTests Platform. Todos os direitos reservados.
+    © <span th:text="${#dates.year(#dates.createNow())}">2024</span> <span th:text="#{footer.text}"></span>
 </footer>
 
 </body>

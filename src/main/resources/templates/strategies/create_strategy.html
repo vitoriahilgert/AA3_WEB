@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="en" xmlns:th="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cadastrar Novo Administrador</title>
+  <title th:text="#{create.strategy.title}"></title>
   <link rel="stylesheet" th:href="@{/css/styles.css}">
   <style>
           body {
@@ -200,45 +201,43 @@
 <div class="container">
   <div class="header">
     <form th:action="@{/strategies}" method="get" style="display: inline;">
-      <button type="submit" class="btn-action" title="Voltar">
-        Voltar para listagem
-      </button>
+      <button type="submit" class="btn-action" th:title="#{strategy.back}" th:text="#{create.strategy.return}"></button>
     </form>
 
-    <h1>Cadastrar Nova Estratégia</h1>
+    <h1 th:text="#{create.strategy.title}"></h1>
   </div>
 
   <div class="modal-body">
     <form method="POST" th:action="@{/strategies/create}" enctype="multipart/form-data">
       <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
       <div class="form-group">
-        <label for="name" class="required-field">Nome:</label>
+        <label for="name" class="required-field" th:text="#{create.name}"></label>
         <input type="text" id="name" name="name" required />
       </div>
 
       <div class="form-group">
-        <label for="description" class="required-field">Descrição:</label>
+        <label for="description" class="required-field" th:text="#{create.description}"></label>
         <textarea type="text" id="description" name="description" required></textarea>
       </div>
 
       <div class="form-group">
-        <label for="examples" class="required-field">Exemplos:</label>
+        <label for="examples" class="required-field" th:text="#{create.example}"></label>
         <textarea type="text" id="examples" name="examples" required></textarea>
       </div>
 
       <div class="form-group">
-        <label for="tips" class="required-field">Dicas:</label>
+        <label for="tips" class="required-field" th:text="#{create.hint}"></label>
         <textarea type="text" id="tips" name="tips" required></textarea>
       </div>
+
 
       <div class="form-group">
         <label for="images">Imagens para auxiliar a exemplificação (opcional - Se quiser adicionar múltiplas imagens, seleciona-se de uma vez):</label>
         <input type="file" id="images" name="images" multiple="multiple" accept="image/png, image/jpeg, image/gif" onchange="displayFileNames()"/>
       </div>
 
-      <button type="submit" class="btn-action">
-        Cadastrar Estratégia
-      </button>
+      <button type="submit" class="btn-action" th:text="#{create.strategy.register}"></button>
+
     </form>
   </div>
 </div>

@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org/extras/spring-security" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciar Estratégias</title>
+    <title th:text="#{strategy.page.title}"></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <style>
@@ -243,6 +244,7 @@
     </style>
 </head>
 <body>
+
 <header>
     <div th:replace="_header :: headerContent(user=${user})"></div>
 </header>
@@ -250,18 +252,14 @@
 <div class="container">
     <div class="header">
         <form th:action="@{/home}" method="get" style="display: inline;">
-            <button type="submit" class="btn-create" title="Voltar">
-                Voltar
-            </button>
+            <button type="submit" class="btn-create" th:title="#{strategy.back} th:text="#{strategy.back}"></button>
         </form>
 
-        <h1 th:text="Estratégias">Estratégias</h1>
+        <h1 th:text="#{strategy.page.strat}"></h1>
 
         <div sec:authorize="hasRole('ADMIN')">
             <form th:action="@{/strategies/create}" method="get">
-                <button type="submit" title="Criar" class="btn-create">
-                    Criar Estratégia
-                </button>
+                <button type="submit" th:title="#{strategy.create}" class="btn-create" th:text="#{strategy.page.create}"></button>
             </form>
         </div>
     </div>
@@ -277,18 +275,18 @@
     <table>
         <thead>
         <tr>
-            <th>Nome</th>
-            <th>Descrição</th>
-            <th>Exemplos</th>
-            <th>Dicas</th>
+            <th th:text="#{strategy.table.name}"></th>
+            <th th:text="#{strategy.table.description}"></th>
+            <th th:text="#{strategy.table.example}"></th>
+            <th th:text="#{strategy.table.hint}"></th>
             <th>Imagens</th>
-            <th th:if="${role == 'ADMIN'}">Deletar</th>
+            <th th:if="${role == 'ADMIN'}" th:text="#{strategy.table.delete}"></th>
         </tr>
         </thead>
         <tbody>
 
         <tr th:if="${strategies.empty}">
-            <td colspan="5" class="no-data">Nenhuma estratégia cadastrada.</td>
+            <td colspan="5" class="no-data" th:text="#{strategy.page.empty}"></td>
         </tr>
 
         <tr th:each="strategy : ${strategies}">
@@ -307,9 +305,9 @@
             </td>
 
             <td sec:authorize="hasRole('ADMIN')" class="action-buttons">
-                <form th:action="@{/strategies/delete}" method="post" style="display: inline;" onsubmit="return confirm('Tem certeza que deseja excluir esta estratégia?');">
+                <form th:action="@{/strategies/delete}" method="post" style="display: inline;" onsubmit="return confirm(th:text"#{}");">
                     <input type="hidden" name="id" th:value="${strategy.id}" />
-                    <button type="submit" class="btn-delete" title="Deletar">
+                    <button type="submit" class="btn-delete" th:title="#{strategy.table.delete}">
                         <i class="fas fa-trash"></i>
                     </button>
                 </form>
