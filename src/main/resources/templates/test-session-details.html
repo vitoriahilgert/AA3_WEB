@@ -155,7 +155,7 @@
         <div class="detail-card">
             <h2>Bugs Relatados</h2>
 
-            <form th:if="${sessao.status.name() == 'IN_PROGRESS'}" id="formBug" th:action="@{/sessions/atualizar-bugs}" method="post">
+            <form th:if="${sessao.status.name() == 'IN_PROGRESS' && (user.id == sessao.testerId || role == 'ADMIN')}" id="formBug" th:action="@{/sessions/atualizar-bugs}" method="post">
                 <input type="hidden" id="id" name="id" th:value="${sessao.id}">
 
                 <label for="new_bug">Descreva o novo bug:</label>
