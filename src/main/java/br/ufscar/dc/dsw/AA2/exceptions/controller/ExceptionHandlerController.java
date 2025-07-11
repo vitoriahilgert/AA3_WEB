@@ -63,6 +63,19 @@ public class ExceptionHandlerController {
         return ResponseEntity.status(status).body(err);
     }
 
+    @ExceptionHandler(UnauthorizedExeption.class)
+    public ResponseEntity<Error> unauthorizedException(UnauthorizedExeption e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        Error err = new Error();
+        err.setTimestamp(Instant.now());
+        err.setStatus(status.value());
+        err.setError("Unauthorized access exception");
+        err.setMessage(e.getMessage());
+        err.setPath(request.getRequestURI());
+
+        return ResponseEntity.status(status).body(err);
+    }
+
     @ExceptionHandler(StorageException.class)
     public ResponseEntity<Error> storage(StorageException e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
