@@ -5,9 +5,9 @@ import java.util.UUID;
 
 public class CreateTestSessionRequestDTO {
     private int duration;
-    private String description;
     private UUID testerId;
     private UUID strategyId;
+    private String description;
 
     public CreateTestSessionRequestDTO() {}
 
@@ -17,14 +17,6 @@ public class CreateTestSessionRequestDTO {
 
     public void setDuration(int duration) {
         this.duration = duration;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public UUID getTesterId() {
@@ -41,5 +33,13 @@ public class CreateTestSessionRequestDTO {
 
     public void setStrategyId(UUID strategyId) {
         this.strategyId = strategyId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

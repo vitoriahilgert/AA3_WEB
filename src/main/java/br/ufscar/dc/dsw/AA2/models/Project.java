@@ -4,12 +4,14 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "projects")
-public class Project {
+public class
+Project {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -23,7 +25,7 @@ public class Project {
     @CreationTimestamp
     private LocalDateTime creationDateTime;
 
-    @OneToMany(mappedBy = "projects", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TestSession> testSessions;
 
     @ManyToMany(targetEntity = User.class)
@@ -32,12 +34,11 @@ public class Project {
     public Project() {
     }
 
-    public Project(UUID id, String name, String description, LocalDateTime creationDateTime, List<TestSession> testSessions, List<User> allowedMembers) {
+    public Project(UUID id, String name, String description, LocalDateTime creationDateTime, List<User> allowedMembers) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.creationDateTime = creationDateTime;
-        this.testSessions = testSessions;
         this.allowedMembers = allowedMembers;
     }
 
@@ -73,6 +74,14 @@ public class Project {
         this.creationDateTime = creationDateTime;
     }
 
+    public List<User> getAllowedMembers() {
+        return allowedMembers;
+    }
+
+    public void setAllowedMembers(List<User> allowedMembers) {
+        this.allowedMembers = allowedMembers;
+    }
+
     public List<TestSession> getTestSessions() {
         return testSessions;
     }
@@ -81,11 +90,16 @@ public class Project {
         this.testSessions = testSessions;
     }
 
-    public List<User> getAllowedMembers() {
-        return allowedMembers;
+    public void addAllowedMember(User user) {
+        if (this.allowedMembers == null) {
+            this.allowedMembers = new ArrayList<>();
+        }
+        if (!this.allowedMembers.contains(user)) {
+            this.allowedMembers.add(user);
+        }
     }
 
-    public void setAllowedMembers(List<User> allowedMembers) {
-        this.allowedMembers = allowedMembers;
-    }
 }
+
+
+

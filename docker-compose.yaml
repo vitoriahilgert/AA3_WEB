@@ -1,0 +1,13 @@
+services:
+  aa2-db:
+    image: 'mysql:8.0'
+    container_name: aa2-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=AA2
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql-data:/var/lib/mysql
