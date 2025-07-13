@@ -1,9 +1,8 @@
 package br.ufscar.dc.dsw.AA2.services;
 
-
-import br.ufscar.dc.dsw.AA2.dtos.project.CreateProjectRequestDTO;
-import br.ufscar.dc.dsw.AA2.dtos.project.ProjectFormDTO;
-import br.ufscar.dc.dsw.AA2.dtos.project.UpdateProjectRequestDTO;
+import br.ufscar.dc.dsw.AA2.config.JwtService;
+import br.ufscar.dc.dsw.AA2.dtos.project.*;
+import br.ufscar.dc.dsw.AA2.exceptions.ResourceNotFoundException;
 import br.ufscar.dc.dsw.AA2.models.Project;
 import br.ufscar.dc.dsw.AA2.models.User;
 import br.ufscar.dc.dsw.AA2.repositories.ProjectRepository;
@@ -12,63 +11,69 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ProjectService {
+
     @Autowired
     private ProjectRepository projectRepository;
 
     @Autowired
     private UserRepository userRepository;
 
-    public List<Project> getAllProjects() {
-        return projectRepository.findAll();
-    }
-
-    public Optional<Project> getProjectById(UUID id) {
-        return projectRepository.findById(id);
-    }
+    @Autowired
+    private JwtService jwtService;
 
     @Transactional
-    public Project saveProject(CreateProjectRequestDTO projectDto) {
+    public GetProjectResponseDTO createProject(CreateProjectRequestDTO dto) {
         Project project = new Project();
-        project.setName(projectDto.getName());
-        project.setDescription(projectDto.getDescription());
+        project.setName(dto.getName());
+        project.setDescription(dto.getDescription());
 
-        if (projectDto.getAllowedMembersIds() != null && !projectDto.getAllowedMembersIds().isEmpty()) {
-            List<User> allowedUsers = userRepository.findAllById(projectDto.getAllowedMembersIds());
+        if (dto.getAllowedMembersIds() != null && !dto.getAllowedMembersIds().isEmpty()) {
+            List<User> allowedMembers = userRepository.findAllById(dto.getAllowedMembersIds());
+            project.setAllowedMembers(allowedMembers);
+        }
+
+        Project saved = projectRepository.save(project);
+
+        return new GetProjectResponseDTO(saved);
+    }
+
+//    O ListAll vai aqui nandica
+//    public GetProjectResponseDTO listProjects( {
+//
+//    }
+
+    public GetProjectResponseDTO getProjectById(UUID id) {
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Project", "id", id.toString()));
+        return new GetProjectResponseDTO(project);
+    }
+
+    public GetProjectResponseDTO updateProject(UUID id, UpdateProjectRequestDTO dto) {
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Project", "id", id.toString()));
+
+        project.setName(dto.getName());
+        project.setDescription(dto.getDescription());
+
+        if (dto.getAllowedMembersIds() != null) {
+            List<User> allowedUsers = userRepository.findAllById(dto.getAllowedMembersIds());
             project.setAllowedMembers(allowedUsers);
         }
-        return projectRepository.save(project);
+
+        projectRepository.save(project);
+
+        return new GetProjectResponseDTO(project);
     }
 
-    @Transactional
-    public Project updateProject(UUID id, UpdateProjectRequestDTO projectDto) {
-        Project project = projectRepository.findById(id).orElse(null);
-
-        if (project != null) {
-            project.setName(projectDto.getName());
-            project.setDescription(projectDto.getDescription());
-
-            if (projectDto.getAllowedMembersIds() != null) {
-                List<User> allowedUsers = userRepository.findAllById(projectDto.getAllowedMembersIds());
-                project.setAllowedMembers(allowedUsers);
-            }
-            return projectRepository.save(project);
-        }
-        return null;
-    }
-
-    @Transactional
     public void deleteProject(UUID id) {
-        projectRepository.deleteById(id);
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Project", "id", id.toString()));
+
+        projectRepository.delete(project);
     }
-
-    public List<Project> getAllowedProjects(UUID id) {
-        User user = userRepository.findById(id).orElse(null);
-        return projectRepository.findProjectsWhereMemberIsAllowed(user);
-
-    }
-
 }
