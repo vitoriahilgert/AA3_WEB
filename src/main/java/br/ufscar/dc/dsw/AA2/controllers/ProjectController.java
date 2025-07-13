@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(Routes.PROJETOS)
+@RequestMapping("/project")
 public class ProjectController {
 
     @Autowired
