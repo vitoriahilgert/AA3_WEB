@@ -10,8 +10,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "projects")
-public class
-Project {
+public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -40,6 +39,7 @@ Project {
         this.description = description;
         this.creationDateTime = creationDateTime;
         this.allowedMembers = allowedMembers;
+
     }
 
     public UUID getId() {
