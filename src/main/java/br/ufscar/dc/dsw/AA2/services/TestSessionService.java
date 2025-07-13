@@ -15,11 +15,19 @@ import br.ufscar.dc.dsw.AA2.repositories.ProjectRepository;
 import br.ufscar.dc.dsw.AA2.repositories.StrategyRepository;
 import br.ufscar.dc.dsw.AA2.repositories.TestSessionRepository;
 import br.ufscar.dc.dsw.AA2.repositories.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -38,21 +46,27 @@ public class TestSessionService {
     @Autowired
     private ProjectRepository projectRepository;
 
+    @Qualifier("taskScheduler")
     @Autowired
     private TaskScheduler taskScheduler;
 
     @Autowired
     private JwtService jwtService;
 
-    public GetTestSessionResponseDTO createTestSession(UUID projectId, CreateTestSessionRequestDTO dto) {
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    public GetTestSessionResponseDTO createTestSession(String token, UUID projectId, CreateTestSessionRequestDTO dto) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId.toString()));
 
-        Strategy strategy = strategyRepository.findById(dto.getStrategyId())
-                .orElseThrow(() -> new ResourceNotFoundException("Strategy", "id", dto.getStrategyId().toString()));
+        Strategy strategy = strategyRepository.findById(UUID.fromString(dto.getStrategyId()))
+                .orElseThrow(() -> new ResourceNotFoundException("Strategy", "id", dto.getStrategyId()));
 
-        User tester = userRepository.findById(dto.getTesterId())
-                .orElseThrow(() -> new ResourceNotFoundException("Tester", "id", dto.getTesterId().toString()));
+        User tester = jwtService.getUserFromToken(token);
+        if (tester == null) {
+            throw new ResourceNotFoundException("User", "id", jwtService.getIdFromToken(token).toString());
+        }
 
         checkIfUserIsAllowedOnProject(projectId, tester);
 
@@ -68,7 +82,10 @@ public class TestSessionService {
         return new GetTestSessionResponseDTO(testSession);
     }
 
-    public GetTestSessionResponseDTO getTestSessionById(UUID sessionId) {
+    public GetTestSessionResponseDTO getTestSessionById(String token, UUID sessionId) {
+        User user = jwtService.getUserFromToken(token);
+        checkIfUserIsAllowedOnSession(sessionId, user);
+
         TestSession testSession = testSessionRepository.findById(sessionId)
                 .orElseThrow(() -> new ResourceNotFoundException("TestSession", "id", sessionId.toString()));
         return new GetTestSessionResponseDTO(testSession);
@@ -102,6 +119,10 @@ public class TestSessionService {
         TestSession testSession = testSessionRepository.findById(sessionId)
                 .orElseThrow(() -> new ResourceNotFoundException("TestSession", "id", sessionId.toString()));
 
+        if (!strategyRepository.existsById(UUID.fromString(dto.getStrategyId()))) {
+            throw new ResourceNotFoundException("Strategy", "id", dto.getStrategyId());
+        }
+
         if (!testSession.getStatus().equals(TestSessionStatusEnum.CREATED)) {
             throw new BadRequestException("A sessão de teste só pode ser editada antes de ser inicializada.");
         }
@@ -118,14 +139,16 @@ public class TestSessionService {
         return new GetTestSessionResponseDTO(testSession);
     }
 
-    public GetTestSessionResponseDTO updateSessionStatus(String token, UUID sessionId) {
+    public UpdateSessionStatusResponseDTO updateSessionStatus(String token, UUID sessionId) {
         TestSession testSession = testSessionRepository.findById(sessionId)
                 .orElseThrow(() -> new ResourceNotFoundException("TestSession", "id", sessionId.toString()));
+
+        TestSessionStatusEnum status = testSession.getStatus();
 
         User user = jwtService.getUserFromToken(token);
         checkIfUserIsAllowedOnSession(sessionId, user);
 
-        if (testSession.getStatus().equals(TestSessionStatusEnum.CREATED)) {
+        if (status.equals(TestSessionStatusEnum.CREATED)) {
             testSession.setStatus(TestSessionStatusEnum.IN_PROGRESS);
             testSession.setStartDateTime(LocalDateTime.now());
 
@@ -134,7 +157,7 @@ public class TestSessionService {
 
             taskScheduler.schedule(() -> finishTestSession(testSession.getId()), endTime.atZone(ZoneId.of("America/Sao_Paulo")).toInstant());
 
-        } else if (testSession.getStatus().equals(TestSessionStatusEnum.IN_PROGRESS)) {
+        } else if (status.equals(TestSessionStatusEnum.IN_PROGRESS)) {
             testSession.setFinishDateTime(LocalDateTime.now());
             testSession.setStatus(TestSessionStatusEnum.FINISHED);
         } else {
@@ -142,21 +165,23 @@ public class TestSessionService {
         }
 
         testSessionRepository.save(testSession);
-        return new GetTestSessionResponseDTO(testSession);
+        return new UpdateSessionStatusResponseDTO(testSession, status);
     }
 
-    public AddTestSessionBugResponseDTO addTestSessionBugs(String token, UUID sessionId, AddTestSessionBugRequestDTO dto) {
+    public AddTestSessionBugResponseDTO addTestSessionBugs(String token, UUID sessionId, AddTestSessionBugRequestDTO dto) throws JsonProcessingException {
         TestSession testSession = testSessionRepository.findById(sessionId)
                 .orElseThrow(() -> new ResourceNotFoundException("TestSession", "id", sessionId.toString()));
 
-        if (!testSession.getStatus().equals(TestSessionStatusEnum.CREATED)) {
+        if (!testSession.getStatus().equals(TestSessionStatusEnum.IN_PROGRESS)) {
             throw new BadRequestException("Os bugs só podem ser registrados enquanto a sessão de teste está em progresso.");
         }
 
         User user = jwtService.getUserFromToken(token);
         checkIfUserIsAllowedOnSession(sessionId, user);
 
-        String updatedBugs = testSession.getBugs() + "/n" + dto.getBug();
+        List<String> bugsList = (testSession.getBugs() == null) ? new ArrayList<>() : objectMapper.readValue(testSession.getBugs(), new TypeReference<>() {});
+        bugsList.add(dto.getBug());
+        String updatedBugs = objectMapper.writeValueAsString(bugsList);
 
         testSession.setBugs(updatedBugs);
         testSessionRepository.save(testSession);

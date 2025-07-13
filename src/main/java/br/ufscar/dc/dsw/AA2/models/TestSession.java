@@ -17,13 +17,13 @@ public class TestSession {
     @Column(nullable = false)
     private int duration;
 
-    @Column()
+    @Column
     private String description;
 
     @Column(nullable = false)
     private TestSessionStatusEnum status = TestSessionStatusEnum.CREATED;
 
-    @Column()
+    @Column
     private String bugs;
 
     @CreationTimestamp
