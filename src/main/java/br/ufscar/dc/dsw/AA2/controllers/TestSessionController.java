@@ -3,6 +3,7 @@ package br.ufscar.dc.dsw.AA2.controllers;
 import br.ufscar.dc.dsw.AA2.dtos.testSession.*;
 import br.ufscar.dc.dsw.AA2.services.TestSessionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,8 @@ public class TestSessionController {
     private TestSessionService testSessionService;
 
     @PostMapping("/{projectId}")
-    public ResponseEntity<GetTestSessionResponseDTO> create(@RequestHeader("Authorization") String token, @PathVariable("projectId") UUID projectId, @RequestBody CreateTestSessionRequestDTO request) {
+    public ResponseEntity<GetTestSessionResponseDTO> create(@RequestHeader("Authorization") String token, @PathVariable("projectId") UUID projectId,
+                                                            @Valid @RequestBody CreateTestSessionRequestDTO request) {
         GetTestSessionResponseDTO session = testSessionService.createTestSession(token, projectId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(session);
     }
@@ -37,19 +39,20 @@ public class TestSessionController {
 
     @PutMapping("/{id}")
     public ResponseEntity<GetTestSessionResponseDTO> update(@RequestHeader("Authorization") String token, @PathVariable UUID id,
-                                                                       @RequestBody UpdateSessionRequestDTO request) {
+                                                                       @Valid @RequestBody UpdateSessionRequestDTO request) {
         GetTestSessionResponseDTO session = testSessionService.updateSession(token, id, request);
         return ResponseEntity.ok(session);
     }
 
     @PatchMapping("status/{id}")
-    public ResponseEntity<String> updateStatus(@RequestHeader("Authorization") String token, @PathVariable UUID id) {
-        GetTestSessionResponseDTO session = testSessionService.updateSessionStatus(token, id);
-        return ResponseEntity.ok("Status da sessão atualizado para: " + session.getStatus());
+    public ResponseEntity<UpdateSessionStatusResponseDTO> updateStatus(@RequestHeader("Authorization") String token, @PathVariable UUID id) {
+        UpdateSessionStatusResponseDTO response = testSessionService.updateSessionStatus(token, id);
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("add-bug/{id}")
-    public ResponseEntity<AddTestSessionBugResponseDTO> addBug(@RequestHeader("Authorization") String token, @PathVariable UUID id, @RequestBody AddTestSessionBugRequestDTO request) throws JsonProcessingException {
+    public ResponseEntity<AddTestSessionBugResponseDTO> addBug(@RequestHeader("Authorization") String token, @PathVariable UUID id,
+                                                               @Valid @RequestBody AddTestSessionBugRequestDTO request) throws JsonProcessingException {
         AddTestSessionBugResponseDTO response = testSessionService.addTestSessionBugs(token, id, request);
         return ResponseEntity.ok(response);
     }

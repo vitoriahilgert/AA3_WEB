@@ -1,10 +1,22 @@
 package br.ufscar.dc.dsw.AA2.dtos.testSession;
 
-import java.util.UUID;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 public class UpdateSessionRequestDTO {
+    @Min(value = 1, message = "A duração precisa ser de no mínimo 1 minuto.")
+    @NotNull(message = "A duração da sessão não pode ser nula.")
     private int duration;
-    private UUID strategyId;
+
+    @NotNull(message = "O ID da estratégia não pode ser nulo.")
+    @Pattern(
+            regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            message = "O formato do ID da estratégia precisa ser um UUID."
+    )
+    private String strategyId;
+
+    @NotNull(message = "A descrição da sessão não pode ser nula.")
     private String description;
 
     public UpdateSessionRequestDTO() {}
@@ -17,11 +29,11 @@ public class UpdateSessionRequestDTO {
         this.duration = duration;
     }
 
-    public UUID getStrategyId() {
+    public String getStrategyId() {
         return strategyId;
     }
 
-    public void setStrategyId(UUID strategyId) {
+    public void setStrategyId(String strategyId) {
         this.strategyId = strategyId;
     }
 

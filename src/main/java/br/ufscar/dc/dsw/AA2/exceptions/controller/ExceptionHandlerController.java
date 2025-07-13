@@ -4,10 +4,14 @@ import br.ufscar.dc.dsw.AA2.exceptions.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 @ControllerAdvice
 public class ExceptionHandlerController {
@@ -17,7 +21,7 @@ public class ExceptionHandlerController {
         Error err = new Error();
         err.setTimestamp(Instant.now());
         err.setStatus(status.value());
-        err.setError("Resource already exists exception.");
+        err.setError("Exceção de recurso já existente.");
         err.setMessage(e.getMessage());
         err.setPath(request.getRequestURI());
 
@@ -30,7 +34,7 @@ public class ExceptionHandlerController {
         Error err = new Error();
         err.setTimestamp(Instant.now());
         err.setStatus(status.value());
-        err.setError("Invalid credentials exception.");
+        err.setError("Exceção de credenciais inválidas.");
         err.setMessage(e.getMessage());
         err.setPath(request.getRequestURI());
 
@@ -43,7 +47,7 @@ public class ExceptionHandlerController {
         Error err = new Error();
         err.setTimestamp(Instant.now());
         err.setStatus(status.value());
-        err.setError("Resource not found exception.");
+        err.setError("Exceção de recurso não encontrado.");
         err.setMessage(e.getMessage());
         err.setPath(request.getRequestURI());
 
@@ -56,7 +60,7 @@ public class ExceptionHandlerController {
         Error err = new Error();
         err.setTimestamp(Instant.now());
         err.setStatus(status.value());
-        err.setError("Invalid request argument exception");
+        err.setError("Exceção de argumento de requisição inválido.");
         err.setMessage(e.getMessage());
         err.setPath(request.getRequestURI());
 
@@ -69,7 +73,7 @@ public class ExceptionHandlerController {
         Error err = new Error();
         err.setTimestamp(Instant.now());
         err.setStatus(status.value());
-        err.setError("Unauthorized access exception");
+        err.setError("Exceção de acesso não autorizado.");
         err.setMessage(e.getMessage());
         err.setPath(request.getRequestURI());
 
@@ -82,10 +86,24 @@ public class ExceptionHandlerController {
         Error err = new Error();
         err.setTimestamp(Instant.now());
         err.setStatus(status.value());
-        err.setError("Storage exception");
+        err.setError("Exceção de armazenamento.");
         err.setMessage(e.getMessage());
         err.setPath(request.getRequestURI());
 
         return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+
+        Map<String, String> errors = new HashMap<>();
+
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 }

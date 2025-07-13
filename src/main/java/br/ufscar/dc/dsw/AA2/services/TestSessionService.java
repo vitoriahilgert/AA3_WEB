@@ -60,8 +60,8 @@ public class TestSessionService {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId.toString()));
 
-        Strategy strategy = strategyRepository.findById(dto.getStrategyId())
-                .orElseThrow(() -> new ResourceNotFoundException("Strategy", "id", dto.getStrategyId().toString()));
+        Strategy strategy = strategyRepository.findById(UUID.fromString(dto.getStrategyId()))
+                .orElseThrow(() -> new ResourceNotFoundException("Strategy", "id", dto.getStrategyId()));
 
         User tester = jwtService.getUserFromToken(token);
         if (tester == null) {
@@ -119,6 +119,10 @@ public class TestSessionService {
         TestSession testSession = testSessionRepository.findById(sessionId)
                 .orElseThrow(() -> new ResourceNotFoundException("TestSession", "id", sessionId.toString()));
 
+        if (!strategyRepository.existsById(UUID.fromString(dto.getStrategyId()))) {
+            throw new ResourceNotFoundException("Strategy", "id", dto.getStrategyId());
+        }
+
         if (!testSession.getStatus().equals(TestSessionStatusEnum.CREATED)) {
             throw new BadRequestException("A sessão de teste só pode ser editada antes de ser inicializada.");
         }
@@ -135,14 +139,16 @@ public class TestSessionService {
         return new GetTestSessionResponseDTO(testSession);
     }
 
-    public GetTestSessionResponseDTO updateSessionStatus(String token, UUID sessionId) {
+    public UpdateSessionStatusResponseDTO updateSessionStatus(String token, UUID sessionId) {
         TestSession testSession = testSessionRepository.findById(sessionId)
                 .orElseThrow(() -> new ResourceNotFoundException("TestSession", "id", sessionId.toString()));
+
+        TestSessionStatusEnum status = testSession.getStatus();
 
         User user = jwtService.getUserFromToken(token);
         checkIfUserIsAllowedOnSession(sessionId, user);
 
-        if (testSession.getStatus().equals(TestSessionStatusEnum.CREATED)) {
+        if (status.equals(TestSessionStatusEnum.CREATED)) {
             testSession.setStatus(TestSessionStatusEnum.IN_PROGRESS);
             testSession.setStartDateTime(LocalDateTime.now());
 
@@ -151,7 +157,7 @@ public class TestSessionService {
 
             taskScheduler.schedule(() -> finishTestSession(testSession.getId()), endTime.atZone(ZoneId.of("America/Sao_Paulo")).toInstant());
 
-        } else if (testSession.getStatus().equals(TestSessionStatusEnum.IN_PROGRESS)) {
+        } else if (status.equals(TestSessionStatusEnum.IN_PROGRESS)) {
             testSession.setFinishDateTime(LocalDateTime.now());
             testSession.setStatus(TestSessionStatusEnum.FINISHED);
         } else {
@@ -159,7 +165,7 @@ public class TestSessionService {
         }
 
         testSessionRepository.save(testSession);
-        return new GetTestSessionResponseDTO(testSession);
+        return new UpdateSessionStatusResponseDTO(testSession, status);
     }
 
     public AddTestSessionBugResponseDTO addTestSessionBugs(String token, UUID sessionId, AddTestSessionBugRequestDTO dto) throws JsonProcessingException {
