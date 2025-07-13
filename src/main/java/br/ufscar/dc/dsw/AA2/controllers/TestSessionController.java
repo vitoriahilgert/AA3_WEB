@@ -2,6 +2,7 @@ package br.ufscar.dc.dsw.AA2.controllers;
 
 import br.ufscar.dc.dsw.AA2.dtos.testSession.*;
 import br.ufscar.dc.dsw.AA2.services.TestSessionService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +18,8 @@ public class TestSessionController {
     private TestSessionService testSessionService;
 
     @PostMapping("/{projectId}")
-    public ResponseEntity<GetTestSessionResponseDTO> create(@PathVariable("projectId") UUID projectId, @RequestBody CreateTestSessionRequestDTO request) {
-        GetTestSessionResponseDTO session = testSessionService.createTestSession(projectId, request);
+    public ResponseEntity<GetTestSessionResponseDTO> create(@RequestHeader("Authorization") String token, @PathVariable("projectId") UUID projectId, @RequestBody CreateTestSessionRequestDTO request) {
+        GetTestSessionResponseDTO session = testSessionService.createTestSession(token, projectId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(session);
     }
 
@@ -29,8 +30,8 @@ public class TestSessionController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GetTestSessionResponseDTO> getById(@PathVariable UUID id) {
-        GetTestSessionResponseDTO session = testSessionService.getTestSessionById(id);
+    public ResponseEntity<GetTestSessionResponseDTO> getById(@RequestHeader("Authorization") String token, @PathVariable UUID id) {
+        GetTestSessionResponseDTO session = testSessionService.getTestSessionById(token, id);
         return ResponseEntity.ok(session);
     }
 
@@ -41,14 +42,14 @@ public class TestSessionController {
         return ResponseEntity.ok(session);
     }
 
-    @PatchMapping("{id}/status")
+    @PatchMapping("status/{id}")
     public ResponseEntity<String> updateStatus(@RequestHeader("Authorization") String token, @PathVariable UUID id) {
         GetTestSessionResponseDTO session = testSessionService.updateSessionStatus(token, id);
         return ResponseEntity.ok("Status da sessão atualizado para: " + session.getStatus());
     }
 
-    @PatchMapping("{id}/add-bug")
-    public ResponseEntity<AddTestSessionBugResponseDTO> addBug(@RequestHeader("Authorization") String token, @PathVariable UUID id, @RequestBody AddTestSessionBugRequestDTO request) {
+    @PatchMapping("add-bug/{id}")
+    public ResponseEntity<AddTestSessionBugResponseDTO> addBug(@RequestHeader("Authorization") String token, @PathVariable UUID id, @RequestBody AddTestSessionBugRequestDTO request) throws JsonProcessingException {
         AddTestSessionBugResponseDTO response = testSessionService.addTestSessionBugs(token, id, request);
         return ResponseEntity.ok(response);
     }
