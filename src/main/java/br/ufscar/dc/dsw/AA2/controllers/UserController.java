@@ -3,6 +3,7 @@ package br.ufscar.dc.dsw.AA2.controllers;
 import br.ufscar.dc.dsw.AA2.dtos.user.*;
 import br.ufscar.dc.dsw.AA2.models.enums.UserRoleEnum;
 import br.ufscar.dc.dsw.AA2.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<GetUserResponseDTO> create(
             @RequestHeader("Authorization") String token,
-            @RequestBody CreateUserRequestDTO request) {
+            @Valid @RequestBody CreateUserRequestDTO request) {
         GetUserResponseDTO user = userService.createUser(token, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
@@ -43,7 +44,7 @@ public class UserController {
     public ResponseEntity<GetUserResponseDTO> update(
             @RequestHeader("Authorization") String token,
             @PathVariable UUID id,
-            @RequestBody UpdateUserRequestDTO request) {
+            @Valid @RequestBody UpdateUserRequestDTO request) {
         GetUserResponseDTO updatedUser = userService.updateUser(token, id, request);
         return ResponseEntity.ok(updatedUser);
     }

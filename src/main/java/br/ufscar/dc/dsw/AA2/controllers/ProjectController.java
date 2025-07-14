@@ -26,8 +26,7 @@ public class ProjectController {
     @PostMapping
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<GetProjectResponseDTO> createProject(
-            @RequestBody @Valid CreateProjectRequestDTO request,
-            @RequestHeader("Authorization") String token) {
+            @RequestBody @Valid CreateProjectRequestDTO request) {
 
         GetProjectResponseDTO project = projectService.createProject(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(project);

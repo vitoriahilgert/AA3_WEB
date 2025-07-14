@@ -62,6 +62,10 @@ public class UserService {
     public GetUserResponseDTO createUser(String token, CreateUserRequestDTO dto) {
         checkIfAdmin(token);
 
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new ResourceNotFoundException("User", "email", dto.getEmail());
+        }
+
         User user = new User();
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());

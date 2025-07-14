@@ -29,14 +29,16 @@ public class AuthService {
     }
 
     public LoginResponseDTO login(LoginRequestDTO dto) {
-        User user = userRepository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User", "email", dto.getEmail()));
+        Optional<User> user = userRepository.findByEmail(dto.getEmail());
+        if (user.isEmpty()) {
+            throw new ResourceNotFoundException("User", "email", dto.getEmail());
+        }
 
-        boolean passwordMatch = passwordEncoder.matches(dto.getPassword(), user.getPassword());
+        boolean passwordMatch = passwordEncoder.matches(dto.getPassword(), user.get().getPassword());
         if (!passwordMatch) {
             throw new InvalidCredentialsException();
         }
 
-        return new LoginResponseDTO(jwtService.generateToken(user));
+        return new LoginResponseDTO(jwtService.generateToken(user.get()));
     }
 }

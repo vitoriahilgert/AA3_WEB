@@ -1,6 +1,7 @@
 package br.ufscar.dc.dsw.AA2.services;
 
 import br.ufscar.dc.dsw.AA2.dtos.strategy.StrategyCreateDTO;
+import br.ufscar.dc.dsw.AA2.exceptions.ResourceNotFoundException;
 import br.ufscar.dc.dsw.AA2.mappers.StrategyMapper;
 import br.ufscar.dc.dsw.AA2.models.Image;
 import br.ufscar.dc.dsw.AA2.models.Strategy;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -37,7 +39,9 @@ public class StrategyService {
 
     @Transactional()
     public Optional<Strategy> getById(UUID id) {
-        return strategyRepository.findById(id);
+        Strategy strategy = strategyRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Estratégia", "id", id.toString()));
+        return Optional.ofNullable(strategy);
     }
 
     public Strategy create(StrategyCreateDTO strategyDTO, List<MultipartFile> imagesFiles) {
@@ -51,16 +55,18 @@ public class StrategyService {
 
         strategyRepository.save(strategy);
 
+        List<Image> images = new ArrayList<>();
         if (imagesFiles != null && !imagesFiles.isEmpty()) {
-            this.uploadImages(strategy, imagesFiles);
+            images = this.uploadImages(strategy, imagesFiles);
         }
+        strategy.setImages(images);
 
         return strategy;
     }
 
     public Strategy update(UUID id, StrategyCreateDTO strategyDTO) {
         Strategy strategy = strategyRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Strategy not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Estratégia", "id", id.toString()));
 
         strategy.setName(strategyDTO.name());
         strategy.setDescription(strategyDTO.description());
@@ -73,13 +79,15 @@ public class StrategyService {
 
     public void deleteById(UUID id) {
         if (!strategyRepository.existsById(id)) {
-            throw new RuntimeException("Strategy not found with id: " + id);
+            throw new ResourceNotFoundException("Estratégia", "id", id.toString());
         }
 
         strategyRepository.deleteById(id);
     }
 
-    private void uploadImages(Strategy strategy, List<MultipartFile> imagesFiles) {
+    private List<Image> uploadImages(Strategy strategy, List<MultipartFile> imagesFiles) {
+        List<Image> images = new ArrayList<>();
+
         imagesFiles.forEach(imageFile -> {
             if(imageFile != null && !imageFile.isEmpty()) {
                 storageProvider.validateFile(imageFile);
@@ -89,7 +97,11 @@ public class StrategyService {
                 image.setUrl(imageUrl);
                 image.setStrategy(strategy);
                 imageRepository.save(image);
+
+                images.add(image);
             }
         });
+
+        return images;
     }
 }

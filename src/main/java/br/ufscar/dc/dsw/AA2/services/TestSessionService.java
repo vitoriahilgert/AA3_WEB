@@ -59,10 +59,10 @@ public class TestSessionService {
 
     public GetTestSessionResponseDTO createTestSession(String token, UUID projectId, CreateTestSessionRequestDTO dto) {
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId.toString()));
+                .orElseThrow(() -> new ResourceNotFoundException("Projeto", "id", projectId.toString()));
 
         Strategy strategy = strategyRepository.findById(UUID.fromString(dto.getStrategyId()))
-                .orElseThrow(() -> new ResourceNotFoundException("Strategy", "id", dto.getStrategyId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Estratégia", "id", dto.getStrategyId()));
 
         User tester = jwtService.getUserFromToken(token);
         if (tester == null) {
@@ -88,7 +88,7 @@ public class TestSessionService {
         checkIfUserIsAllowedOnSession(sessionId, user);
 
         TestSession testSession = testSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new ResourceNotFoundException("TestSession", "id", sessionId.toString()));
+                .orElseThrow(() -> new ResourceNotFoundException("Sessão de teste", "id", sessionId.toString()));
         return new GetTestSessionResponseDTO(testSession);
     }
 
@@ -98,7 +98,7 @@ public class TestSessionService {
 
         if (projectId.isPresent()) {
             project = projectRepository.findById(projectId.get())
-                    .orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId.toString()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Projeto", "id", projectId.toString()));
         }
 
         List<TestSession> testSessions;
@@ -123,7 +123,7 @@ public class TestSessionService {
 
     public void deleteTestSession(String token, UUID sessionId) {
         TestSession testSession = testSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new ResourceNotFoundException("TestSession", "id", sessionId.toString()));
+                .orElseThrow(() -> new ResourceNotFoundException("Sessão de teste", "id", sessionId.toString()));
 
         User user = jwtService.getUserFromToken(token);
         checkIfUserIsAllowedOnSession(sessionId, user);
@@ -133,10 +133,10 @@ public class TestSessionService {
 
     public GetTestSessionResponseDTO updateSession(String token, UUID sessionId, UpdateSessionRequestDTO dto) {
         TestSession testSession = testSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new ResourceNotFoundException("TestSession", "id", sessionId.toString()));
+                .orElseThrow(() -> new ResourceNotFoundException("Sessão de teste", "id", sessionId.toString()));
 
         if (!strategyRepository.existsById(UUID.fromString(dto.getStrategyId()))) {
-            throw new ResourceNotFoundException("Strategy", "id", dto.getStrategyId());
+            throw new ResourceNotFoundException("Estratégia", "id", dto.getStrategyId());
         }
 
         if (!testSession.getStatus().equals(TestSessionStatusEnum.CREATED)) {
@@ -157,7 +157,7 @@ public class TestSessionService {
 
     public UpdateSessionStatusResponseDTO updateSessionStatus(String token, UUID sessionId) {
         TestSession testSession = testSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new ResourceNotFoundException("TestSession", "id", sessionId.toString()));
+                .orElseThrow(() -> new ResourceNotFoundException("Sessão de teste", "id", sessionId.toString()));
 
         TestSessionStatusEnum status = testSession.getStatus();
 
@@ -186,7 +186,7 @@ public class TestSessionService {
 
     public AddTestSessionBugResponseDTO addTestSessionBugs(String token, UUID sessionId, AddTestSessionBugRequestDTO dto) throws JsonProcessingException {
         TestSession testSession = testSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new ResourceNotFoundException("TestSession", "id", sessionId.toString()));
+                .orElseThrow(() -> new ResourceNotFoundException("Sessão de teste", "id", sessionId.toString()));
 
         if (!testSession.getStatus().equals(TestSessionStatusEnum.IN_PROGRESS)) {
             throw new BadRequestException("Os bugs só podem ser registrados enquanto a sessão de teste está em progresso.");
@@ -206,7 +206,7 @@ public class TestSessionService {
 
     private void finishTestSession(UUID sessionId) {
         TestSession testSession = testSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new ResourceNotFoundException("TestSession", "id", sessionId.toString()));
+                .orElseThrow(() -> new ResourceNotFoundException("Sessão de teste", "id", sessionId.toString()));
 
         testSession.setStatus(TestSessionStatusEnum.FINISHED);
         testSession.setFinishDateTime(LocalDateTime.now());
@@ -218,7 +218,7 @@ public class TestSessionService {
 
     private void checkIfUserIsAllowedOnProject(UUID projectId, User user) {
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId.toString()));
+                .orElseThrow(() -> new ResourceNotFoundException("Projeto", "id", projectId.toString()));
 
         if (user.getRole().equals(UserRoleEnum.TESTER)) {
             if (!project.getAllowedMembers().contains(user)) {
@@ -229,7 +229,7 @@ public class TestSessionService {
 
     private void checkIfUserIsAllowedOnSession(UUID sessionId, User user) {
         TestSession testSession = testSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new ResourceNotFoundException("TestSession", "id", sessionId.toString()));
+                .orElseThrow(() -> new ResourceNotFoundException("Sessão de teste", "id", sessionId.toString()));
 
         if (user.getRole().equals(UserRoleEnum.TESTER)) {
             if (!testSession.getTester().getId().equals(user.getId())) {
