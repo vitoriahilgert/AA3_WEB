@@ -1,50 +1,80 @@
 package br.ufscar.dc.dsw.AA2.services;
 
+import br.ufscar.dc.dsw.AA2.config.JwtService;
+import br.ufscar.dc.dsw.AA2.dtos.user.CreateUserRequestDTO;
+import br.ufscar.dc.dsw.AA2.dtos.user.GetUserResponseDTO;
+import br.ufscar.dc.dsw.AA2.dtos.user.UpdateUserRequestDTO;
 import br.ufscar.dc.dsw.AA2.exceptions.ResourceNotFoundException;
+import br.ufscar.dc.dsw.AA2.exceptions.UnauthorizedExeption;
 import br.ufscar.dc.dsw.AA2.models.Project;
 import br.ufscar.dc.dsw.AA2.models.User;
 import br.ufscar.dc.dsw.AA2.models.enums.UserRoleEnum;
 import br.ufscar.dc.dsw.AA2.repositories.UserRepository;
-import br.ufscar.dc.dsw.AA2.dtos.UserRecordDto;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
+
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    @Autowired
+    private JwtService jwtService;
+
+    private void checkIfAdmin(String token) {
+        User user = jwtService.getUserFromToken(token);
+        if (user.getRole() != UserRoleEnum.ADMIN) {
+            throw new UnauthorizedExeption("Acesso negado: apenas administradores podem realizar esta operação.");
+        }
     }
 
-    public User getUserById(UUID id) {
-        return userRepository.findById(id).orElse(null);
+    public List<GetUserResponseDTO> getAllUsers(String token) {
+        checkIfAdmin(token);
+        return userRepository.findAll().stream()
+                .map(GetUserResponseDTO::new)
+                .collect(Collectors.toList());
     }
 
-    public List<User> findByRole(UserRoleEnum role) { return userRepository.findByRole(role); }
+    public GetUserResponseDTO getUserById(String token, UUID id) {
+        checkIfAdmin(token);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id.toString()));
+        return new GetUserResponseDTO(user);
+    }
+
+    public List<GetUserResponseDTO> getUsersByRole(String token, UserRoleEnum role) {
+        checkIfAdmin(token);
+        return userRepository.findByRole(role).stream()
+                .map(GetUserResponseDTO::new)
+                .collect(Collectors.toList());
+    }
 
     @Transactional
-    public User saveUser(UserRecordDto userDto) {
+    public GetUserResponseDTO createUser(String token, CreateUserRequestDTO dto) {
+        checkIfAdmin(token);
+
         User user = new User();
-        user.setName(userDto.name());
-        user.setEmail(userDto.email());
-        user.setPassword(passwordEncoder.encode(userDto.password()));
-        user.setRole(userDto.role());
-        return userRepository.save(user);
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setRole(dto.getRole());
+
+        return new GetUserResponseDTO(userRepository.save(user));
     }
 
     @Transactional
-    public void deleteUser(UUID id) {
+    public void deleteUser(String token, UUID id) {
+        checkIfAdmin(token);
+
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id.toString()));
 
@@ -55,26 +85,17 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public User updateUser(UUID id, UserRecordDto userDto) {
-        User userToUpdate = this.getUserById(id);
-
-        if (userToUpdate != null) {
-            userToUpdate.setName(userDto.name());
-            userToUpdate.setEmail(userDto.email());
-
-            if (userDto.password() != null && !userDto.password().isEmpty()) {
-                userToUpdate.setPassword(passwordEncoder.encode(userDto.password()));
-            }
-
-            return userRepository.save(userToUpdate);
-        }
-
-        return null;
-    }
-
     @Transactional
-    public List<User> getAllTesters() {
-        return userRepository.findByRole(UserRoleEnum.TESTER);
-    }
+    public GetUserResponseDTO updateUser(String token, UUID id, UpdateUserRequestDTO dto) {
+        checkIfAdmin(token);
 
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id.toString()));
+
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        user.setRole(dto.getRole());
+
+        return new GetUserResponseDTO(userRepository.save(user));
+    }
 }
