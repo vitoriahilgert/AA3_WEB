@@ -13,6 +13,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -34,6 +36,7 @@ public class ProjectService {
         Project project = new Project();
         project.setName(dto.getName());
         project.setDescription(dto.getDescription());
+        project.setCreationDateTime(LocalDateTime.now());
 
         if (dto.getAllowedMembersIds() != null && !dto.getAllowedMembersIds().isEmpty()) {
             List<User> allowedMembers = userRepository.findAllById(dto.getAllowedMembersIds());

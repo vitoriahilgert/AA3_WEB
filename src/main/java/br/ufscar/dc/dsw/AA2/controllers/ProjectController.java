@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class ProjectController {
     private UserService userService;
 
     @PostMapping
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<GetProjectResponseDTO> createProject(
             @RequestBody @Valid CreateProjectRequestDTO request,
             @RequestHeader("Authorization") String token) {
@@ -47,12 +49,14 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<GetProjectResponseDTO> updateProject(@PathVariable UUID id, @RequestBody UpdateProjectRequestDTO request) {
         GetProjectResponseDTO project = projectService.updateProject(id, request);
         return ResponseEntity.ok(project);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<Void> deleteProject(@PathVariable UUID id) {
         projectService.deleteProject(id);
         return ResponseEntity.noContent().build();

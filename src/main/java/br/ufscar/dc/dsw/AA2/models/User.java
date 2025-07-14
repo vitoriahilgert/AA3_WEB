@@ -6,28 +6,27 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 254)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 64)
     private String password;
 
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
     private UserRoleEnum role;
 
     @OneToMany(mappedBy = "tester", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -36,8 +35,7 @@ public class User implements UserDetails {
     @ManyToMany(targetEntity = Project.class, mappedBy = "allowedMembers")
     private List<Project> projects = new ArrayList<>();
 
-    public User() {
-    }
+    public User() {}
 
     public User(UUID id, String name, String email, String password, UserRoleEnum role) {
         this.id = id;
@@ -46,6 +44,8 @@ public class User implements UserDetails {
         this.password = password;
         this.role = role;
     }
+
+    // Getters e Setters
 
     public UUID getId() {
         return id;
@@ -103,6 +103,8 @@ public class User implements UserDetails {
         this.projects = projects;
     }
 
+    // Métodos do Spring Security
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
@@ -110,26 +112,26 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return "";
+        return email; // melhor do que retornar ""
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
+        return true; // pode ajustar para lógica real se quiser
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return true;
     }
 }
