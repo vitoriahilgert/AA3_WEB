@@ -2,6 +2,7 @@ package br.ufscar.dc.dsw.AA2.config;
 
 import br.ufscar.dc.dsw.AA2.exceptions.ResourceNotFoundException;
 import br.ufscar.dc.dsw.AA2.models.User;
+import br.ufscar.dc.dsw.AA2.models.enums.UserRoleEnum;
 import br.ufscar.dc.dsw.AA2.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.jwt.*;
@@ -19,15 +20,25 @@ public class JwtService {
     @Autowired
     private UserRepository userRepository;
 
-    public String generateToken(UUID id) {
+    public String generateToken(User user) {
         Instant now = Instant.now();
-        int expiresIn = 60 * 60 * 24 * 7; // 7 days
+        long expiry = 36000L; // 7 days
+
+        UserRoleEnum role = user.getRole();
+        String scope;
+
+        if (role == UserRoleEnum.ADMIN) {
+            scope = "ROLE_ADMIN ROLE_TESTER";
+        } else {
+            scope = "ROLE_TESTER";
+        }
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("my-api")
-                .subject(id.toString())
                 .issuedAt(now)
-                .expiresAt(now.plusSeconds(expiresIn))
+                .expiresAt(now.plusSeconds(expiry))
+                .subject(user.getId().toString())
+                .claim("scope", scope)
                 .build();
 
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
