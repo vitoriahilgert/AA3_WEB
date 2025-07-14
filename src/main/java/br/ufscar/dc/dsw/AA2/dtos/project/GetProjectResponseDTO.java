@@ -1,7 +1,6 @@
 package br.ufscar.dc.dsw.AA2.dtos.project;
 
 import br.ufscar.dc.dsw.AA2.models.Project;
-import br.ufscar.dc.dsw.AA2.models.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,18 +12,16 @@ public class GetProjectResponseDTO {
     private String name;
     private String description;
     private LocalDateTime creationDateTime;
-    private List<UUID> allowedMembersIds;
+    private List<ProjectMemberDTO> allowedMembers;
 
     public GetProjectResponseDTO(Project project) {
         this.id = project.getId();
         this.name = project.getName();
         this.description = project.getDescription();
         this.creationDateTime = project.getCreationDateTime();
-
-        // corrigido: converte List<User> para List<UUID>
-        this.allowedMembersIds = project.getAllowedMembers()
+        this.allowedMembers = project.getAllowedMembers()
                 .stream()
-                .map(User::getId)
+                .map(ProjectMemberDTO::new)
                 .collect(Collectors.toList());
     }
 
@@ -44,9 +41,9 @@ public class GetProjectResponseDTO {
 
     public void setCreationDateTime(LocalDateTime creationDateTime) { this.creationDateTime = creationDateTime; }
 
-    public List<UUID> getAllowedMembersIds() { return allowedMembersIds; }
+    public List<ProjectMemberDTO> getAllowedMembers() { return allowedMembers; }
 
-    public void setAllowedMembersIds(List<UUID> allowedMembersIds) {
-        this.allowedMembersIds = allowedMembersIds;
+    public void setAllowedMembers(List<ProjectMemberDTO> allowedMembers) {
+        this.allowedMembers = allowedMembers;
     }
 }

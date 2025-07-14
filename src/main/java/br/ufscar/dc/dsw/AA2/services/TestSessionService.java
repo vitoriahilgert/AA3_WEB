@@ -74,19 +74,33 @@ public class TestSessionService {
         return new GetTestSessionResponseDTO(testSession);
     }
 
-    public List<GetTestSessionResponseDTO> getAllowedTestSessionsByToken(String token) {
+    public List<GetTestSessionResponseDTO> getAllowedTestSessionsByToken(String token, UUID projectId) {
         User user = jwtService.getUserFromToken(token);
+        Project project = null;
+        if (projectId != null) {
+            project = projectRepository.findById(projectId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId.toString()));
+        }
 
         List<TestSession> testSessions;
 
         if (user.getRole().equals(UserRoleEnum.ADMIN)) {
-            testSessions = testSessionRepository.findAll();
+            if (projectId != null) {
+                testSessions = testSessionRepository.findAllByProject(project);
+            } else {
+                testSessions = testSessionRepository.findAll();
+            }
         } else {
-            testSessions = testSessionRepository.findByTester(user);
+            if (projectId != null) {
+                testSessions = testSessionRepository.findAllByProjectAndTester(project, user);
+            } else {
+                testSessions = testSessionRepository.findByTester(user);
+            }
         }
 
         return testSessions.stream().map(GetTestSessionResponseDTO::new).collect(Collectors.toList());
     }
+
 
     public void deleteTestSession(String token, UUID sessionId) {
         TestSession testSession = testSessionRepository.findById(sessionId)

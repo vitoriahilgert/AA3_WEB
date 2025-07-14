@@ -1,11 +1,16 @@
 package br.ufscar.dc.dsw.AA2.dtos.project;
 
+import jakarta.validation.constraints.Size;
+
 import java.util.List;
 import java.util.UUID;
 
 public class UpdateProjectRequestDTO {
+    @Size(max = 255, message = "O nome deve ter no máximo 255 caracteres")
     private String name;
+
     private String description;
+
     private List<UUID> allowedMembersIds;
 
     public UpdateProjectRequestDTO() {
