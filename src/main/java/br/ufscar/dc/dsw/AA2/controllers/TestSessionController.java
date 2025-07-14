@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -27,10 +28,11 @@ public class TestSessionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GetTestSessionResponseDTO>> getAllAllowed(@RequestHeader("Authorization") String token) {
-        List<GetTestSessionResponseDTO> sessions = testSessionService.getAllowedTestSessionsByToken(token);
+    public ResponseEntity<List<GetTestSessionResponseDTO>> getAllAllowed(@RequestHeader("Authorization") String token, @RequestParam("projectId") Optional<UUID> projectId) {
+        List<GetTestSessionResponseDTO> sessions = testSessionService.getAllowedTestSessionsByToken(token, projectId);
         return ResponseEntity.ok(sessions);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<GetTestSessionResponseDTO> getById(@RequestHeader("Authorization") String token, @PathVariable UUID id) {

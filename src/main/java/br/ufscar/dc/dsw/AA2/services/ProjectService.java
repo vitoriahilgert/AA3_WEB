@@ -2,17 +2,22 @@ package br.ufscar.dc.dsw.AA2.services;
 
 import br.ufscar.dc.dsw.AA2.config.JwtService;
 import br.ufscar.dc.dsw.AA2.dtos.project.*;
+import br.ufscar.dc.dsw.AA2.dtos.testSession.GetTestSessionResponseDTO;
 import br.ufscar.dc.dsw.AA2.exceptions.ResourceNotFoundException;
 import br.ufscar.dc.dsw.AA2.models.Project;
 import br.ufscar.dc.dsw.AA2.models.User;
+import br.ufscar.dc.dsw.AA2.models.enums.UserRoleEnum;
 import br.ufscar.dc.dsw.AA2.repositories.ProjectRepository;
 import br.ufscar.dc.dsw.AA2.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
@@ -31,6 +36,7 @@ public class ProjectService {
         Project project = new Project();
         project.setName(dto.getName());
         project.setDescription(dto.getDescription());
+        project.setCreationDateTime(LocalDateTime.now());
 
         if (dto.getAllowedMembersIds() != null && !dto.getAllowedMembersIds().isEmpty()) {
             List<User> allowedMembers = userRepository.findAllById(dto.getAllowedMembersIds());
@@ -42,10 +48,24 @@ public class ProjectService {
         return new GetProjectResponseDTO(saved);
     }
 
-//    O ListAll vai aqui nandica
-//    public GetProjectResponseDTO listProjects( {
-//
-//    }
+    public List<GetProjectResponseDTO> getAllProjectsByToken(String token, boolean filter) {
+        User user = jwtService.getUserFromToken(token);
+        List<Project> projects;
+
+        if (user.getRole().equals(UserRoleEnum.ADMIN)) {
+            projects = projectRepository.findAll();
+        } else {
+            if (filter) {
+                projects = projectRepository.findAll().stream()
+                        .filter(p -> p.getAllowedMembers().contains(user))
+                        .collect(Collectors.toList());
+            } else {
+                projects = projectRepository.findAll();
+            }
+        }
+
+        return projects.stream().map(GetProjectResponseDTO::new).collect(Collectors.toList());
+    }
 
     public GetProjectResponseDTO getProjectById(UUID id) {
         Project project = projectRepository.findById(id)

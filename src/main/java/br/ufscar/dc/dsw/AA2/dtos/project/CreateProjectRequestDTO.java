@@ -2,10 +2,19 @@ package br.ufscar.dc.dsw.AA2.dtos.project;
 
 import java.util.List;
 import java.util.UUID;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 
 public class CreateProjectRequestDTO {
+    @NotBlank(message = "O nome é obrigatório")
+    @Size(max = 255, message = "O nome deve ter no máximo 255 caracteres")
     private String name;
+
+    @NotBlank(message = "A descrição é obrigatória.")
     private String description;
+
     private List<UUID> allowedMembersIds;
 
     public CreateProjectRequestDTO() {

@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -91,19 +92,34 @@ public class TestSessionService {
         return new GetTestSessionResponseDTO(testSession);
     }
 
-    public List<GetTestSessionResponseDTO> getAllowedTestSessionsByToken(String token) {
+    public List<GetTestSessionResponseDTO> getAllowedTestSessionsByToken(String token, Optional<UUID> projectId) {
         User user = jwtService.getUserFromToken(token);
+        Project project = null;
+
+        if (projectId.isPresent()) {
+            project = projectRepository.findById(projectId.get())
+                    .orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId.toString()));
+        }
 
         List<TestSession> testSessions;
 
         if (user.getRole().equals(UserRoleEnum.ADMIN)) {
-            testSessions = testSessionRepository.findAll();
+            if (projectId.isPresent()) {
+                testSessions = testSessionRepository.findAllByProject(project);
+            } else {
+                testSessions = testSessionRepository.findAll();
+            }
         } else {
-            testSessions = testSessionRepository.findByTester(user);
+            if (projectId.isPresent()) {
+                testSessions = testSessionRepository.findAllByProjectAndTester(project, user);
+            } else {
+                testSessions = testSessionRepository.findByTester(user);
+            }
         }
 
         return testSessions.stream().map(GetTestSessionResponseDTO::new).collect(Collectors.toList());
     }
+
 
     public void deleteTestSession(String token, UUID sessionId) {
         TestSession testSession = testSessionRepository.findById(sessionId)
