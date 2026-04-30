@@ -45,8 +45,6 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    // Getters e Setters
-
     public UUID getId() {
         return id;
     }
@@ -103,8 +101,6 @@ public class User implements UserDetails {
         this.projects = projects;
     }
 
-    // Métodos do Spring Security
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
@@ -112,12 +108,12 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email; // melhor do que retornar ""
+        return email;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true; // pode ajustar para lógica real se quiser
+        return true;
     }
 
     @Override

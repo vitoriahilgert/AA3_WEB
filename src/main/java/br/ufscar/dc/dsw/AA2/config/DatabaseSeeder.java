@@ -20,11 +20,10 @@ public class DatabaseSeeder {
     @Bean
     CommandLineRunner initDatabase(UserRepository userRepository, PasswordEncoder passwordEncoder, ProjectRepository projectRepository, StrategyRepository strategyRepository) {
         return args -> {
-            // Verifica se a tabela está vazia para evitar duplicação em cada reinício
             if (userRepository.count() == 0) {
                 User admin = new User();
                 admin.setEmail("vihilgerttomasel@gmail.com");
-                admin.setPassword(passwordEncoder.encode("password")); // Senha: password
+                admin.setPassword(passwordEncoder.encode("password"));
                 admin.setName("Vitória Admin");
                 admin.setRole(UserRoleEnum.ADMIN);
                 userRepository.save(admin);
@@ -32,7 +31,7 @@ public class DatabaseSeeder {
 
                 User tester1 = new User();
                 tester1.setEmail("nandaq2003@gmail.com");
-                tester1.setPassword(passwordEncoder.encode("password")); // Senha: tester123
+                tester1.setPassword(passwordEncoder.encode("password"));
                 tester1.setName("Maria Fernanda");
                 tester1.setRole(UserRoleEnum.TESTER);
                 userRepository.save(tester1);
@@ -40,7 +39,7 @@ public class DatabaseSeeder {
 
                 User tester2 = new User();
                 tester2.setEmail("rodrigo@estudante.ufscar.br");
-                tester2.setPassword(passwordEncoder.encode("password")); // Senha: tester123
+                tester2.setPassword(passwordEncoder.encode("password"));
                 tester2.setName("Rodrigo");
                 tester2.setRole(UserRoleEnum.TESTER);
                 userRepository.save(tester2);

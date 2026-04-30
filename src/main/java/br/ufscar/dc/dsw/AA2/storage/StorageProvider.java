@@ -105,7 +105,6 @@ public class StorageProvider {
             throw new StorageException("Filename contains invalid path sequence: " + originalFilename);
         }
 
-        // Aceitando apenas arquivos PNG e JPG
         if (!Objects.equals(file.getContentType(), "image/png") &&
                 !Objects.equals(file.getContentType(), "image/jpeg") &&
                 !Objects.equals(file.getContentType(), "image/jpg")

@@ -14,9 +14,7 @@ public class JPAUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        // O nome do método é 'loadUserByUsername', mas a string que chega aqui
-        // é o que o usuário digitou no campo 'username' (que é o email).
-        return userRepository.findByEmail(email) // ou findByUsername, dependendo do seu repositório
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + email));
     }
 }
